@@ -1,4 +1,4 @@
 # Noodle Unity Starter Assets
- Starter assets for any new project in Unity
 
- Add URL: https://github.com/noodlemanifold/Noodle-Unity-Starter-Kit.git?path=/Assets/StarterKit
+This is a simple package that just contains simple assets for starting new projects. They are perfect for prototyping 
+and game jams! There is also a cheat sheet for quick reference and refreshers on many Unity features! Have fun creating <3

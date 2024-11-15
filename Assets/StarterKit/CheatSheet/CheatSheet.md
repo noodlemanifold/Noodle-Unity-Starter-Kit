@@ -1087,7 +1087,7 @@ can be added to a scene by clicking and dragging them from the assets pane into 
 To edit a prefab, double-click the prefab in the assets pane. To edit a prefab with the surroundings of one of its instances
 still visible, click that instance in the scene hierarchy, and click open at the top in the inspector pane.
 
-To remove all prefab behavior from a prefab instance, right click an instance in the scene hierarchy and select Unpack
+To remove all prefab behavior from a prefab instance, right-click an instance in the scene hierarchy and select Prefab > Unpack
 Completely.
 
 ## Overrides
@@ -1151,6 +1151,7 @@ coroutines and the GetComponent() function.
 # 🎆 VFX Graph
 
 - add images for prefab open and override buttons?
+- hotkeys? like search is Alt + K?
 
 [//]: # (<pre>)
 [//]: # (<n>//Im a comment! </n>)
