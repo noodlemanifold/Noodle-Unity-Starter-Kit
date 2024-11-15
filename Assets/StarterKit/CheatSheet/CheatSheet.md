@@ -1122,9 +1122,121 @@ void Start(){
 ```
 
 # 🧞 Monobehaviours
+[📓](https://docs.unity3d.com/ScriptReference/MonoBehaviour.html)  
 Monobehaviour is a base class that all components in Unity derive from. It automatically calls many functions that fire for
 certain events or give information. The most common of these are the Start() and Update() functions. It also handles 
 coroutines and the GetComponent() function.
+
+To create a new Monobehaviour, click Assets > Create > Scripting > Monobehaviour Script. The name of this new file must 
+match your Monobehaviour's name, so pick a good one. To attach it to a gameobject, click and drag your script file from the 
+assets pane onto the gameobject in the scene hierarchy, or onto the bottom of the inspector pane if you have a gameobject selected.
+
+## Messages
+These are not all the events that Monobehaviour will send, but I think these are the most important ones. They are listed
+in the order they are called.
+```csharp
+//Rendering/Frame Loop
+
+void Awake(){}//called when loaded in the first time
+void OnEnable(){}//called when loaded or whenever the monobehaviour is enabled
+void Start(){}//called before the first frame is processed. Meant for initialization
+//loop starts here
+void Update(){}//called every frame before Unity's internal rendering and updating and stuff
+void LateUpdate(){}//called every frame after Unity's internal rendering and updating and stuff
+void OnDrawGizmos(){}//call all your Gizmos.DrawXXX() stuff here
+void OnApplicationPause(bool pauseStatus){}//sent when game is paused or unpaused from losing focus
+//loop ends here
+void OnApplicationQuit(){}//called if the game is closed :(
+void OnDisable(){}//called when monobehaviour is disabled. if reenabled, OnEnable() is called again
+void OnDestroy(){}//called right before this monobehaviour is unloaded
+```
+
+```csharp
+//Physics Loop
+
+//loop starts here
+void FixedUpdate(){}//called on every physics loop before the interal physics is advanced
+//internal physics update happens here
+void OnTriggerEnter(Collider col){}//called once the tick a collider enters a trigger
+                            //called on both the trigger and the entering collider
+                            //parameter col is the other collider of the interaction
+void OnTriggerStay(Collider col){}//called every tick for every collider is inside a trigger
+                            //called on both the trigger and the entering collider
+                            //parameter col is the other collider of the interaction
+void OnTriggerExit(Collider col){}//called once the tick a collider exits a trigger
+                            //called on both the trigger and the entering collider
+                            //parameter col is the other collider of the interaction
+void OnCollisionEnter(Collision col){}//called once the tick two colliders start colliding
+                            //called on both involved colliders
+                            //parameter col contains all the info of the collision
+void OnCollisionStay(Collision col){}//called every tick for every collision this object is involved in
+                            //called on both involved colliders
+                            //parameter col contains all the info of the collision
+void OnCollisionExit(Collision col){}//called once the tick two colliders start colliding
+                            //called on both involved colliders
+                            //parameter col contains all the info of the collision
+//loop ends here
+```
+
+## Managing in Code
+
+```csharp
+//except for AddComponent, all of these can be done on gameobjects or monobehaviours.
+//when done on a monobehaviour, it calls the function on the gameobject is is attached to.
+
+BoxCollider box = AddComponent<BoxCollider>();//box holds the new BoxCollider that was added to this gameobject
+BoxCollider box2 = GetComponent<BoxCollider>();//box2 holds the first BoxCollider found on this gameobject
+BoxCollider[] boxes = GetComponents<BoxCollider>();//boxes holds an array of all BoxColliders on this gameobject
+Destroy(box2);//removes box2 from this gameobject before the next frame
+DestroyImmediate(box2);//removes box2 from this gameobject *immediately*. worse for performance.
+Destroy(this.gameObject);//Destroy() is used for removing components and gameobjects from a scene.
+//Destroy can remove assets as well, useful for preventing memory leaks with procedural textures or meshes.
+```
+
+## Coroutines
+
+Coroutines are a really nice way to run code in-between frames asynchronously without needing to spin up another thread.
+They are useful for animations, timers, waiting for asynchronous functions like loading scenes, and more. NOTE:
+Coroutines are executed by the monobehaviour they are called from. If their monobehaviour is disabled or destoryed, they
+are also disabled or destroyed.
+
+```csharp
+//Coroutine declaration.
+//They're just functions that return an IEnumerator
+IEnumerator ImACoroutine(string message){
+    float time = 0;
+    while(true){
+        time += Time.delatTime;
+        Debug.Log("I've been saying "+message+" for "+time+" seconds!");//this prints every frame
+        yield return null;//stops running code until the next frame/Update()
+    }
+}
+```
+```csharp
+//Coroutines can also wait for a time in seconds
+IEnumerator ICanSpellCoroutine(){
+    while(true){
+        Debug.Log("C-O-R-O-U-T-I-N-E");//this prints every 5 seconds
+        yield return new WaitForSeconds(5f);//stops running code for 5 seconds
+    }
+}
+```
+```csharp
+//Coroutines can be tied to the physics loop instead of the game loop as well
+IEnumerator PhysicsCoroutine(){
+    while(true){
+        Debug.Log("Don't touch me!!!");//this prints every physics tick
+        yield return new WaitForFixedUpdate();//stops running code until the next physics tick/FixedUpdate()
+    }
+}
+```
+```csharp
+//starting and stopping coroutines
+IEnumerator coroutine = ImACoroutine("Yaaaay parameters!");//sets up coroutine
+StartCoroutine(coroutine);//actually starts executing the coroutine
+------
+StopCoroutine(coroutine);//cancels executing the coroutine if it is still running
+```
 
 # 🚋 Transform
 
@@ -1152,6 +1264,7 @@ coroutines and the GetComponent() function.
 
 - add images for prefab open and override buttons?
 - hotkeys? like search is Alt + K?
+- Gizmos!
 
 [//]: # (<pre>)
 [//]: # (<n>//Im a comment! </n>)
