@@ -1,0 +1,16 @@
+{
+    "name": "com.noodlemanifold.starterkit",
+    "version": "0.1",
+    "displayName": "Noodle Unity Starter Kit",
+    "description": "This is an example package",
+    "unity": "6000.0",
+    "unityRelease": "20f1",
+    "documentationUrl": "https://example.com/",
+    "changelogUrl": "https://example.com/changelog.html",
+    "licensesUrl": "https://example.com/licensing.html",
+    "author": {
+      "name": "Roxy Campbell",
+      "email": "roxannecampbell244@gmail.com",
+      "url": "https://noodlemanifold.github.io/"
+    }
+}
