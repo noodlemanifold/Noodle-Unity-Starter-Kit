@@ -8,5 +8,5 @@ To add it to your project:
 - Click install package from Git URL...
 - Paste in this URL: https://github.com/noodlemanifold/Noodle-Unity-Starter-Kit.git?path=/Assets/StarterKit
 - Click install
-- Authenticate you Github Account if it asks
+- Authenticate you Github Account if it asks  
 Tada!!
