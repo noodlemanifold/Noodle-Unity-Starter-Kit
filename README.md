@@ -10,3 +10,5 @@ To add it to your project:
 - Click install
 - Authenticate you Github Account if it asks  
 Tada!!
+
+Here is a link to the Cheat Sheet here on Github for quick reference! https://github.com/noodlemanifold/Noodle-Unity-Starter-Kit/blob/main/Assets/StarterKit/CheatSheet/CheatSheet.md
