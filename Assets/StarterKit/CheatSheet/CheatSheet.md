@@ -1398,15 +1398,17 @@ that matches the input device you set the bind for. Interactions and Processors 
 ## Implementation in Code
 [📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflows.html)  
 Unity intends for there to be 3 different ways for you to interact with the Input System, each with different pros and cons.
-The next 3 sections will each cover one. They are Direct Polling, PlayerInput Events, and Quick & Dirty Hardcoding. Direct Polling
-has all input behavior defined in code, as opposed to having links in the editor, which can make debugging easier. It also allows
+The next 3 sections will each cover one. They are using the Actions API, PlayerInput Events, and Quick & Dirty Hardcoding. The Actions API
+is the recommended method and has all input behavior defined in code, as opposed to having links in the editor, which can make debugging easier. It also allows
 for more custom behavior. However, it does require more code. PlayerInput Events lets you set up events that will trigger your code 
 when needed. This results in less code, but can make de-bugging trickier. This approach does have a baked in solution for local
 multiplayer when combined with the PlayerInputManager. Quick & Dirty Hardcoding completely bypasses action maps, actions, and bindings,
 and just lets you quickly check if a button is pressed. This is good for prototyping and game jams, but shouldn't be used for anything serious.
 
-## Direct Polling
+## Actions API
 [📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflow-Actions.html)  
+There are several ways to do this style in of itself O_o. They all have Pros and Cons I guess.
+### Polling
 ```csharp
 using UnityEngine.InputSystem;
 ------
@@ -1426,8 +1428,9 @@ void Update(){
     }
 }
 ```
+
+### Events
 ```csharp
-//sneaky suprise way to do events with the direct method :O
 //this is basically just what PlayerInput does for you
 using UnityEngine.InputSystem;
 ------
@@ -1450,6 +1453,34 @@ void OnDestroy(){
     moveAction.canceled -= MoveCallback;
 }
 ```
+
+### Code Generation
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/ActionAssets.html#type-safe-c-api-generation)  
+For this to work, *single*-click your actions asset to see its settings in the inspector. Tick the box labelled Generate C# Class.
+Put in a class name you would like (and optionally a file name or namespace). I'll use SampleKitInputs. Then click apply.
+For your script, all you have to do is this:
+```csharp
+public class InputScript : MonoBehaviour, SampleKitInputs.IPlayerActions { //the interface will be named after your action map
+
+    SampleKitInputs inputs;
+    
+    void Start(){
+        inputs = new SampleKitInputs();
+        inputs.Player.SetCallbacks(this);//send input callbacks to this object
+        inputs.Player.Enable();//enable player action map
+    }
+    
+    public void OnMove(InputAction.CallbackContext context){
+        Vector2 moveValue = context.ReadValue<Vector2>();
+    }
+
+    public void OnJump(InputAction.CallbackContext context){
+        bool jumpValue = context.ReadValueAsButton();
+    }
+    ...
+}
+```
+*and thats it O_o*. This method is very elegant, but it does make you make a function for every action in the map.
 
 ## PlayerInput Events
 [📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflow-PlayerInput.html)  
