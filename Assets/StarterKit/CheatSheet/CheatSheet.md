@@ -1545,14 +1545,15 @@ public void MoveCallback(InputAction.CallbackContext context){
 //interactive rebinding where the user presses the button they want bound
 //this will work for most cases but not all. For those cases, look at the documentation for changing the default rebinding settings.
 InputAction moveAction = InputSystem.actions.FindAction("Player/Move");
-        
-int bindingIndex = moveAction.GetBindingIndex(InputBinding.MaskByGroup("Gamepad"));
+int bindingIndex = moveAction.GetBindingIndex(InputBinding.MaskByGroup("Gamepad"));//rebind Gamepad input
+
 var rebind = moveAction.PerformInteractiveRebinding(bindingIndex);
 rebind.OnComplete(//callback lambda function for when the rebind is complete
    operation => {
        Debug.Log($"Rebound '{moveAction}' to '{operation.selectedControl}'");
        operation.Dispose();//must dispose to avoid memory leak
    });
+
 rebind.Start();//start the rebind. this happens in the background asynchronously.
 ```
 ```csharp
@@ -1582,6 +1583,85 @@ InputSystem.actions.RemoveAllBindingOverrides();//reset all bindings for all act
 
 # 🧮 Math
 
+## Floats
+[📓](https://docs.unity3d.com/ScriptReference/Mathf.html)  
+Beyond the basic arithmetic operators built into C# (+,-,*,/,%), the rest of the Math functionality for floats is found in the
+Mathf class. These are what I think are the most useful features of it. Full list is in the documentation as always. :)
+
+```csharp
+//static variables
+
+float degrees = Mathf.Rad2Deg * 1.54f;//convert radians to degrees
+float radians = Mathf.Deg2Rad * 90f;//convert degrees to radians
+
+float tau = Mathf.PI * 2f;// π constant
+float eep = Mathf.Epsilon;//really tiny but not quite zero number. useful for avoiding dividing by zero.
+```
+```csharp
+//static functions
+
+float abs = Mathf.Abs(-5f);//takes the absolute value
+float sign = Mathf.Sign(-5f);//returns the sign of a number. Either -1 or 1.
+
+bool closeEnough = Mathf.Approximately(1.0f, 10.0f / 10.0f);//returns if two floats are the same despite floating point inaccuracies.
+
+int round = Mathf.RoundToInt(1.5f);//returns closet int according to rounding rules
+int two = Mathf.CielToInt(1.1f);//returns next int above the float value
+int one = Mathf.FloorToInt(1.9f);//returns next int below the float value
+
+float daClaaaaamps = Mathf.Clamp(value,minimum,maximum);//sets value to be between minimum and maximum if it is not
+
+float max = Mathf.Max(1f,5f);//returns the greater of two values
+float min = Mathf.Min(1f,5f);//returns the smaller of two values
+
+float whatsALog = Mathf.Log(value,bas);//calculates the log of the specified value and base
+float exp = Mathf.Pow(value, exponent);//returns value raised to the power of exponent
+float sqrt = Mathf.Sqrt(value);//takes the square root mate
+```
+```csharp
+//trigonometry
+float sin = Mathf.Sin(0f);
+float cos = Mathf.Cos(0f);
+float tan = Mathf.Tan(0f);
+
+float arcsin = Mathf.Asin(0f);
+float arccos = Mathf.Acos(0f);
+float arctan = Mathf.Atan(0f);
+
+Vector2 someLine = new Vector2(1f,1f).Normalize();
+float angle = Mathf.Atan2(someLine.y, someLine.x);//returns angle in radians whose Tan is y/x
+                                                  //can be thought of as angle between 2D vector and X axis. Very Helpful.
+```
+```csharp
+//leeeeerping
+float leeerp = Mathf.Lerp(min, max, fac);//returns value between min and max weighted by fac. fac should go from 0 -> 1
+float angleLerp = Mathf.LerpAngle(min, max, fac);//lerps for angles in degrees. Same as Lerp, but handles rolling over 360 degrees.
+float noClampssss = Mathf.LerpUnclamped(min, max, fac);//same as lerp, but fac can go above 1 or below 0. very fun.
+//realtime lerp formula
+float value = Mathf.Lerp(value, target, 1-pow(rate,Time.deltaTime));//thank u Freya :3
+
+float fac = Mathf.InverseLerp(min, max, value);//determines where a value is between two other values. Actually quite useful!
+
+float shmooth = Mathf.SmoothStep(min, max, fac);//interpolates between min and max in an S curve instead of linearly.
+```
+(By the way, if u are working with doubles instead of floats, there is an identical matching set of functions for them under
+the Math class without the f)
+
+## Vectors
+
+## Quaternions
+
+## Matrices
+
+## Time
+
+## RNG
+
+## Misc
+Plane, Ray, Rect
+
+# 🟩 2D
+
 # 🌐 Meshes
 
 # 🥏 Physics
@@ -1603,4 +1683,5 @@ InputSystem.actions.RemoveAllBindingOverrides();//reset all bindings for all act
 - add images for prefab open and override buttons?
 - hotkeys? like search is Alt + K?
 - Gizmos!
+- Color and Gradient?
 
