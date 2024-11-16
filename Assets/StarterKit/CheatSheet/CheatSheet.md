@@ -1349,6 +1349,205 @@ void Start(){
 ```
 
 # 🕹️ Inputs
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html)  
+In Unity 6, game input is handled with the Input System package. This is different from the old built in Input Manager, 
+so be careful when looking up guides. The Input System supports actions, action maps, runtime rebinding, and a ton of 
+devices! There's a ton of theory for this one, so I've broken it up into sections. Good luck!
+
+## Terminology
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Concepts.html)  
+- A **user** is a player of your game. 
+- A **device** is the input hardware they are using (controller, keyboard & mouse, pen, etc...).
+- A **control** is an individual sensor or group of sensors on a device. Most commonly these are buttons, but they also include
+joysticks, triggers, and mouse movement.
+- An **action** is a verb or, well, action, that happens in your game. Common ones are "Move", "Jump", and "Fire". Actions
+have a type as well. They can be a bool, float, Vector2, and other exotic things I've never used.
+- An **action map** is a group of actions that go with a scenario in your game. By default, there are two: "Player" and "UI".
+Additional ones could be "Vehicle", "Battle", or "Editor".
+- A **binding** is a link between an action and a control. The most common example is a bool action triggered by a button.
+One action can have multiple bindings. These can be for different devices or multiple controls on the same device. 
+
+## Theory
+The idea behind the Input System is to have one actions asset for your entire project, with all the actions maps, actions, and bindings
+for your project in one location. Your game will listen to different action maps in different situations, as you define in your code. You can have one action map
+active at a time, or listen to multiple at once. You can also have the game listen to one input device at a time, or allow mixed
+inputs from multiple devices. Every input you need for your game should live as an action under some action map in this action asset.
+How you choose to use the structure is up to you. You can have a lot of action maps, or just make one large action map with all your
+actions in it.
+
+## Setting up Actions
+Unity 6 will generate an actions asset for you in the Assets folder of your project. Double-click it to open it. Save your changes
+or enable Auto Save in the top right. 
+
+To add an Action Map, click the Plus at the top of the Action Maps section, type in a name,
+and press enter. Left-click an action map to edit its actions. 
+
+To add an action, click the plus at the top of the Actions section,
+type in a name, and press enter. To edit an action, left click it, and options will appear in the Properties panel on the
+right. Select button to make it a simple on or off, or select value to make it a float, Vector2, or another type. Here you can
+also add Interactions to make things like double click or hold, and Processors to invert, normalize, add deadzones, and more
+to input values.
+
+To add a binding, select an action and click the plus to the right of its name. Most of the time you will just want to 
+click Add Binding, but if you wish to make a multi-key combo, like WASD for movement, click Add Composite (Modifier bindings are used 
+for things like Shift+Click. I've never used them). Left-click a binding to edit it, and its settings will appear in the Properties
+section on the right. Click the box to the right of path and navigate through the menus to select which input you would like, or
+search for it at the top. Below that it asks which control scheme you wish for that binding to be active in. Select the scheme
+that matches the input device you set the bind for. Interactions and Processors can be added for individual bindings as well below.
+
+## Implementation in Code
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflows.html)  
+Unity intends for there to be 3 different ways for you to interact with the Input System, each with different pros and cons.
+The next 3 sections will each cover one. They are Direct Polling, PlayerInput Events, and Quick & Dirty Hardcoding. Direct Polling
+has all input behavior defined in code, as opposed to having links in the editor, which can make debugging easier. It also allows
+for more custom behavior. However, it does require more code. PlayerInput Events lets you set up events that will trigger your code 
+when needed. This results in less code, but can make de-bugging trickier. This approach does have a baked in solution for local
+multiplayer when combined with the PlayerInputManager. Quick & Dirty Hardcoding completely bypasses action maps, actions, and bindings,
+and just lets you quickly check if a button is pressed. This is good for prototyping and game jams, but shouldn't be used for anything serious.
+
+## Direct Polling
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflow-Actions.html)  
+```csharp
+using UnityEngine.InputSystem;
+------
+InputAction moveAction;//variables to hold references to actions
+InputAction jumpAction;
+
+void Start(){
+    moveAction = InputSystem.actions.FindAction("Player/Move");//get references to the actions
+    jumpAction = InputSystem.actions.FindAction("Player/Jump");//dont do this in Update(), its a bit laggy
+}
+
+void Update(){
+    Vector2 moveValue = moveAction.ReadValue<Vector2>();
+    bool jumpValue = jumpAction.WasPressedThisFrame();
+    if (jumpValue){
+        Debug.Log("Jump Pressed!");
+    }
+}
+```
+```csharp
+//sneaky suprise way to do events with the direct method :O
+//this is basically just what PlayerInput does for you
+using UnityEngine.InputSystem;
+------
+InputAction moveAction;
+
+void Start(){
+    moveAction = InputSystem.actions.FindAction("Player/Move");//get references to the actions
+    moveAction.started += MoveCallback;//the callback context will say if it is started, performed, or cancelled
+    moveAction.performed += MoveCallback;//how that works depends on the binding, action type, and all that. Google it 
+    moveAction.canceled += MoveCallback;//if you arent sure!
+}
+
+void MoveCallback(InputAction.CallbackContext context){
+    Vector2 moveValue = context.ReadValue<Vector2>();
+}
+
+void OnDestroy(){
+    moveAction.started -= MoveCallback;//if you don't do this I think it causes a memory leak
+    moveAction.performed -= MoveCallback;
+    moveAction.canceled -= MoveCallback;
+}
+```
+
+## PlayerInput Events
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflow-PlayerInput.html)  
+This method requires some setup in the editor first. Add a PlayerInput component to a GameObject in your scene (probably
+the player character). Click the dropdown next to Behaviour and select Unity Events.
+
+To make a function to get the value of an action, make a script with a function that looks like this:
+```csharp
+using UnityEngine.InputSystem;
+------
+public void MoveCallback(InputAction.CallbackContext context){
+    Vector2 moveValue = context.ReadValue<Vector2>();
+}
+```
+Now, in the Unity Editor, select the GameObject with your Player Input Component. In the inspector, go to the PlayerInput
+component, and expand the section for Events. Open the Action Map you want, scroll down to the action you want, and click the
+plus at the bottom of the box below it. Drag the GameObject with your input script into the field that says "None (Object)".
+Now click the dropdown to the right of that field. Hover over your input script, and then select the appropriate method 
+from the section at the top labelled Dynamic CallbackContext. If you don't see it, make sure it matches the function above.
+All Done! ^-^
+
+```csharp
+//switching action maps
+PlayerInput playerInput = GetComponent<PlayerInput>();
+playerInput.SwitchCurrentActionMap("Player");
+```
+
+## Quick & Dirty Hardcoding
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflow-Direct.html)  
+```csharp
+//sometimes we like it a little quick and dirty
+using UnityEngine.InputSystem;
+------
+if (Gamepad.current == null) return;
+if (Gamepad.current.rightShoulder.wasPressedThisFrame){
+    Debug.Log("Cold Shoulder");
+}
+Vector2 leftStick = Gamepad.current.leftStick.value;
+
+if (Keyboard.current == null) return;
+bool press = Keyboard.current.spaceKey.isPressed;
+
+if (Mouse.current == null) return;
+bool click = Mouse.current.leftButton.wasPressedThisFrame;
+```
+
+## Reading Values
+```csharp
+using UnityEngine.InputSystem;
+------
+public void MoveCallback(InputAction.CallbackContext context){
+    //if the action is a button type
+    bool moveValue = context.ReadValueAsButton();
+    //if the action is a value type
+    Vector2 moveValue = context.ReadValue<Vector2>();
+}
+```
+
+## Runtime Rebinding
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/ActionBindings.html#interactive-rebinding)  
+```csharp
+//interactive rebinding where the user presses the button they want bound
+//this will work for most cases but not all. For those cases, look at the documentation for changing the default rebinding settings.
+InputAction moveAction = InputSystem.actions.FindAction("Player/Move");
+        
+int bindingIndex = moveAction.GetBindingIndex(InputBinding.MaskByGroup("Gamepad"));
+var rebind = moveAction.PerformInteractiveRebinding(bindingIndex);
+rebind.OnComplete(//callback lambda function for when the rebind is complete
+   operation => {
+       Debug.Log($"Rebound '{moveAction}' to '{operation.selectedControl}'");
+       operation.Dispose();//must dispose to avoid memory leak
+   });
+rebind.Start();//start the rebind. this happens in the background asynchronously.
+```
+```csharp
+//saving and loading the user's custom rebinds. this is shockingly easy
+
+void OnApplicationQuit(){//monobehaviour message
+    //save rebinds to PlayerPrefs
+    var rebinds = playerInput.actions.SaveBindingOverridesAsJson();
+    PlayerPrefs.SetString("rebinds", rebinds);
+}
+
+void Start(){
+    //load rebinds from PlayerPrefs
+    var rebinds = PlayerPrefs.GetString("rebinds");
+    playerInput.actions.LoadBindingOverridesFromJson(rebinds);
+}
+```
+```csharp
+//restoring default keybinds
+
+InputAction moveAction = InputSystem.actions.FindAction("Player/Move");
+        
+moveAction.RemoveBindingOverride(InputBinding.MaskByGroup("Gamepad"));//reset Gamepad bindings for this action
+moveAction.RemoveAllBindingOverrides();//reset bindings for all devices for this action
+InputSystem.actions.RemoveAllBindingOverrides();//reset all bindings for all actions
+```
 
 # 🧮 Math
 
