@@ -22,20 +22,21 @@ deep breath, relax, and have fun creating! 💗
     9. [Generics](#generics)
     10. [Misc](#misc)
 3. [🖼️ Scenes](#-scenes)
-4. [📦️ Prefabs](#-prefabs)
-5. [🧞 Monobehaviors](#-monobehaviors)
-6. [🚋 Transform](#-transform)
-7. [🕹️ Inputs](#-inputs)
-8. [🧮 Math](#-math)
-9. [🌐 Meshes](#-meshes)
-10. [🥏 Physics](#-physics)
-11. [🔊 Audio](#-audio)
-12. [🎥 Rendering](#-rendering)
-13. [🖥️ UI](#-ui)
-14. [🏃‍➡️ Animations](#-animations)
-15. [🏗️ Probuilder](#-probuilder)
-16. [📉 Shader Graph](#-shader-graph)
-17. [🎆 VFX Graph](#-vfx-graph)
+4. [🦴 GameObjects](#-gameobjects)
+5. [🫙 MonoBehaviors](#-monobehaviours)
+6. [🚋 Transforms](#-transforms)
+7. [📦️ Prefabs](#-prefabs)
+8. [🕹️ Inputs](#-inputs)
+9. [🧮 Math](#-math)
+10. [🌐 Meshes](#-meshes)
+11. [🥏 Physics](#-physics)
+12. [🔊 Audio](#-audio)
+13. [🎥 Rendering](#-rendering)
+14. [🖥️ UI](#-ui)
+15. [🏃‍➡️ Animations](#-animations)
+16. [🏗️ Probuilder](#-probuilder)
+17. [📉 Shader Graph](#-shader-graph)
+18. [🎆 VFX Graph](#-vfx-graph)
 
 # 🎓 Reference
 
@@ -1074,65 +1075,43 @@ SceneManager.sceneLoaded += LoadSceneCallback;//delegate that fires when a scene
 SceneManager.sceneUnloaded += UnloadSceneCallback;//delegate that fires when a scene is unloaded
 ```
 
-# 📦️ Prefabs
-[📓](https://docs.unity3d.com/Manual/Prefabs.html)  
-
-Prefabs allow you to save a gameobject and its children as an asset in your project that can be resued multiple times or
-created at runtime. When you edit the prefab asset, any changes you make are automatically sent to any instances in any 
-of your scenes.
-
-To create a prefab, simply drag and drop a gameobject from the scene hierarchy into a folder in the assets pane. Prefabs
-can be added to a scene by clicking and dragging them from the assets pane into the scene hierarchy!
-
-To edit a prefab, double-click the prefab in the assets pane. To edit a prefab with the surroundings of one of its instances
-still visible, click that instance in the scene hierarchy, and click open at the top in the inspector pane.
-
-To remove all prefab behavior from a prefab instance, right-click an instance in the scene hierarchy and select Prefab > Unpack
-Completely.
-
-## Overrides
-
-Prefab instances can be altered from the prefab asset they were created from. You can do this by adding, removing, or
-altering the exposed variables of any component on any object in the prefab. You cannot remove or re-parent objects though.
-Overridden settings will be bolded in the inspector pane.
-
-To manage overrides, select a prefab instance in the scene hierarchy, and click the Overrides button at the top of the
-inspector pane. This will show you everything that is overridden in the instance, and allows you to revert it to the 
-way it is in the prefab, or apply those changes to the root prefab asset so all other instances have that change
-as well.
-
-## Variants
-
-Prefab variants allow you to make a copy of a prefab with some alterations, and use that as its own prefab. It works the 
-same as material variants. 
-
-To create a variant, right-click a prefab and select Create > Prefab Variant. Editing them is the same as editing normal
-prefabs. Any changes you make in an prefab instance work just like the overrides system. Values you change yourself will
-stay, but any values that are unchanged will still inherit from the root prefab asset it was created from.
-
-## Creating at Runtime
+# 🦴 GameObjects
+[📓](https://docs.unity3d.com/ScriptReference/GameObject.html)  
+GameObject is the base class anything in the scene must be derived from. This includes lights, particle systems, characters,
+levels, props, or anything in the scene hierarchy. Because GameObjects are so universal, they are also very generic, so there is not much
+functionality to cover, but here are a few useful things about them! 
 
 ```csharp
-public GameObject myPrefab; //assign prefab asset to this field in the inspector
+GameObject go = new GameObject("Nice Name");//creates an empty gameobject and assigns it to go
+                                            //use prefabs for creating anything with any more complexity than this
 
-void Start(){
-    GameObject instance = Instantiate(myPrefab, Vector3.zero, Quaternion.identity);
-    Debug.Log(instance.name);
-}
+bool enabled = go.activeSelf;//Read Only Boolean for if the GameObject is enabled or not
+go.SetActive(true);//Function to set the GameObject as enabled or disabled
+go.name = "New Name";//set or get the GameObject name
+go.layer = 8;//set or get the GameObject's layer. mostly used for physics, but not always.
+go.tag = "TaggyTagTag";//set or get the GameObject's tag. Useful for tracking types of GameObjects
+Debug.Log(go.transform.position);//get a gameobject's transform
+
+Rigidbody[] AllRBsLoaded = FindObjectsByType<Rigidbody>(FindObjectsSortMode.None);//returns a list of all RigidBodies in the scene
+GameObject go2 = GameObject.Find("Camera");//Returns any GameObject with the specified name. Kinda Laggy.
+GameObject[] props = GameObject.FindGameObjectsWithTag("Prop");//Returns array of all active GameObjects tagged "Prop"
+
+Destroy(go);//delete the GameObject before the next frame
+DestroyImmediate(go);//delete the GameObject *Immediately*. (Worse for performance)
 ```
 
-# 🧞 Monobehaviours
+# 🫙 MonoBehaviours
 [📓](https://docs.unity3d.com/ScriptReference/MonoBehaviour.html)  
-Monobehaviour is a base class that all components in Unity derive from. It automatically calls many functions that fire for
-certain events or give information. The most common of these are the Start() and Update() functions. It also handles 
+MonoBehaviour is a base class that all components in Unity derive from. It automatically calls many functions that fire for
+certain events or give information. The most common of these are the Start() and Update() functions. It also handles
 coroutines and the GetComponent() function.
 
-To create a new Monobehaviour, click Assets > Create > Scripting > Monobehaviour Script. The name of this new file must 
-match your Monobehaviour's name, so pick a good one. To attach it to a gameobject, click and drag your script file from the 
-assets pane onto the gameobject in the scene hierarchy, or onto the bottom of the inspector pane if you have a gameobject selected.
+To create a new MonoBehaviour, click Assets > Create > Scripting > MonoBehaviour Script. The name of this new file must
+match your MonoBehaviour's name, so pick a good one. To attach it to a GameObject, click and drag your script file from the
+assets pane onto the GameObject in the scene hierarchy, or onto the bottom of the inspector pane if you have a GameObject selected.
 
 ## Messages
-These are not all the events that Monobehaviour will send, but I think these are the most important ones. They are listed
+These are not all the events that MonoBehaviour will send, but I think these are the most important ones. They are listed
 in the order they are called.
 ```csharp
 //Rendering/Frame Loop
@@ -1181,14 +1160,15 @@ void OnCollisionExit(Collision col){}//called once the tick two colliders start 
 ## Managing in Code
 
 ```csharp
-//except for AddComponent, all of these can be done on gameobjects or monobehaviours.
-//when done on a monobehaviour, it calls the function on the gameobject is is attached to.
+//except for AddComponent, all of these can be done on gameobjects, monobehaviours, or transforms.
+//when done on a monobehaviour or transform, it calls the function on the gameobject is is attached to.
 
-BoxCollider box = AddComponent<BoxCollider>();//box holds the new BoxCollider that was added to this gameobject
-BoxCollider box2 = GetComponent<BoxCollider>();//box2 holds the first BoxCollider found on this gameobject
+BoxCollider box = gameObject.AddComponent<BoxCollider>();//box holds the new BoxCollider that was added to this gameobject
+BoxCollider box2 = GetComponenet<BoxCollider>();//box2 holds the first BoxCollider found on this GameObject.
+BoxCollider boxChild = transform.GetChild(0).GetComponent<BoxCollider>();//boxChild holds the first BoxCollider found on this transform's 0th child.
 BoxCollider[] boxes = GetComponents<BoxCollider>();//boxes holds an array of all BoxColliders on this gameobject
-Destroy(box2);//removes box2 from this gameobject before the next frame
-DestroyImmediate(box2);//removes box2 from this gameobject *immediately*. worse for performance.
+Destroy(box);//removes box from this gameobject before the next frame
+DestroyImmediate(box);//removes box from this gameobject *immediately*. worse for performance.
 Destroy(this.gameObject);//Destroy() is used for removing components and gameobjects from a scene.
 //Destroy can remove assets as well, useful for preventing memory leaks with procedural textures or meshes.
 ```
@@ -1238,7 +1218,135 @@ StartCoroutine(coroutine);//actually starts executing the coroutine
 StopCoroutine(coroutine);//cancels executing the coroutine if it is still running
 ```
 
-# 🚋 Transform
+# 🚋 Transforms
+[📓](https://docs.unity3d.com/ScriptReference/Transform.html)  
+Transform is the one mandatory component every GameObject must have. It stores and allows modification of a GameObject's
+position, rotation, and scale. It also contains a GameObject's parent and any children GameObjects in the hierarchy.
+
+## Position, Rotation, and Scale
+```csharp
+//how to access world position, rotation, and scale.
+//look at the math section for how to actually work with them
+
+Vector3 pos = transform.position;//get world position
+pos.x = -pos.x;
+transform.position = pos;//set world position
+                        //cannot directly edit transform.position.x unfort
+
+Quaternion rot = transform.rotation;//get world rotation
+transform.rotation = Quaternion.identity;//set world rotation
+
+Vector3 rot2 = transform.eulerAngles;//get world rotation converted to euler angles 🤢
+
+Vector3 globalScale = transform.lossyScale;//read only global scale. Will be messed up if any parent transforms are rotated
+```
+```csharp
+//how to access local position, rotation, and scale.
+//look at the math section for how to actually work with them
+
+Vector3 localPos = transform.localPosition;//get position relative to parent
+
+Quaternion localRot = transform.localRotation;//get rotation relative to parent
+Vector3 localEulerAngles = transform.localEulerAngles;//get rotation relative to parent converted to euler angles 🤢
+
+Vector3 scale = transform.localScale;//scale relative to parent transform
+```
+```csharp
+//helpful class variables
+
+Vector3 forwardDirection = transform.forward;//blue vector of editor position gizmo
+Vector3 upDirection = transform.up;//green vector of editor position gizmo
+Vector3 rightDirection = transform.right;//red vector of editor position gizmo
+GameObject go = transform.gameObject;//get gameobject for this transform
+
+Matrix4x4 localToWorld = transform.localToWorldMatrix;//matrix that when multiplied with a position in local space,
+                                                      //gives you that position in world space.
+Matrix4x4 worldToLocal = transform.worldToLocalMatrix;//matrix that when multiplied with a position in world space,
+                                                      //gives you that position in local space.
+```
+```csharp
+//utility functions for all your transformation needs
+
+transform.LookAt(Vector3.zero, Vector3.up);//rotates the transform to look at the first parameter.
+                                           //optional second parameter specifies a second direction Unity will try to match the
+                                                //transform's up direction to as best it can.
+transform.RotateAround(new Vector3(100f,20f,-300f), Vector3.up, 35f);//rotates transform around the specified location
+                                                            //along specified axis by the specified angle in degrees
+
+Vector3 worldPoint = transform.TransformPoint(localPoint);//transform local position to world position
+Vector3 worldDirection = transform.TransformDirection(Vector3.up);//transform local direction to world direction
+
+Vector3 localPoint = transform.InverseTransformPoint(worldPoint);//transform world position to local position
+Vector3 localDirection = transform.InverseTransformDirection(transform.up);//transform world direction to local direction
+```
+
+## Hierarchy
+```csharp
+//working with parents and children
+//if only it was this easy
+
+Transform parent = transform.parent;//parent in the hierarchy
+Transform root = transform.root;//topmost transform we are a descendent of
+
+int childCount = transform.childCount;//number of children we have
+for (int i =0; i < childCount; i++){//loop through all children of this transform
+    Debug.log(transform.GetChild(i));//get child by its index
+}
+
+Transform hiChi = transform.Find("Hiiii");//finds a child of this transform with this name
+
+Transform firstChild = transform.GetChild(0);
+firstChild.SetSiblingIndex(1);//reorder a transform relative to its siblings. this makes it the second child.
+```
+
+# 📦️ Prefabs
+[📓](https://docs.unity3d.com/Manual/Prefabs.html)  
+
+Prefabs allow you to save a gameobject and its children as an asset in your project that can be resued multiple times or
+created at runtime. When you edit the prefab asset, any changes you make are automatically sent to any instances in any 
+of your scenes.
+
+To create a prefab, simply drag and drop a gameobject from the scene hierarchy into a folder in the assets pane. Prefabs
+can be added to a scene by clicking and dragging them from the assets pane into the scene hierarchy!
+
+To edit a prefab, double-click the prefab in the assets pane. To edit a prefab with the surroundings of one of its instances
+still visible, click that instance in the scene hierarchy, and click open at the top in the inspector pane.
+
+To remove all prefab behavior from a prefab instance, right-click an instance in the scene hierarchy and select Prefab > Unpack
+Completely.
+
+## Overrides
+
+Prefab instances can be altered from the prefab asset they were created from. You can do this by adding, removing, or
+altering the exposed variables of any component on any object in the prefab. You cannot remove or re-parent objects though.
+Overridden settings will be bolded in the inspector pane.
+
+To manage overrides, select a prefab instance in the scene hierarchy, and click the Overrides button at the top of the
+inspector pane. This will show you everything that is overridden in the instance, and allows you to revert it to the 
+way it is in the prefab, or apply those changes to the root prefab asset so all other instances have that change
+as well.
+
+## Variants
+
+Prefab variants allow you to make a copy of a prefab with some alterations, and use that as its own prefab. It works the 
+same as material variants. 
+
+To create a variant, right-click a prefab and select Create > Prefab Variant. Editing them is the same as editing normal
+prefabs. Any changes you make in an prefab instance work just like the overrides system. Values you change yourself will
+stay, but any values that are unchanged will still inherit from the root prefab asset it was created from.
+
+## Using at Runtime
+
+```csharp
+public GameObject myPrefab; //assign prefab asset to this field in the inspector
+
+void Start(){
+    GameObject instance = Instantiate(myPrefab, Vector3.zero, Quaternion.identity);//create instance from prefab
+    Debug.Log(instance.name);
+    Destroy(instance);//remove the instance (or any gameobject) before the next frame
+    DestroyImmediate(instance);//remove the instance (or any gameobject) *instantly*. Worse for performance.
+}
+```
 
 # 🕹️ Inputs
 
@@ -1266,54 +1374,3 @@ StopCoroutine(coroutine);//cancels executing the coroutine if it is still runnin
 - hotkeys? like search is Alt + K?
 - Gizmos!
 
-[//]: # (<pre>)
-[//]: # (<n>//Im a comment! </n>)
-[//]: # ([<c>Header</c>&#40;<t>"Fields"</t>&#41;])
-[//]: # (<k>float</k> <v>distance</v> = <c>Mathf</c>.<f>Abs</f>&#40;<l>1f</l>/<v>x</v>&#41;; )
-[//]: # (</pre>)
-
-<style>:root {
-  color-scheme: light dark;
-}
-/* Tags:
-    k = keywords
-    c = classes
-    v = variables
-    f = functions
-    l = literals (hardcoded numbers)
-    t = strings
-    n = comments
-    feel free to change any of the colors as you want!
-*/
-/*Roxy Light Theme*/
-@media (prefers-color-scheme: light) {
-    k { color: #F92688 }
-    c { color: #0492EA }
-    v { color: #06AD36 }
-    f { color: #F27B04 }
-    l { color: #9700E2 }
-    t { color: #EDC500 }
-    n { color: #918487 }
-}
-/*VS Studio Light theme
-@media (prefers-color-scheme: light) {
-    k { color: #0000FF }
-    c { color: #5194B5 }
-    v { color: #000000 }
-    f { color: #755832 }
-    l { color: #098658 }
-    t { color: #A31515 }
-    n { color: #008000 }
-}
-*/
-/*Visual Studio Dark Theme*/
-@media (prefers-color-scheme: dark) {
-    k { color: #569CD6 }
-    c { color: #4EC999 }
-    v { color: #9CDCFE }
-    f { color: #DCDCAA }
-    l { color: #B5CEA8 }
-    t { color: #D69D85 }
-    n { color: #57A64A }
-}
-</style>
