@@ -466,7 +466,7 @@ public class ImAClass{
     //lots of very important stuff
 }
 private struct WhatIsAStruct{
-    //lost of somewhat important stuff
+    //lots of somewhat important stuff
 }
 ```
 
@@ -558,7 +558,7 @@ public class CoolCollider : Collider{
 public abstract class AbstractClass{
     public static void float favoriteNumber = 24f;//accessbile with AbstractClass.favoriteNumber
     
-    public abstract void ImplementMe(float a, int b);//must be implmenets by any child class
+    public abstract void ImplementMe(float a, int b);//must be implemented by any child class
 }
 ```
 ```csharp
@@ -887,7 +887,7 @@ cool.Add(Vector3.forward);
 cool.Remove(Vector3.up);
 ```
 ```csharp
-//you can restrict a generic to be a class, a struct, inherit from a base class, or implement and interface all with :
+//you can restrict a generic to be a class, a struct, inherit from a base class, or implement an interface all with :
 
 interface IState{
     public void Step(float time);
@@ -1648,6 +1648,8 @@ float shmooth = Mathf.SmoothStep(min, max, fac);//interpolates between min and m
 the Math class without the f)
 
 ## Vectors
+These examples will use the 3D Vector Vector3, but most of these functions (excluding Dot(), Cross(), ProjectOnPlane(), and Slerp()) will work with Vector2
+and Vector4s as well!
 
 ## Quaternions
 
@@ -1660,7 +1662,240 @@ the Math class without the f)
 ## Misc
 Plane, Ray, Rect
 
-# 🟩 2D
+# 📄 2D
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/Unity2D.html)  
+I could honestly make an entire other cheat sheet on just 2D stuff, but here is an overview of the most important things
+for making 2D games in Unity!
+
+## Perspective
+2D games are made with the orthographic perspective. That means things do not get smaller as they get further from the camera.
+This is necessary so players can't feel how flat the game truly is. When making a 2D game, there are still all kinds of perspective styles you can choose.
+There is top down, where you look at the world from the perspective of a cloud. The straight side on view from Mario is a classic. You can pick a middle ground between side
+view and top down that looks down at the world at an angle, like in Stardew Valley. If you then rotate the Camera on an imaginary
+vertical axis, your camera is angled in two different axises, and the result is the Isometric Perspective, as seen in Monument Valley. 
+If you have another idea, feel free to try it, the only rule here is that it must be fun!
+
+
+## Depth
+In order to make a 2D game in Unity, you don't have to change anything in the editor. Just enable the "View Options" scene 
+view toolbar and hit the 2D button. This just changes the scene view Camera to be orthographic and to look down the Z axis.
+2D games in Unity are still 3D and fully capable of being a 3D game. This means it is possible to make 2.5D games, but it
+also means every 2D Unity game still has the third dimension. The Z coordinate is used to determine which sprites are drawn
+on top of which other sprites. The term for this is [sorting](#sorting).
+
+## Sprites
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/sprite/sprite-landing.html)  
+Sprites are just 2D images for your 2D game. It may seem simple, but they can get kinda complicated!
+
+### Asset Import
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/sprite/import-images-sprites/import-images-sprites-landing.html)  
+If you just drag and drop an image into your Unity project, it won't work as a sprite. You must first change its import settings.
+Single click the image in the assets pane, and its import settings will appear in the inspector pane. Change the Texture Type
+at the top from Default to Sprite (2D and UI). When you do this, new options will appear. Change the pixels per unit variable to
+determine how large your sprite is rendered in the world. The higher the number, the smaller it will be. Click the button labelled Open Sprite Editor. A preview of your sprite will appear. 
+Left-click hold the top left of your sprite, drag to the bottom right of your sprite, and release. A bounding box defining your 
+sprite will appear. You can click and drag the corners to adjust it. This is the workflow for simple object sprites, there is 
+more you can do later with tile maps and 9-slicing. When you are happy, click Apply in the top right, and close the sprite editor.
+Back in the inspector, tick the Alpha is Transparency box if your sprite has any
+transparency in it. The other important settings are found at the bottom. Wrap mode changes how the texture behaves if it
+ever encounters UV coordinates above 1 or below 0. Filter mode changes how the artwork is sampled by Unity for rendering. If
+you are using pixel art, make sure you change this from Bilinear to Point. Below this are the texture's compression options, but
+the defaults for those are usually fine. IMPORTANT: After you change any of these asset import settings, you must hit the Apply button at
+the very end below all the settings for any changes to be saved!!!
+
+### Adding to a Scene
+If your import settings are set up correctly, you can just drag your sprite from the assets pane into the scene or the scene
+hierarchy! ^-^
+
+### Sorting
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/sprite/sort-sprites/sort-sprites-landing.html)  
+There are a few ways to sort which sprites render on top!
+
+Sprites with higher Z axis coordinates will render on top of sprites with lower Z axis coordinates.
+
+If two sprites have the same Z axis coordinate, Order is determined by the Order in Layer field in their Sprite Renderer Component.
+Higher values are rendered on top of lower values. You can also group sprites into sorting layers. Assign a sorting layer to a sprite
+in its Sprite Renderer Component. You can change the Sorting Layer order by going to Project Settings > Tage and Layers > Sorting Layers.
+Sorting layers take priority over Order in Layer.
+```csharp
+int sortWeight = 100;
+//sort by depth
+Vector3 pos = transform.position;
+pos.z = sortWeight;
+transform.position = pos;
+//sort by order in layer
+SpriteRenderer sr = GetComponent<SpriteRenderer>();
+sr.sortingOrder = sortWeight;
+```
+
+### 9-Slicing
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/sprite/9-slice/9-slice-landing.html)  
+9-Slicing is a technique to make resizeable sprites without any stretching. The sprite is sliced into 9 rectangles. When
+resized, the corners just move without changing shape, the edges tile only along the axis they are parallel to, and the center
+tiles in both directions to fill the space. This is a very powerful technique for making 2D levels and backgrounds, as one sprite
+can be used to make entire levels of a game.
+
+In order to set up 9-Slicing, drag and drop your 9-Slice sprite artwork into the assets pane and follow the [sprite import instructions](#asset-import) above.
+When you are finished, under the Sprite Mode section, change Mesh Type from Tight to Full Rect. Then click the Open Sprite Editor
+Button. Along the edges of your sprite bounds you should see green dots. Click and drag those in towards the center of your sprite.
+After doing this for all 4 edges, you should have green lines defining 9 rectangular sections of your sprite within the sprite bounds.
+Click Apply in the Sprite Editor, close it, and click Apply on the Sprite Import Settings.
+
+To use your 9-Sliced sprite, click and drag it from the assets pane into the scene. Go to its Sprite Renderer Component, and change
+the Draw Mode from Simple to either Sliced or Tiled. Sliced will stretch the individual sections of the 9-Slice, and Tiled will tile
+them. Choose one, change the size of your sprite, and see how it looks! NOTE: 9-Slicing only works when you change the width or height
+of the sprite in the SpriteRenderer component or using the Rect tool in the scene window. Scaling the transform will still stretch the sprite.
+
+## Sprite Sheets
+Sprite sheets allow you to have many sprites and/or sprite animation frames all on one image file. This is better for performance,
+since the GPU just has to shift UV coordinates instead of uploading an entire new image for each sprite or animation frame.
+
+In order to set up a sprite sheet, drag and drop your sprite sheet file into the assets pane and follow the [sprite import instructions](#asset-import).
+After you are finished, click the Open Sprite Editor Button. In the top left, click the Slice Button. The first option is Slice Type. There 
+are a few options, but I find Grid by Cell Count easiest, so we will do that. Click the dropdown next to Type and choose Grid by Cell Count.
+Put in the number of columns and rows of sprites on your sprite sheet, and include any offsets or padding if you used those when drawing. When you are happy
+with where the red lines are slicing your sheet, hit slice! Now your sprite is a grid of individual sprites. You can now go in
+and individually change the bounds of any sprite, or even 9-slice some of them. When you are happy, hit Apply in the top right
+and close the Sprite Editor.
+
+Now, your sprite sheet asset in the assets pane will have an arrow pointing to the right over the image. Click that to expand it.
+A list of every sprite in the sprite sheet will appear in the assets pane. Click and drag any of them into your scene to add them,
+just like with any other sprite!
+
+## Tile Maps
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/tilemaps/tilemaps-landing.html)  
+Tile Maps are a package in Unity that allows you to turn sprite sheets into a set of brushes to quickly paint levels! I'm just
+going to go over rectangular tile maps here, but there are also hexagonal and isometric tile maps as well! Check the documentation
+or look up guides for those styles if you need them.
+
+To create a tile map, Click GameObject > 2D Object > Tilemap > Rectangular. This creates a grid and a Tilemap below it. You can
+have multiple tilemaps per grid for different layers. To do that, right-click the Grid gameobject in the scene hierarchy, then click
+2D Object > Tilemap > Rectangular.
+
+Select your tilemap gameobject in the scene hierarchy. In the bottom right of the scene view, there will be a little button that
+says Open Tile Palette. Click it! This window has the tile palette for your tilemap. Drag and drop any number of sprites or
+sprites from a spritesheet into the section where it says to do so. The editor will prompt you to select a folder. It doesn't 
+tell you this, but it is about to put a ton of new files in whatever folder you select, so make sure to make a new folder for your
+tilemap and choose that one.
+
+Once you have some sprites, the tile palette is split into three sections. The top one has a bar of tools that you can use to paint
+your tilemap with sprites. There is also a dropdown to select which tilemap you are editing if you have multiple. The middle section
+is a grid of every sprite in your tile palette. You can keep dragging more sprite assets in here to build your palette. There is a dropdown to switch which tile palette you are painting with. Tile maps and
+tile palettes are totally separate from each other, so you can make multiple tile palettes to your liking and use them on any tile map
+in your game! To the right of that dropdown there are 3 buttons. The pencil button lets you use the tools in the top bar to edit and move
+the sprites in your tile palette instead of sprites in the tile map. Use this to organize your palette. The other two buttons are options
+to show the grid and show gizmos in your palette. The bottom section holds scriptable brushes. There are a few defaults, but you
+can also create your own or find some online. Press the gear icon to hide this section if you aren't using it.
+
+If you aren't happy with the size of your sprites in a grid space, change their pixels per unit in their import settings. By default,
+one tilemap cell is one unit by one unit. If you would like to change this, select the Grid gameobject in your scene hierarchy and change the grid size.
+
+A quick note on Physics: you can add a TilemapCollider2D Component to your tile map gameobject, and it will automagically generate 
+colliders for every tile in your tile map!!
+
+## Sprite Shapes
+If you want an alternative to tilemaps that is less of a rigid grid and allows for fluid curves and angles, sprite shape is for you!
+Sprite Shapes is a package that lets you set up sprites to be drawn along lines you draw in the editor in any shape you please. There is
+a lot of depth and functionality here I'm going to gloss over, but know there are a lot more options if you need them!
+
+There are two parts to make a sprite shape: sprite shape profiles and sprite shape controllers. Sprite shape profiles can be thought of
+as the material for your sprite shape. To create one, click Assets > Create > 2D > Shape Sprite Profile. There sure are a lot of
+settings to tweak, lets go through them! The fill sprite is what is tiled to fill in a closed shape. If you make an open shape (a line),
+this goes unused. Below that there is a large circle. The way this works is you can define an angle range by dragging the handles
+at the bottom or typing in values at the bottom. The blue handle at the top is your preview angle. If you drag the preview angle beyond your
+allowed angle range, a Create Range button appears. Click this to add another set of handles to define a second range! Each angle range has
+its own sprite(s) that it uses. You can assign the sprite(s) it will use below the angle limit variables. This allows you to use different sprites
+for flat ground versus steep slopes or walls. Also, make sure any sprites you use are set to the Full Rect mesh type, and have their
+wrap mode set to Repeat. There are also options below this to use bespoke sprites for various corner types if you use any sharp corners.
+
+Create a sprite shape controller by clicking GameObject > 2D Object > Sprite Shape > Open Shape or Closed Shape. Open shapes are just
+lines with control points. Closed shapes are polygons with a closed interior that will be filled with your fill sprite. Select your
+shape after you create it and look at its Sprite Shape Controller component. Assign you sprite shape profile to the variable named profile.
+under that there is a button to edit the shape. Click that. You can drag any control points to anywhere you like. Click on a line between 
+two points to add a new control point there. Press the delete key with a control point selected to delete it. In the bottom right of the
+scene view, you can select which type of control point you would like it to be and manually type in values for it. There are other
+options in the sprite shape controller but honestly the defaults seem fine.
+
+Attach a PolygonCollider2D or an EdgeCollider2D to you sprite shape controller to enable collision!
+
+## Animations
+2D animations are actually super easy to do! Easy once you have the sprites done 😬. Animations in general are covered in the main [Animations](#-animations) section,
+but here is how to set up an animation for sprites specifically.
+
+To set up your animated character or whatever, you could add an Animator component to your gameobject with a Sprite Renderer,
+create an Animation Controller Asset, assign that controller to the Animator Component, Click Window > Animation > Animation to
+open the Animation Window, select your character, click Create Animation, save the file in your project, click Add Property,
+select the Sprite variable under Sprite Renderer, and add keyframes for each sprite of your animation, OR, you could do the shortcut.
+Select multiple sprites from a sprite sheet in the asset pane, then click and drag them into the scene hierarchy. Give your animation
+a name and save it somewhere nice in your project. Now all of what I just described has been done for you automatically. Adjust the 
+auto-generated keyframes as necessary. To make more animations, click the dropdown in the top left of the animation window,
+then click Create New Clip. Give it a name and save it. In the new clip, click Add Property, then select Sprite under Sprite Renderer.
+Add keyframes for the various sprites you want. This new animation will show up in your animation controller, and you can set up
+the transitions from there. Happy animating!
+
+(If you want you can also just change the active sprite in the Sprite Renderer component in code and just make your own animation
+system if you don't like how Unity does it)
+```csharp
+public Sprite sprite;//asign sprite asset to this in the editor
+------
+SpriteRenderer sr = GetComponent<SpriteRenderer>();
+sr.sprite = sprite;//do this a bunch for every animation frame
+```
+
+## Physics2D
+2D Physics uses all the same class, component, and collider names as normal 3D physics, just with a 2D stuck on the end.
+2D Rigidbodies are Rigidbody2D, Colliders are of type Collider2D, you do raycasts with Physics2D.Raycast(), yada yada. This
+means if you are comfortable with 3D physics, using 2D physics is actually a pretty easy transition! If you aren't comfortable
+with 3D physics, check out the [Physics Section](#-physics). I will just be covering the specific differences to 2D physics here.
+
+Rigidbody2D is pretty much the same as the normal Rigidbody. Add it to things to give them physics simulation. Angular Velocity,
+Rotation, and Angular Inertia are all just floats now because it's 2D. I think that's all!
+
+All your favorite Collider types are back! BoxCollider is now BoxCollider2D, CapsuleCollider is now CapsuleCollider2D, and 
+SphereCollider is now CircleCollider2D! Because 2D physics is computationally so much lighter than 3D, there are also a lot 
+more options for colliders that don't have 3D equivalents. CompositeCollider2D will merge the shape of any other colliders into
+one big collider. EdgeCollider2D lets you draw a line that will collide with things from both sides of the line. PolygonCollider2D
+does the same, but instead lets you define your own wacky closed shape to match any sprite you wish. Keep in mind, unlike with 3D
+physics, there is no restriction on concave colliders. You can make your rigidbody colliders whatever wacky shape you please. Also 
+keep in mind the Z coordinate is completely ignored for calculations. Use layers if you need objects to pass through each other.
+
+The Physics2D class is very similar to the Physics class. It has a lot of functions, the most useful ones being the overlap functions,
+collider cast functions, and ray cast functions. These are all similar to their 3D equivalents, except they use Vector2s instead of
+Vector3s. You can find documentation for all these functions [here](https://docs.unity3d.com/ScriptReference/Physics2D.html).
+
+There are also more joints available for 2D physics than for 3D. Unity has support for distance joints, fixed joints, friction
+joints, hinge joints, relative joints, slider joints, spring joints, target joints, and wheel (suspension) joints. Have fun!
+
+2D physics has a concept of its own that is missing from 3D physics: effectors. Effectors are basically built in functionality 
+for trigger colliders. You set one up by first creating a trigger collider. Anything inside this trigger collider will be effected
+by the effector. Make sure both Is Trigger and Used by Effector are both ticked. Then, all you have to do is add an effector as a component to the gameobject.
+Your options are: Area effector, buoyancy effector, platform effector, point effector, and surface effector. The area effector 
+just constantly applies a force in a specified direction. The buoyancy effector "simulates" a fluid with a specified density and
+surface level. Platform effectors are meant for platformers. They make their colliders have one way collisions, remove side friction,
+remove bounciness, and quote, "more". Don't make your collider(s) a trigger when using this effector. Point effectors will apply a force
+towards a specified point, like a magnet. Surface effectors simulate a movement speed along their edges without actually moving, useful
+for conveyor belts and such. Again with this one, don't use trigger colliders, make them normal colliders.
+
+## Lighting
+If you are using the 2D version of the Universal Render Pipeline (setup automatically with the 2D project template), then Unity
+actually has some really cool 2D lighting options available to you! By adding 2D lights and shadows to your scene, Unity will generate
+render textures on top of all your sprites to make them appear as if they are being lit and casting shadows in certain directions.
+Note: This is not physically accurate AT ALL, it's just a neat aesthetic. This only works if your project is set up in a very specific
+way. If you are interested, I highly recommend making your project from the 2D template so it just works out of the box.
+
+If your project is set up right, to add a light, just click GameObject > Light > select any light ending in 2D. Your new light will
+now shine onto any sprite in its range. Keep in mind, if your sprite is white, it can't get any brighter so you won't see anything.
+Spot lights are point lights that let u define an angle range for them. Sprite lights cast light in the shape of any sprite you select.
+Freeform lights let you draw a polygon that will cast light a set distance away from it. Global lights just add light to everything globally (only seems to work with the additive blend mode for some reason?).
+
+To add shadows, first make sure you have a 2D light in your scene that isn't a global light, and that light has shadows enabled. Also make
+sure you have some kind of background sprite, shadows will not cast over the skybox. For every sprite that you want to have shadows,
+add a Shadow Caster 2D component to it. Tada! Shadows! If you want shadows from multiple objects to play nicely with each other, make sure
+each object also has the Composite Shadow Caster 2D component attached to it as well in addition to the Shadow Caster 2D component.
+
+Lights and shadows can both be restricted to various sorting layers to achieve complex layered results. The sprite Z coordinate is not considered
+at all, so you must use sorting layers.
+
 
 # 🌐 Meshes
 
@@ -1674,6 +1909,8 @@ Plane, Ray, Rect
 
 # 🏃 Animations
 
+# 🗄️ Multiplayer
+
 # 🏗️ Probuilder
 
 # 📉 Shader Graph
@@ -1681,7 +1918,7 @@ Plane, Ray, Rect
 # 🎆 VFX Graph
 
 - add images for prefab open and override buttons?
-- hotkeys? like search is Alt + K?
+- hotkeys? like search is Ctrl + K?
 - Gizmos!
 - Color and Gradient?
 
