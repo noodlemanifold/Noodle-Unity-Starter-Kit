@@ -1589,7 +1589,7 @@ Beyond the basic arithmetic operators built into C# (+,-,*,/,%), the rest of the
 Mathf class. These are what I think are the most useful features of it. Full list is in the documentation as always. :)
 
 ```csharp
-//static variables
+//static constants
 
 float degrees = Mathf.Rad2Deg * 1.54f;//convert radians to degrees
 float radians = Mathf.Deg2Rad * 90f;//convert degrees to radians
@@ -1645,19 +1645,267 @@ float fac = Mathf.InverseLerp(min, max, value);//determines where a value is bet
 float shmooth = Mathf.SmoothStep(min, max, fac);//interpolates between min and max in an S curve instead of linearly.
 ```
 (By the way, if u are working with doubles instead of floats, there is an identical matching set of functions for them under
-the Math class without the f)
+the Math class without the f :3)
 
 ## Vectors
+[📓](https://docs.unity3d.com/ScriptReference/Vector3.html)  
 These examples will use the 3D Vector Vector3, but most of these functions (excluding Dot(), Cross(), ProjectOnPlane(), and Slerp()) will work with Vector2
 and Vector4s as well!
 
+3D Vectors in Unity can be thought of as Points or Directions, and it is used to represent both. Sometimes the math is the
+same for both, and sometimes Unity will have different functions for points or directions. For instance, use Lerp() when your
+Vector3 is a point and Slerp() when your Vector3 is a direction. If your math doesn't quite work, make sure you aren't mistreating
+your directions or points!
+
+### Basics
+
+```csharp
+//creating and modifying a vector
+Vector3 vector = new Vector3(1f,1f,1f);
+
+vector.x = 2f;//transform.position and transform.scale don't allow you to edit components directly like this
+vector.y = 3f;//but you can with any Vector3 that you create and most other Vector3s in Unity.
+vector.z = 4f;
+
+Debug.Log("Vertical Component is "+vector.y);
+```
+Vectors in unity, like all math classes, are [structs](#classes--structs), which means they are [value types, not reference types](#object-instances).
+```csharp
+Vector3 vecA = new Vector3(1f,1f,1f);
+Vector3 vecB = vecA;//copies vecA into vecB
+vecA.y = 2f;
+Debug.Log(vecB.y);//prints 1f;
+```
+Vectors can be added or subtracted only from other vectors. They can only be multiplied or divided by scalars (ints or floats).
+```csharp
+Vector3 vecA = new Vector3(1f,1f,1f);
+Vector3 vecB = new Vector3(1f,1f,1f);
+//addition & subtraction
+Vector3 vecC = vecA+vecB;
+vecA = vecC - vecB;
+//multiplication & division
+vecA = vecA *2f;
+vecA *= 2f;//shorthand identical to the previous line
+vecB = vecB / 2f;
+vecB /= 2f;//shorthand identical to the previous line
+```
+You can compare two different vectors and get results as you would expect
+```csharp
+Vector3 vecA = new Vector3(1f,1f,1f);
+Vector3 vecB = new Vector3(1f,1f,1f);
+
+if (vecA == vecB){//this check is passed
+    Debug.Log("Huzzah!");//this gets printed
+}
+```
+Useful built-in properties:
+```csharp
+Vector3 vec;
+vec = Vector3.zero;   //same as new Vector3(0f,0f,0f);
+vec = Vector3.one;    //same as new Vector3(1f,1f,1f);
+vec = Vector3.right;  //same as new Vector3(1f,0f,0f);
+vec = Vector3.left;   //same as new Vector3(-1f,0f,0f);
+vec = Vector3.up;     //same as new Vector3(0f,1f,0f);
+vec = Vector3.down;   //same as new Vector3(0f,-1f,0f);
+vec = Vector3.forward;//same as new Vector3(0f,0f,1f);
+vec = Vector3.back;   //same as new Vector3(0f,0f,-1f);
+
+float length = vec.magnitude;//returns length of the vector
+float sqrLength = vec.sqrMagnitude;//returns square of the vector length. Much less expensive to compute, use this if you can.
+Vector3 vecNorm = vec.normalized;//returns a copy of this vector that has the same direction, but a length of one.
+```
+
+### Functions
+
+```csharp
+Vector3 vecA = Vector3.forward;
+Vector3 vecB = Vector3.up;
+
+float angle = Vector3.Angle(vecA,vecB);//returns smallest angle between the two vectors
+float signedAngle = Vector3.SignedAngle(vecA, vecB, Vector3.right);//still returns smallest angle between the two vectors,
+                                        //but uses the 3rd axis parameter to assign a sign according to the left-hand rule.
+                                        //always returns between -180 degrees and 180 degrees.
+```
+```csharp
+Vector3 maxComponents = Vector3.Max(vecA, vecB);//returns the max of each vector component individually in a new vector
+Vector3 minComponents = Vector3.Min(vecA, vecB);//returns the min of each vector component individually in a new vector
+
+float dist = Vector3.Distance(vecA, vecB);//returns distance between the two vectors as points
+Vector3 newVec = Vector3.MoveTowards(vecA, vecB, 0.5f);//returns vecA moved towards vecB a distance no further than the 3rd parameter.
+```
+```csharp
+float dot = Vector3.Dot(vecA, vecB);//projects vecA onto vecB, returns its new length. The direction is just vecB.normalized
+Vector3 cross = Vector3.Cross(vecA, vecB);//returns new vector orthogonal to the two parameters. Direction determined by left-hand rule
+
+Vector3 unit = Vector3.Normalize(vecA);//returns vecA normalized
+Vector3.OrthoNormalize(ref vecA, ref vecB);//normalizes vecA, normalizes vecB and makes it orthogonal to vecA
+```
+```csharp
+Vector3 proj = Vector3.Project(vecA, vecB);//projects vecA onto vecB. its the same as Vector3.Dot(), but returns a whole vector
+Vector3 proj2 = Vector3.ProjectOnPlane(vecA, vecB);//projects vecA onto a plane defined with vecB as its normal.
+Vector3 reflect = Vector3.Reflect(vecA, vecB);//returns vecA reflected off a plane defined with vecB as its normal.
+
+Vector3 mov = Vector3.MoveTowards(vecA,vecB,5f);//moves point vecA towards vecB without exceeding the max distance given
+Vector3 rot = Vector3.RotateTowards(vecA, vecB,Mathf.Pi/4f,1f);//returns vecA rotated and scaled towards vecB while staying below 
+                                                //the maximum angle(in radians) and length delta specified by parameters 3 & 4.
+```
+```csharp                                                
+Vector3 lerp = Vector3.Lerp(vecA, vecB, 0.3f);//returns vector linearly interpolated between vecA and vecB by a percentage
+Vector3 noClamps = Vector3.LerpUnclamped(vecA, vecB, 1.3f);//same as lerp, but the percentage can go above 1 or below 0 O-o
+//realtime lerp forumla
+float rate;
+vecA = Vector3.Lerp(vecA, vecB, 1-pow(rate,Time.deltaTime));//thank u Freya :3
+
+Vector3 yummy = Vector3.Slerp(vecA, vecB,0.3f);//same as lerp, except vectors are treated as directions, not points.
+                      //if both vectors have the same length, they are interpolated over the surface of a sphere, hence slerp.
+Vector3 noSlamps = Vector3.SlerpUnclamped(vecA, vecB, 1.3f);//same as slerp, but the percentage can go above 1 or below 0 O-o
+```
+
 ## Quaternions
+[📓](https://docs.unity3d.com/ScriptReference/Quaternion.html)  
+Quaternions are 4 dimensional unit vectors that lie on the surface of a 4 dimensional sphere with a radius of one. 
+By the magic of group theory, those vectors can be used to represent rotations for objects in 3D space.
+Fortunately, Unity hides all that complexity, and gives us an API to work with them in a simple way. 
+Remember, they are not Vector4s, they work differently and have different rules!
+
+Quaternions are used exclusively for working with rotations in Unity. They are better than Euler Angles because they interpolate
+smoothly from one rotation to another, they never experience gimbal lock, and they don't have any issues with wrapping around
+360 degrees. For these reasons, I will only be covering Quaternions.
+
+Quaternions can be thought of as not storing rotations, but storing a rotational movement from a starting rotation, if that
+makes any sense. It is the rotational equivalent of storing a distance, not a location. If you just have one Quaternion, it represents a movement from the default (identity) rotation to a new rotation.
+When you combine Quaternions, these movements can instead start from a different rotation. This is how you do math with Quaternions,
+by combining different rotational movements to build a new rotation. If you play with this idea in your head, you can see 
+why Quaternion combinations are not commutative. The order in which you apply them matters.
+
+There are almost no circumstances where you will create or modify the individual components of a Quaternion. In 99% of cases
+it is better to start with existing rotations from GameObjects or Quaternion functions and manipulate those. If you are a member
+of the 1%, here is how to do it anyways.
+```csharp
+//don't do this ever unless you *really* like 4D math and group theory
+Quaternion oNo = new Quaternion (0f,0f,0f,1f);
+oNo.x = 1f;
+oNo.y = -oNo.y;
+oNo.z = -oNo.z;
+oNo.w = 0f;//w is the 4th component not the first, don't ask why
+```
+Here is how you should create Quaternions:
+```csharp
+// useful Quaternion creation functions
+Quaternion rot = transform.rotation;//just yoink an existing object's rotation
+Quaternion default = Quaternion.identity;//same as a Euler rotation of 0,0,0
+Quaternion y90 = Quaternion.AngleAxis(90f, Vector3.up);//creates a rotational movement 90 degrees around the y axis.
+                              //when multiplied with another Quaternion, it will rotate it around the axis by the given angle.
+Quaternion ew = Quaternion.Euler(20f,30f,45f);//creates a quaternion from a euler rotation. 
+                              //rotation around each axis is applied in the order Z -> X -> Y
+Quaternion sbin = Quaternion.FromToRotation(transform.up,Vector3.up);//creates a rotational movement that if applied to the
+                              //first vector, will rotate it so that it is aligned with the second vector.
+Quaternion look = Quaternion.LookRotation(transform.forward, Vector3.up);//creates a rotation defined by a forward and up vector.
+                              //Note: the vectors do not have to be orthogonal, Unity will match forward and do its best with up.
+```
+Quaternions do not have any defined addition, subtraction, or division operators. They do use the multiplication operator,
+but in practice it should just be thought of as combining or applying, not multiplying.
+```csharp
+Quaternion rotA = Quaternion.AngleAxis(90f, Vector3.up);
+Quaternion rotB = Quaternion.AngleAxis(90f, Vector3.up);
+
+Quaternion rotC = rotA * rotB;//combines 2 90 degree y axis rotations into one y axis 180 degree rotation
+Quaternion rotD = Quaternion.AngleAxis(180f, Vector3.up);
+Debug.Log(rotC == rotD);//prints "true"
+```
+```csharp
+//Quaternion combination is not commutative;
+Quaternion rot90 = Quaternion.AngleAxis(90f, Vector3.up);
+
+Quaternion resultA = rot90 * transform.rotation;
+Quaternion resultB = transform.rotation * rot90;
+Debug.Log(resultA == resultB);//prints "false"
+------
+//here is the difference:
+Quaternion resultA = rot90 * transform.rotation;//this rotates transform.rotation in *world* space
+Quaternion resultB = transform.rotation * rot90;//this rotates transform.rotation in *local* space
+//this sorta makes sense if you think about it but it still blows my mind
+Quaternion resultC = Quaternion.AngleAxis(90f, transform.up) * transform.rotation;
+Debug.Log(resultB == resultC);//prints "true:
+```
+```csharp
+//you can also combine quaternions with vectors to rotate vectors!
+Vector3 rotated = Quaternion.AngleAxis(90f, Vector3.up) * Vector3.forward;//only works in this order
+Debug.Log(rotated);//prints (1,0,0);
+```
+Other Quaternion Functions:
+```csharp
+float angle = Quaternion.Angle(quaternionA, quaternionB);//returns the angle between two rotations
+Quaternion inv = Quaternion.Inverse(quaternion);//creates the opposite rotation of the rotation given. Useful for "subtracting" quaternions
+Quaternion result = Quaternion.RotateTowards(quatA, quatB, maxAngle);//gives rotation going from quatA to quatB that rotates
+                                                //a maximum of maxAngle degrees.
+                                                
+Quaternion lerp = Quaternion.Lerp(quatA, quatB, 0.3f);//returns a linearly interpolated rotation between quatA and quatB by a percent.
+Quaternion ulerp = Quaternion.LerpUnclamped(quatA, quatB, 1.3f);//same as lerp, but the percent can be above 1 or below 0.
+//realtime lerp formula
+float rate;
+transform.rotation = Quaternion.Lerp(transform.rotation, rotTarget, 1-pow(rate,Time.deltaTime));//thank u Freya :3
+
+Quaternion lerp = Quaternion.Slerp(quatA, quatB, 0.3f);//for quaternions, this just slightly changes the path interpolated rotations take
+                                                //from quatA to quatB. Just use whichever u like more :)
+Quaternion ulerp = Quaternion.SlerpUnclamped(quatA, quatB, 1.3f);//same as slerp, but the percent can be above 1 or below 0.
+```
+Common Use Case Examples:
+```csharp
+//rotate around some axis by x degrees
+transform.rotation = Quaternion.AngleAxis(angle, axis) * transform.rotation;
+
+//"subtract" a quaternion instead of "adding" it
+Quaternion superCoolRot = Quaternion.blablabla();
+transform.rotation = Quaternion.Inverse(superCoolRot) * transform.rotation;
+
+//rotate to look at a point
+Vector3 lookDir = targetPoint - transform.position;
+transform.rotation = Quaternion.LookRotation(lookDir,Vector3.up);//make Vector3.up the direction of up in ur game.
+```
 
 ## Matrices
 
 ## Time
+All the stuff you need related to time is just a static variable you can get from the Time class.
+```csharp
+float delta = Time.deltaTime;//time since last frame
+float frames = Time.frameCount;//number of frames rendered since the game started
+float duration = Time.realtimeSinceStartup;//time in seconds the game has been running
+float frameTime = Time.time;//time in seconds the game was running when this current fram started.
+
+float stepDelta = Time.fixedDeltaTime;//time between physics ticks
+float stepTime = Time.fixedTime;//time in seconds the game was running when this physics tick started
+bool inTick = Time.inFixedTimeStep;//returns true if this function was called from a physics event, false otherwise
+
+float levelTime = Time.timeSinceLevelLoad;//time in seconds since the last *non additive* scene load
+```
 
 ## RNG
+Unity has a Random class for all the fun quirky random needs you may have. Note: there is also a built-in C# class called
+Random, and if you are `using System;` in your script, they will conflict. To use Unity's, either don't include System,
+call it using UnityEngine.Random, or put `using Random = UnityEngine.Random;` at the top of your file.
+```csharp
+//properties:
+Vector2 circle = Random.insideUnitCircle;//gives a random point inside the unit circle.
+Vector3 sphere = Random.insideUnitSphere;//gives a random point inside the unit sphere.
+Vector3 randomDir = Random.onUnitSphere;//gives a random point on the surface of the unit sphere.
+                                        //This is effectively a random direction generator
+Quaternion randomRot = Random.rotationUniform;//gives a random rotation.
+Random.State state = Random.state;//get *or set* the internal randomization state. this allows you to seed RNG.
+
+float value = Random.value;//returns a float between 0->1 inclusive. 
+```
+```csharp
+functions:
+Color randomColor = Random.ColorHSV();//random color
+Color randomColor2 = Random.ColorHSV(hueMin,hueMax,saturationMin,saturationMax,valueMin,valueMax,alphaMin,alphaMax);
+                                    //random color within a specified HSV range!
+
+Random.InitState(5);//seeds the random number generator
+
+float range = Random.Range(3f,5.5f);//returns a random float between the two parameters inclusive.
+```
 
 ## Misc
 Plane, Ray, Rect
@@ -1921,4 +2169,5 @@ at all, so you must use sorting layers.
 - hotkeys? like search is Ctrl + K?
 - Gizmos!
 - Color and Gradient?
+- custom inspector buttons and sliders and stuff
 
