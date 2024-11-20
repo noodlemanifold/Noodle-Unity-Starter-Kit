@@ -466,7 +466,7 @@ public class ImAClass{
     //lots of very important stuff
 }
 private struct WhatIsAStruct{
-    //lost of somewhat important stuff
+    //lots of somewhat important stuff
 }
 ```
 
@@ -558,7 +558,7 @@ public class CoolCollider : Collider{
 public abstract class AbstractClass{
     public static void float favoriteNumber = 24f;//accessbile with AbstractClass.favoriteNumber
     
-    public abstract void ImplementMe(float a, int b);//must be implmenets by any child class
+    public abstract void ImplementMe(float a, int b);//must be implemented by any child class
 }
 ```
 ```csharp
@@ -887,7 +887,7 @@ cool.Add(Vector3.forward);
 cool.Remove(Vector3.up);
 ```
 ```csharp
-//you can restrict a generic to be a class, a struct, inherit from a base class, or implement and interface all with :
+//you can restrict a generic to be a class, a struct, inherit from a base class, or implement an interface all with :
 
 interface IState{
     public void Step(float time);
@@ -1349,20 +1349,997 @@ void Start(){
 ```
 
 # 🕹️ Inputs
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html)  
+In Unity 6, game input is handled with the Input System package. This is different from the old built in Input Manager, 
+so be careful when looking up guides. The Input System supports actions, action maps, runtime rebinding, and a ton of 
+devices! There's a ton of theory for this one, so I've broken it up into sections. Good luck!
+
+## Terminology
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Concepts.html)  
+- A **user** is a player of your game. 
+- A **device** is the input hardware they are using (controller, keyboard & mouse, pen, etc...).
+- A **control** is an individual sensor or group of sensors on a device. Most commonly these are buttons, but they also include
+joysticks, triggers, and mouse movement.
+- An **action** is a verb or, well, action, that happens in your game. Common ones are "Move", "Jump", and "Fire". Actions
+have a type as well. They can be a bool, float, Vector2, and other exotic things I've never used.
+- An **action map** is a group of actions that go with a scenario in your game. By default, there are two: "Player" and "UI".
+Additional ones could be "Vehicle", "Battle", or "Editor".
+- A **binding** is a link between an action and a control. The most common example is a bool action triggered by a button.
+One action can have multiple bindings. These can be for different devices or multiple controls on the same device. 
+
+## Theory
+The idea behind the Input System is to have one actions asset for your entire project, with all the actions maps, actions, and bindings
+for your project in one location. Your game will listen to different action maps in different situations, as you define in your code. You can have one action map
+active at a time, or listen to multiple at once. You can also have the game listen to one input device at a time, or allow mixed
+inputs from multiple devices. Every input you need for your game should live as an action under some action map in this action asset.
+How you choose to use the structure is up to you. You can have a lot of action maps, or just make one large action map with all your
+actions in it.
+
+## Setting up Actions
+Unity 6 will generate an actions asset for you in the Assets folder of your project. Double-click it to open it. Save your changes
+or enable Auto Save in the top right. 
+
+To add an Action Map, click the Plus at the top of the Action Maps section, type in a name,
+and press enter. Left-click an action map to edit its actions. 
+
+To add an action, click the plus at the top of the Actions section,
+type in a name, and press enter. To edit an action, left click it, and options will appear in the Properties panel on the
+right. Select button to make it a simple on or off, or select value to make it a float, Vector2, or another type. Here you can
+also add Interactions to make things like double click or hold, and Processors to invert, normalize, add deadzones, and more
+to input values.
+
+To add a binding, select an action and click the plus to the right of its name. Most of the time you will just want to 
+click Add Binding, but if you wish to make a multi-key combo, like WASD for movement, click Add Composite (Modifier bindings are used 
+for things like Shift+Click. I've never used them). Left-click a binding to edit it, and its settings will appear in the Properties
+section on the right. Click the box to the right of path and navigate through the menus to select which input you would like, or
+search for it at the top. Below that it asks which control scheme you wish for that binding to be active in. Select the scheme
+that matches the input device you set the bind for. Interactions and Processors can be added for individual bindings as well below.
+
+## Implementation in Code
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflows.html)  
+Unity intends for there to be 3 different ways for you to interact with the Input System, each with different pros and cons.
+The next 3 sections will each cover one. They are using the Actions API, PlayerInput Events, and Quick & Dirty Hardcoding. The Actions API
+is the recommended method and has all input behavior defined in code, as opposed to having links in the editor, which can make debugging easier. It also allows
+for more custom behavior. However, it does require more code. PlayerInput Events lets you set up events that will trigger your code 
+when needed. This results in less code, but can make de-bugging trickier. This approach does have a baked in solution for local
+multiplayer when combined with the PlayerInputManager. Quick & Dirty Hardcoding completely bypasses action maps, actions, and bindings,
+and just lets you quickly check if a button is pressed. This is good for prototyping and game jams, but shouldn't be used for anything serious.
+
+## Actions API
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflow-Actions.html)  
+There are several ways to do this style in of itself O_o. They all have Pros and Cons I guess.
+### Polling
+```csharp
+using UnityEngine.InputSystem;
+------
+InputAction moveAction;//variables to hold references to actions
+InputAction jumpAction;
+
+void Start(){
+    moveAction = InputSystem.actions.FindAction("Player/Move");//get references to the actions
+    jumpAction = InputSystem.actions.FindAction("Player/Jump");//dont do this in Update(), its a bit laggy
+}
+
+void Update(){
+    Vector2 moveValue = moveAction.ReadValue<Vector2>();
+    bool jumpValue = jumpAction.WasPressedThisFrame();
+    if (jumpValue){
+        Debug.Log("Jump Pressed!");
+    }
+}
+```
+
+### Events
+```csharp
+//this is basically just what PlayerInput does for you
+using UnityEngine.InputSystem;
+------
+InputAction moveAction;
+
+void Start(){
+    moveAction = InputSystem.actions.FindAction("Player/Move");//get references to the actions
+    moveAction.started += MoveCallback;//the callback context will say if it is started, performed, or cancelled
+    moveAction.performed += MoveCallback;//how that works depends on the binding, action type, and all that. Google it 
+    moveAction.canceled += MoveCallback;//if you arent sure!
+}
+
+void MoveCallback(InputAction.CallbackContext context){
+    Vector2 moveValue = context.ReadValue<Vector2>();
+}
+
+void OnDestroy(){
+    moveAction.started -= MoveCallback;//if you don't do this I think it causes a memory leak
+    moveAction.performed -= MoveCallback;
+    moveAction.canceled -= MoveCallback;
+}
+```
+
+### Code Generation
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/ActionAssets.html#type-safe-c-api-generation)  
+For this to work, *single*-click your actions asset to see its settings in the inspector. Tick the box labelled Generate C# Class.
+Put in a class name you would like (and optionally a file name or namespace). I'll use SampleKitInputs. Then click apply.
+For your script, all you have to do is this:
+```csharp
+public class InputScript : MonoBehaviour, SampleKitInputs.IPlayerActions { //the interface will be named after your action map
+
+    SampleKitInputs inputs;
+    
+    void Start(){
+        inputs = new SampleKitInputs();
+        inputs.Player.SetCallbacks(this);//send input callbacks to this object
+        inputs.Player.Enable();//enable player action map
+    }
+    
+    public void OnMove(InputAction.CallbackContext context){
+        Vector2 moveValue = context.ReadValue<Vector2>();
+    }
+
+    public void OnJump(InputAction.CallbackContext context){
+        bool jumpValue = context.ReadValueAsButton();
+    }
+    ...
+}
+```
+*and thats it O_o*. This method is very elegant, but it does make you make a function for every action in the map.
+
+## PlayerInput Events
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflow-PlayerInput.html)  
+This method requires some setup in the editor first. Add a PlayerInput component to a GameObject in your scene (probably
+the player character). Click the dropdown next to Behaviour and select Unity Events.
+
+To make a function to get the value of an action, make a script with a function that looks like this:
+```csharp
+using UnityEngine.InputSystem;
+------
+public void MoveCallback(InputAction.CallbackContext context){
+    Vector2 moveValue = context.ReadValue<Vector2>();
+}
+```
+Now, in the Unity Editor, select the GameObject with your Player Input Component. In the inspector, go to the PlayerInput
+component, and expand the section for Events. Open the Action Map you want, scroll down to the action you want, and click the
+plus at the bottom of the box below it. Drag the GameObject with your input script into the field that says "None (Object)".
+Now click the dropdown to the right of that field. Hover over your input script, and then select the appropriate method 
+from the section at the top labelled Dynamic CallbackContext. If you don't see it, make sure it matches the function above.
+All Done! ^-^
+
+```csharp
+//switching action maps
+PlayerInput playerInput = GetComponent<PlayerInput>();
+playerInput.SwitchCurrentActionMap("Player");
+```
+
+## Quick & Dirty Hardcoding
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflow-Direct.html)  
+```csharp
+//sometimes we like it a little quick and dirty
+using UnityEngine.InputSystem;
+------
+if (Gamepad.current == null) return;
+if (Gamepad.current.rightShoulder.wasPressedThisFrame){
+    Debug.Log("Cold Shoulder");
+}
+Vector2 leftStick = Gamepad.current.leftStick.value;
+
+if (Keyboard.current == null) return;
+bool press = Keyboard.current.spaceKey.isPressed;
+
+if (Mouse.current == null) return;
+bool click = Mouse.current.leftButton.wasPressedThisFrame;
+```
+
+## Reading Values
+```csharp
+using UnityEngine.InputSystem;
+------
+public void MoveCallback(InputAction.CallbackContext context){
+    //if the action is a button type
+    bool moveValue = context.ReadValueAsButton();
+    //if the action is a value type
+    Vector2 moveValue = context.ReadValue<Vector2>();
+}
+```
+
+## Runtime Rebinding
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/ActionBindings.html#interactive-rebinding)  
+```csharp
+//interactive rebinding where the user presses the button they want bound
+//this will work for most cases but not all. For those cases, look at the documentation for changing the default rebinding settings.
+InputAction moveAction = InputSystem.actions.FindAction("Player/Move");
+int bindingIndex = moveAction.GetBindingIndex(InputBinding.MaskByGroup("Gamepad"));//rebind Gamepad input
+
+var rebind = moveAction.PerformInteractiveRebinding(bindingIndex);
+rebind.OnComplete(//callback lambda function for when the rebind is complete
+   operation => {
+       Debug.Log($"Rebound '{moveAction}' to '{operation.selectedControl}'");
+       operation.Dispose();//must dispose to avoid memory leak
+   });
+
+rebind.Start();//start the rebind. this happens in the background asynchronously.
+```
+```csharp
+//saving and loading the user's custom rebinds. this is shockingly easy
+
+void OnApplicationQuit(){//monobehaviour message
+    //save rebinds to PlayerPrefs
+    var rebinds = playerInput.actions.SaveBindingOverridesAsJson();
+    PlayerPrefs.SetString("rebinds", rebinds);
+}
+
+void Start(){
+    //load rebinds from PlayerPrefs
+    var rebinds = PlayerPrefs.GetString("rebinds");
+    playerInput.actions.LoadBindingOverridesFromJson(rebinds);
+}
+```
+```csharp
+//restoring default keybinds
+
+InputAction moveAction = InputSystem.actions.FindAction("Player/Move");
+        
+moveAction.RemoveBindingOverride(InputBinding.MaskByGroup("Gamepad"));//reset Gamepad bindings for this action
+moveAction.RemoveAllBindingOverrides();//reset bindings for all devices for this action
+InputSystem.actions.RemoveAllBindingOverrides();//reset all bindings for all actions
+```
 
 # 🧮 Math
 
+## Floats
+[📓](https://docs.unity3d.com/ScriptReference/Mathf.html)  
+Beyond the basic arithmetic operators built into C# (+,-,*,/,%), the rest of the Math functionality for floats is found in the
+Mathf class. These are what I think are the most useful features of it. Full list is in the documentation as always. :)
+
+```csharp
+//static constants
+
+float degrees = Mathf.Rad2Deg * 1.54f;//convert radians to degrees
+float radians = Mathf.Deg2Rad * 90f;//convert degrees to radians
+
+float tau = Mathf.PI * 2f;// π constant
+float eep = Mathf.Epsilon;//really tiny but not quite zero number. useful for avoiding dividing by zero.
+```
+```csharp
+//static functions
+
+float abs = Mathf.Abs(-5f);//takes the absolute value
+float sign = Mathf.Sign(-5f);//returns the sign of a number. Either -1 or 1.
+
+bool closeEnough = Mathf.Approximately(1.0f, 10.0f / 10.0f);//returns if two floats are the same despite floating point inaccuracies.
+
+int round = Mathf.RoundToInt(1.5f);//returns closet int according to rounding rules
+int two = Mathf.CielToInt(1.1f);//returns next int above the float value
+int one = Mathf.FloorToInt(1.9f);//returns next int below the float value
+
+float daClaaaaamps = Mathf.Clamp(value,minimum,maximum);//sets value to be between minimum and maximum if it is not
+
+float max = Mathf.Max(1f,5f);//returns the greater of two values
+float min = Mathf.Min(1f,5f);//returns the smaller of two values
+
+float whatsALog = Mathf.Log(value,bas);//calculates the log of the specified value and base
+float exp = Mathf.Pow(value, exponent);//returns value raised to the power of exponent
+float sqrt = Mathf.Sqrt(value);//takes the square root mate
+```
+```csharp
+//trigonometry
+float sin = Mathf.Sin(0f);
+float cos = Mathf.Cos(0f);
+float tan = Mathf.Tan(0f);
+
+float arcsin = Mathf.Asin(0f);
+float arccos = Mathf.Acos(0f);
+float arctan = Mathf.Atan(0f);
+
+Vector2 someLine = new Vector2(1f,1f).Normalize();
+float angle = Mathf.Atan2(someLine.y, someLine.x);//returns angle in radians whose Tan is y/x
+                                                  //can be thought of as angle between 2D vector and X axis. Very Helpful.
+```
+```csharp
+//leeeeerping
+float leeerp = Mathf.Lerp(min, max, fac);//returns value between min and max weighted by fac. fac should go from 0 -> 1
+float angleLerp = Mathf.LerpAngle(min, max, fac);//lerps for angles in degrees. Same as Lerp, but handles rolling over 360 degrees.
+float noClampssss = Mathf.LerpUnclamped(min, max, fac);//same as lerp, but fac can go above 1 or below 0. very fun.
+//realtime lerp formula
+float value = Mathf.Lerp(value, target, 1-pow(rate,Time.deltaTime));//thank u Freya :3
+
+float fac = Mathf.InverseLerp(min, max, value);//determines where a value is between two other values. Actually quite useful!
+
+float shmooth = Mathf.SmoothStep(min, max, fac);//interpolates between min and max in an S curve instead of linearly.
+```
+(By the way, if u are working with doubles instead of floats, there is an identical matching set of functions for them under
+the Math class without the f :3)
+
+## Vectors
+[📓](https://docs.unity3d.com/ScriptReference/Vector3.html)  
+These examples will use the 3D Vector Vector3, but most of these functions (excluding Dot(), Cross(), ProjectOnPlane(), and Slerp()) will work with Vector2
+and Vector4s as well!
+
+3D Vectors in Unity can be thought of as Points or Directions, and it is used to represent both. Sometimes the math is the
+same for both, and sometimes Unity will have different functions for points or directions. For instance, use Lerp() when your
+Vector3 is a point and Slerp() when your Vector3 is a direction. If your math doesn't quite work, make sure you aren't mistreating
+your directions or points!
+
+### Basics
+
+```csharp
+//creating and modifying a vector
+Vector3 vector = new Vector3(1f,1f,1f);
+
+vector.x = 2f;//transform.position and transform.scale don't allow you to edit components directly like this
+vector.y = 3f;//but you can with any Vector3 that you create and most other Vector3s in Unity.
+vector.z = 4f;
+
+Debug.Log("Vertical Component is "+vector.y);
+```
+Vectors in unity, like all math classes, are [structs](#classes--structs), which means they are [value types, not reference types](#object-instances).
+```csharp
+Vector3 vecA = new Vector3(1f,1f,1f);
+Vector3 vecB = vecA;//copies vecA into vecB
+vecA.y = 2f;
+Debug.Log(vecB.y);//prints 1f;
+```
+Vectors can be added or subtracted only from other vectors. They can only be multiplied or divided by scalars (ints or floats).
+```csharp
+Vector3 vecA = new Vector3(1f,1f,1f);
+Vector3 vecB = new Vector3(1f,1f,1f);
+//addition & subtraction
+Vector3 vecC = vecA+vecB;
+vecA = vecC - vecB;
+//multiplication & division
+vecA = vecA *2f;
+vecA *= 2f;//shorthand identical to the previous line
+vecB = vecB / 2f;
+vecB /= 2f;//shorthand identical to the previous line
+```
+You can compare two different vectors and get results as you would expect
+```csharp
+Vector3 vecA = new Vector3(1f,1f,1f);
+Vector3 vecB = new Vector3(1f,1f,1f);
+
+if (vecA == vecB){//this check is passed
+    Debug.Log("Huzzah!");//this gets printed
+}
+```
+Useful built-in properties:
+```csharp
+Vector3 vec;
+vec = Vector3.zero;   //same as new Vector3(0f,0f,0f);
+vec = Vector3.one;    //same as new Vector3(1f,1f,1f);
+vec = Vector3.right;  //same as new Vector3(1f,0f,0f);
+vec = Vector3.left;   //same as new Vector3(-1f,0f,0f);
+vec = Vector3.up;     //same as new Vector3(0f,1f,0f);
+vec = Vector3.down;   //same as new Vector3(0f,-1f,0f);
+vec = Vector3.forward;//same as new Vector3(0f,0f,1f);
+vec = Vector3.back;   //same as new Vector3(0f,0f,-1f);
+
+float length = vec.magnitude;//returns length of the vector
+float sqrLength = vec.sqrMagnitude;//returns square of the vector length. Much less expensive to compute, use this if you can.
+Vector3 vecNorm = vec.normalized;//returns a copy of this vector that has the same direction, but a length of one.
+```
+
+### Functions
+
+```csharp
+Vector3 vecA = Vector3.forward;
+Vector3 vecB = Vector3.up;
+
+float angle = Vector3.Angle(vecA,vecB);//returns smallest angle between the two vectors
+float signedAngle = Vector3.SignedAngle(vecA, vecB, Vector3.right);//still returns smallest angle between the two vectors,
+                                        //but uses the 3rd axis parameter to assign a sign according to the left-hand rule.
+                                        //always returns between -180 degrees and 180 degrees.
+```
+```csharp
+Vector3 maxComponents = Vector3.Max(vecA, vecB);//returns the max of each vector component individually in a new vector
+Vector3 minComponents = Vector3.Min(vecA, vecB);//returns the min of each vector component individually in a new vector
+
+float dist = Vector3.Distance(vecA, vecB);//returns distance between the two vectors as points
+Vector3 newVec = Vector3.MoveTowards(vecA, vecB, 0.5f);//returns vecA moved towards vecB a distance no further than the 3rd parameter.
+```
+```csharp
+float dot = Vector3.Dot(vecA, vecB);//projects vecA onto vecB, returns its new length. The direction is just vecB.normalized
+Vector3 cross = Vector3.Cross(vecA, vecB);//returns new vector orthogonal to the two parameters. Direction determined by left-hand rule
+
+Vector3 unit = Vector3.Normalize(vecA);//returns vecA normalized
+Vector3.OrthoNormalize(ref vecA, ref vecB);//normalizes vecA, normalizes vecB and makes it orthogonal to vecA
+```
+```csharp
+Vector3 proj = Vector3.Project(vecA, vecB);//projects vecA onto vecB. its the same as Vector3.Dot(), but returns a whole vector
+Vector3 proj2 = Vector3.ProjectOnPlane(vecA, vecB);//projects vecA onto a plane defined with vecB as its normal.
+Vector3 reflect = Vector3.Reflect(vecA, vecB);//returns vecA reflected off a plane defined with vecB as its normal.
+
+Vector3 mov = Vector3.MoveTowards(vecA,vecB,5f);//moves point vecA towards vecB without exceeding the max distance given
+Vector3 rot = Vector3.RotateTowards(vecA, vecB,Mathf.Pi/4f,1f);//returns vecA rotated and scaled towards vecB while staying below 
+                                                //the maximum angle(in radians) and length delta specified by parameters 3 & 4.
+```
+```csharp                                                
+Vector3 lerp = Vector3.Lerp(vecA, vecB, 0.3f);//returns vector linearly interpolated between vecA and vecB by a percentage
+Vector3 noClamps = Vector3.LerpUnclamped(vecA, vecB, 1.3f);//same as lerp, but the percentage can go above 1 or below 0 O-o
+//realtime lerp forumla
+float rate;
+vecA = Vector3.Lerp(vecA, vecB, 1-pow(rate,Time.deltaTime));//thank u Freya :3
+
+Vector3 yummy = Vector3.Slerp(vecA, vecB,0.3f);//same as lerp, except vectors are treated as directions, not points.
+                      //if both vectors have the same length, they are interpolated over the surface of a sphere, hence slerp.
+Vector3 noSlamps = Vector3.SlerpUnclamped(vecA, vecB, 1.3f);//same as slerp, but the percentage can go above 1 or below 0 O-o
+```
+
+## Quaternions
+[📓](https://docs.unity3d.com/ScriptReference/Quaternion.html)  
+Quaternions are 4 dimensional unit vectors that lie on the surface of a 4 dimensional sphere with a radius of one. 
+By the magic of group theory, those vectors can be used to represent rotations for objects in 3D space.
+Fortunately, Unity hides all that complexity, and gives us an API to work with them in a simple way. 
+Remember, they are not Vector4s, they work differently and have different rules!
+
+Quaternions are used exclusively for working with rotations in Unity. They are better than Euler Angles because they interpolate
+smoothly from one rotation to another, they never experience gimbal lock, and they don't have any issues with wrapping around
+360 degrees. For these reasons, I will only be covering Quaternions.
+
+Quaternions can be thought of as not storing rotations, but storing a rotational movement from a starting rotation, if that
+makes any sense. It is the rotational equivalent of storing a distance, not a location. If you just have one Quaternion, it represents a movement from the default (identity) rotation to a new rotation.
+When you combine Quaternions, these movements can instead start from a different rotation. This is how you do math with Quaternions,
+by combining different rotational movements to build a new rotation. If you play with this idea in your head, you can see 
+why Quaternion combinations are not commutative. The order in which you apply them matters.
+
+There are almost no circumstances where you will create or modify the individual components of a Quaternion. In 99% of cases
+it is better to start with existing rotations from GameObjects or Quaternion functions and manipulate those. If you are a member
+of the 1%, here is how to do it anyways.
+```csharp
+//don't do this ever unless you *really* like 4D math and group theory
+Quaternion oNo = new Quaternion (0f,0f,0f,1f);
+oNo.x = 1f;
+oNo.y = -oNo.y;
+oNo.z = -oNo.z;
+oNo.w = 0f;//w is the 4th component not the first, don't ask why
+```
+Here is how you should create Quaternions:
+```csharp
+// useful Quaternion creation functions
+Quaternion rot = transform.rotation;//just yoink an existing object's rotation
+Quaternion defaultRot = Quaternion.identity;//same as a Euler rotation of 0,0,0
+Quaternion y90 = Quaternion.AngleAxis(90f, Vector3.up);//creates a rotational movement 90 degrees around the y axis.
+                              //when multiplied with another Quaternion, it will rotate it around the axis by the given angle.
+Quaternion ew = Quaternion.Euler(20f,30f,45f);//creates a quaternion from a euler rotation. 
+                              //rotation around each axis is applied in the order Z -> X -> Y
+Quaternion sbin = Quaternion.FromToRotation(transform.up,Vector3.up);//creates a rotational movement that if applied to the
+                              //first vector, will rotate it so that it is aligned with the second vector.
+Quaternion look = Quaternion.LookRotation(transform.forward, Vector3.up);//creates a rotation defined by a forward and up vector.
+                              //Note: the vectors do not have to be orthogonal, Unity will match forward and do its best with up.
+```
+Quaternions do not have any defined addition, subtraction, or division operators. They do use the multiplication operator,
+but in practice it should just be thought of as combining or applying, not multiplying.
+```csharp
+Quaternion rotA = Quaternion.AngleAxis(90f, Vector3.up);
+Quaternion rotB = Quaternion.AngleAxis(90f, Vector3.up);
+
+Quaternion rotC = rotA * rotB;//combines 2 90 degree y axis rotations into one y axis 180 degree rotation
+Quaternion rotD = Quaternion.AngleAxis(180f, Vector3.up);
+Debug.Log(rotC == rotD);//prints "true"
+```
+```csharp
+//Quaternion combination is not commutative;
+Quaternion rot90 = Quaternion.AngleAxis(90f, Vector3.up);
+
+Quaternion resultA = rot90 * transform.rotation;
+Quaternion resultB = transform.rotation * rot90;
+Debug.Log(resultA == resultB);//prints "false"
+------
+//here is the difference:
+Quaternion resultA = rot90 * transform.rotation;//this rotates transform.rotation in *world* space
+Quaternion resultB = transform.rotation * rot90;//this rotates transform.rotation in *local* space
+//this sorta makes sense if you think about it but it still blows my mind
+Quaternion resultC = Quaternion.AngleAxis(90f, transform.up) * transform.rotation;
+Debug.Log(resultB == resultC);//prints "true:
+```
+```csharp
+//you can also combine quaternions with vectors to rotate vectors!
+Vector3 rotated = Quaternion.AngleAxis(90f, Vector3.up) * Vector3.forward;//only works in this order
+Debug.Log(rotated);//prints (1,0,0);
+```
+Other Quaternion Functions:
+```csharp
+float angle = Quaternion.Angle(quaternionA, quaternionB);//returns the angle between two rotations
+Quaternion inv = Quaternion.Inverse(quaternion);//creates the opposite rotation of the rotation given. Useful for "subtracting" quaternions
+Quaternion result = Quaternion.RotateTowards(quatA, quatB, maxAngle);//gives rotation going from quatA to quatB that rotates
+                                                //a maximum of maxAngle degrees.
+                                                
+Quaternion lerp = Quaternion.Lerp(quatA, quatB, 0.3f);//returns a linearly interpolated rotation between quatA and quatB by a percent.
+Quaternion ulerp = Quaternion.LerpUnclamped(quatA, quatB, 1.3f);//same as lerp, but the percent can be above 1 or below 0.
+//realtime lerp formula
+float rate;
+transform.rotation = Quaternion.Lerp(transform.rotation, rotTarget, 1-pow(rate,Time.deltaTime));//thank u Freya :3
+
+Quaternion lerp = Quaternion.Slerp(quatA, quatB, 0.3f);//for quaternions, this just slightly changes the path interpolated rotations take
+                                                //from quatA to quatB. Just use whichever u like more :)
+Quaternion ulerp = Quaternion.SlerpUnclamped(quatA, quatB, 1.3f);//same as slerp, but the percent can be above 1 or below 0.
+```
+Common Use Case Examples:
+```csharp
+//rotate around some axis by x degrees
+transform.rotation = Quaternion.AngleAxis(angle, axis) * transform.rotation;
+
+//"subtract" a quaternion instead of "adding" it
+Quaternion superCoolRot = Quaternion.blablabla();
+transform.rotation = Quaternion.Inverse(superCoolRot) * transform.rotation;
+
+//rotate to look at a point
+Vector3 lookDir = targetPoint - transform.position;
+transform.rotation = Quaternion.LookRotation(lookDir,Vector3.up);//make Vector3.up the direction of up in ur game.
+```
+
+## Matrices
+[📓](https://docs.unity3d.com/ScriptReference/Matrix4x4.html)  
+Matrices are a mathematical structure that stores a small grid of numbers. Unity has a few Matrix types, but by far and away
+the most common of them is Matrix4x4, so I will be covering that. Matrices are most used for representing transformations
+(positions, rotation, scale) of objects in various coordinate spaces (world, local, view); Here is how to use them in Unity!
+
+Matrices in Unity are column-major and use homogenous coordinates. For the 4x4 matrix, the first column represents the X axis, 
+second the Y axis, third the Z axis, and 4th the translation. 
+```csharp
+//creation
+Matrix4x4 emptyMat = Matrix4x4.identity;
+Matrix4x4 identityMat = Matrix4x4.identity;
+Vector4 column0, column1, column2, column3;
+Matrix4x4 initialized = new Matrix4x4(column0,column1,column2,column3);
+
+Vector3 position;
+Quaternion rotation;
+Vector3 scale;
+Matrix4x4 posMat = Matrix4x4.Translate(position);//creates a translation matrix that translates by the specified point
+Matrix4x4 rotMat = Matrix4x4.Rotate(rotation);//creates a rotation matrix that matches the specified quaternion's rotation
+Matrix4x4 sclMat = Matrix4x4.Scale(scale);//creates a scaling matrix that has the same scaling as the specified scaling vector
+Matrix4x4 allTogetherNow = Matrix4x4.TRS(position,rotation,scale);//creates a full transformation matrix with the specified
+                                        //position, rotation, and scale
+Vector3 fromPos, toPos, upDirection;
+Martix4x4 peep = Matrix4x4.LookAt(fromPos,toPos,upDirection);//creates a transform matrix at fromPos looking at toPos
+
+//these use the OpenGL convention. these may be wrong if Unity is using another graphics API. Use GL.GetGPUProjectionMatrix if so
+float fov, aspectRatio, nearClippingDist, farClippingDist;
+Matrix4x4 perspective = Matrix4x4.Perspective(fov, aspectRatio, nearClippingDist, farClippingDist);//creates perpective view matrix
+float leftCoord, rightCoord, bottomCoord, topCoord, nearDist, farDist;
+Matrix4x4 ortho = Matrix4x4.Orthographic(leftCoord, rightCoord, bottomCoord, topCoord, nearDist, farDist);
+Matrix4x4 viewMat = Matrix4x4.Frustum(leftCoord, rightCoord, bottomCoord, topCoord, nearDist, farDist);//different that Ortho somehow?
+```
+```csharp
+//variables
+FrustumPlanes projectionFrustum = mat.decomposeProjection;//if  a projection matrix, returns the 6 planes that define the frustum
+float determinant = mat.determinant;//determinant. yup.
+Matrix4x4 inverse = mat.inverse;//returns a new matrix that is the inverse of mat
+bool isIdentity = mat.isIdentity;//returns true if mat is an identity matrix
+Vector3 lossyScale = mat.lossyScale;//attempts to return scaling in a Vector3. may be wrong if other transformations are applied.
+Quaternion rotation = mat.rotation;//gets just the rotation described in this matrix
+Matrix4x4 transpose = mat.transpose;//returns a new matrix that is the transpose of mat
+
+int a,b;
+float element = mat[a,b];//gets an element of the matrix. a is the row, b is the column. both must be between 0->3 inclusive.
+```
+```csharp
+//functions
+Vector4 lastColumn = mat.GetColumn(3);//returns the nth column. parameter is an int thats 0->3 inclusive
+Vector4 firstRow = mat.GetRow(0);//returns the nth row. parameter is an int thats 0->3 inclusive
+Vector4 bla = Vector4.one;
+mat.SetColumn(0,bla);//replaces the specified column with the Vector4 given.
+mat.SetRow(3,bla);//replaces the specified row with the Vector4 given.
+
+Vector3 pos = mat.GetPosition();//returns the position encoded inside of this matrix
+Vector3 newPoint = mat.MultiplyPoint(Vector3.one);//returns the point multiplied by this matrix
+Vector3 newDirection = mat.MultiplyVector(Vector3.up);//returns the direction multiplied by this matrix.
+Plane plane;
+Plane newPlane = mat.TransformPlane(plane);//transforms a plane with this matrix
+
+Vector3 position;
+Quaternion rotation;
+Vector3 scale;
+mat.SetTRS(position,rotation,scale);//sets this matrix to be a translation-rotation-scale matrix with the specified 
+                            //position, rotation, and scale
+bool isTRS = mat.ValidTRS();//returns true if this matrix is a valid translation-rotation-scale matrix
+```
+
+
+## Time
+[📓](https://docs.unity3d.com/ScriptReference/Time.html)  
+All the stuff you need related to time is just a static variable you can get from the Time class.
+```csharp
+float delta = Time.deltaTime;//time since last frame
+float frames = Time.frameCount;//number of frames rendered since the game started
+float duration = Time.realtimeSinceStartup;//time in seconds the game has been running
+float frameTime = Time.time;//time in seconds the game was running when this current fram started.
+
+float stepDelta = Time.fixedDeltaTime;//time between physics ticks
+float stepTime = Time.fixedTime;//time in seconds the game was running when this physics tick started
+bool inTick = Time.inFixedTimeStep;//returns true if this function was called from a physics event, false otherwise
+
+float levelTime = Time.timeSinceLevelLoad;//time in seconds since the last *non additive* scene load
+```
+
+## RNG
+[📓](https://docs.unity3d.com/ScriptReference/Random.html)  
+Unity has a Random class for all the fun quirky random needs you may have. Note: there is also a built-in C# class called
+Random, and if you are `using System;` in your script, they will conflict. To use Unity's, either don't include System,
+call it using UnityEngine.Random, or put `using Random = UnityEngine.Random;` at the top of your file.
+```csharp
+//properties:
+Vector2 circle = Random.insideUnitCircle;//gives a random point inside the unit circle.
+Vector3 sphere = Random.insideUnitSphere;//gives a random point inside the unit sphere.
+Vector3 randomDir = Random.onUnitSphere;//gives a random point on the surface of the unit sphere.
+                                        //This is effectively a random direction generator
+Quaternion randomRot = Random.rotationUniform;//gives a random rotation.
+Random.State state = Random.state;//get *or set* the internal randomization state. this allows you to seed RNG.
+
+float value = Random.value;//returns a float between 0->1 inclusive. 
+```
+```csharp
+functions:
+Color randomColor = Random.ColorHSV();//random color
+Color randomColor2 = Random.ColorHSV(hueMin,hueMax,saturationMin,saturationMax,valueMin,valueMax,alphaMin,alphaMax);
+                                    //random color within a specified HSV range!
+
+Random.InitState(5);//seeds the random number generator
+
+float range = Random.Range(3f,5.5f);//returns a random float between the two parameters inclusive.
+```
+
+## Misc
+These are some miscellaneous math classes you may run into but are not super common.
+
+### Ray
+[📓](https://docs.unity3d.com/ScriptReference/Ray.html)  
+A Ray represents an infinite line starting at one point, and then going off to infinity in some direction.
+```csharp
+Vector3 point;
+Vector3 direction;
+Ray ray = new Ray(point, direction);
+
+ray.origin = Vector3.one;//ray starting point
+ray.direction = Vector3.up;//ray direction
+
+Vector3 alongBy10 = ray.GetPoint(10f);//returns a point some distance along the ray from its starting point.
+```
+
+### Rect
+[📓](https://docs.unity3d.com/ScriptReference/Rect.html)  
+Rect is a class that represents a 2D rectangle. It simultaneously supports two ways to represent the rectangle. One way 
+is specifying a point, and then storing the width and height of the rectangle from that point. The other is storing the x coordinate
+for the left and right sides of the box, called xMin and xMax, and the y coordinates of the top and bottom of the box, called
+yMin and yMax. You can use either representation method or use them interchangeably with the same Rect object.
+
+```csharp
+//create a Rect
+float pointX, pointY, width, height;
+Rect rect = new Rect(pointX, pointY, width, height);
+float xMin, yMin, xMax, yMax;
+Rect rect2 = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+```
+```csharp
+//variables
+float pX = rect.x;//x coord of point size representation. Modifying this will translate the rect
+float pY = rect.y;//y coord of point size representation. Modifying this will translate the rect
+float w = rect.width;//width of point size representation. Modifying this will resize the rect
+float h = rect.height;//height of point size representation. Modifying this will resize the rect
+
+float xMi = rect.xMin;//left side coord . Modifying this will resize the rect
+float yMi = rect.yMin;//bottom side coord. Modifying this will resize the rect
+float xMa = rect.xMax;//right side coord. Modifying this will resize the rect
+float yMa = rect.yMax;//top side coord. Modifying this will resize the rect
+
+Vector2 center = rect.center;//center point of the rect
+Vector2 min = rect.min;//bottom left point of the rect
+Vector2 max = rect.max;//top right point of the rect
+Vector2 size = rect.size;//the width and height of the rect
+```
+```csharp
+Vector2 point = new Vector2(0f,1f);
+bool inside = rect.Contains(point);//returns true if the point is in the rect, false otherwise
+Rect rect2;
+bool overlap = rect.Overlaps(rect2);//returns true if the two rects overlap each other
+```
+
+### Bounds
+[📓](https://docs.unity3d.com/ScriptReference/Bounds.html)  
+This class is similar to Rect, but for 3D. It represents an axis-aligned bounding box, which you may have seen abreviated 
+as AABB. Since the box is never rotated, it can be represented with just a center point and a size.
+
+```csharp
+Vector3 centerPoint;
+Vector3 sideLengths;
+Bounds bounds = new Bounds(centerPoint,sideLengths);
+```
+```csharp
+Vector3 center = bounds.center;//center point of the bounds.
+Vector3 size = bounds.size;//lengths of the 3 sides of the bounding box
+Vector3 extents = bounds.extents;//half the length of the sides. always equivalent to bounds.size/2f;
+Vector3 min = bounds.min;//the corner of the box that has the smallest x,y,and z coords. equal to center - extents.
+Vector3 max = bounds.max;//the corner of the box that has the largest x,y,and z coords. equal to center + extents.
+```
+```csharp
+Vector3 closest = bounds.ClosestPoint(Vector3.one);//returns closest point on or inside the bounds
+bool inside = bounds.Contains(Vector3.one);//returns if the point is inside the bounds or not
+bounds.Encapsulate(Vector3.zero);//grows the bounds to include the point if it is not included already
+bounds.Expand(5f);//grows the length of each side by the specified amount
+Ray ray;
+bool touches = Bounds.IntersectRay(ray);//returns true if the ray intersects these bounds
+Bounds bounds2;
+bool intersect = bounds.Intersects(bounds2);//returns true if the two bounds intersect each other at all
+float sqrDist = bounds.SqrDistance(Vector3.one);//returns the distance to the closest point on or in the bounds squared.
+```
+
+### Plane
+[📓](https://docs.unity3d.com/ScriptReference/Plane.html)  
+This class just represents a mathematical plane that extends off to infinity. It has a normal vector that is orthogonal to
+the plane, and a single point that the plane goes through. This is enough information to define any plane.
+```csharp
+//creating a plane
+Vector3 normal = Vector3.up;
+Vector3 point = Vector3.one;
+Plane plane = new Plane(normal, point);
+```
+```csharp
+//variables
+float dist = plane.distance;//smallest distance from the plane to the origin
+Plane flip = plane.flipped;//returns this plane with its normal vector inverted
+Vector3 normal = plane.normal;//the normal vector of the plane
+```
+```csharp
+//functions
+Vector3 closest = plane.ClosestPointOnPlane(Vector3.one);//returns the closest point to the specified point on the plane
+plane.Flip();//flips the normal vector of the plane
+float signedDist = plane.GetDistanceToPoint(Vector3.one);//returns the distance to the point from the plane. 
+                                                //distance is negative if the point is below the plane.
+bool side = plane.GetSide(Vector3.one);//returns if the point is above the plane or not
+
+float enterDist;
+Ray ray;
+bool intersects = plane.Raycast(ray, out enterDist);//returns true if the ray intersects the plane. 
+                               //if it does, enterDist is set to the distance along the ray the intersection occured at
+```
+
+# 📄 2D
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/Unity2D.html)  
+I could honestly make an entire other cheat sheet on just 2D stuff, but here is an overview of the most important things
+for making 2D games in Unity!
+
+## Perspective
+2D games are made with the orthographic perspective. That means things do not get smaller as they get further from the camera.
+This is necessary so players can't feel how flat the game truly is. When making a 2D game, there are still all kinds of perspective styles you can choose.
+There is top down, where you look at the world from the perspective of a cloud. The straight side on view from Mario is a classic. You can pick a middle ground between side
+view and top down that looks down at the world at an angle, like in Stardew Valley. If you then rotate the Camera on an imaginary
+vertical axis, your camera is angled in two different axises, and the result is the Isometric Perspective, as seen in Monument Valley. 
+If you have another idea, feel free to try it, the only rule here is that it must be fun!
+
+
+## Depth
+In order to make a 2D game in Unity, you don't have to change anything in the editor. Just enable the "View Options" scene 
+view toolbar and hit the 2D button. This just changes the scene view Camera to be orthographic and to look down the Z axis.
+2D games in Unity are still 3D and fully capable of being a 3D game. This means it is possible to make 2.5D games, but it
+also means every 2D Unity game still has the third dimension. The Z coordinate is used to determine which sprites are drawn
+on top of which other sprites. The term for this is [sorting](#sorting).
+
+## Sprites
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/sprite/sprite-landing.html)  
+Sprites are just 2D images for your 2D game. It may seem simple, but they can get kinda complicated!
+
+### Asset Import
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/sprite/import-images-sprites/import-images-sprites-landing.html)  
+If you just drag and drop an image into your Unity project, it won't work as a sprite. You must first change its import settings.
+Single click the image in the assets pane, and its import settings will appear in the inspector pane. Change the Texture Type
+at the top from Default to Sprite (2D and UI). When you do this, new options will appear. Change the pixels per unit variable to
+determine how large your sprite is rendered in the world. The higher the number, the smaller it will be. Click the button labelled Open Sprite Editor. A preview of your sprite will appear. 
+Left-click hold the top left of your sprite, drag to the bottom right of your sprite, and release. A bounding box defining your 
+sprite will appear. You can click and drag the corners to adjust it. This is the workflow for simple object sprites, there is 
+more you can do later with tile maps and 9-slicing. When you are happy, click Apply in the top right, and close the sprite editor.
+Back in the inspector, tick the Alpha is Transparency box if your sprite has any
+transparency in it. The other important settings are found at the bottom. Wrap mode changes how the texture behaves if it
+ever encounters UV coordinates above 1 or below 0. Filter mode changes how the artwork is sampled by Unity for rendering. If
+you are using pixel art, make sure you change this from Bilinear to Point. Below this are the texture's compression options, but
+the defaults for those are usually fine. IMPORTANT: After you change any of these asset import settings, you must hit the Apply button at
+the very end below all the settings for any changes to be saved!!!
+
+### Adding to a Scene
+If your import settings are set up correctly, you can just drag your sprite from the assets pane into the scene or the scene
+hierarchy! ^-^
+
+### Sorting
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/sprite/sort-sprites/sort-sprites-landing.html)  
+There are a few ways to sort which sprites render on top!
+
+Sprites with higher Z axis coordinates will render on top of sprites with lower Z axis coordinates.
+
+If two sprites have the same Z axis coordinate, Order is determined by the Order in Layer field in their Sprite Renderer Component.
+Higher values are rendered on top of lower values. You can also group sprites into sorting layers. Assign a sorting layer to a sprite
+in its Sprite Renderer Component. You can change the Sorting Layer order by going to Project Settings > Tage and Layers > Sorting Layers.
+Sorting layers take priority over Order in Layer.
+```csharp
+int sortWeight = 100;
+//sort by depth
+Vector3 pos = transform.position;
+pos.z = sortWeight;
+transform.position = pos;
+//sort by order in layer
+SpriteRenderer sr = GetComponent<SpriteRenderer>();
+sr.sortingOrder = sortWeight;
+```
+
+### 9-Slicing
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/sprite/9-slice/9-slice-landing.html)  
+9-Slicing is a technique to make resizeable sprites without any stretching. The sprite is sliced into 9 rectangles. When
+resized, the corners just move without changing shape, the edges tile only along the axis they are parallel to, and the center
+tiles in both directions to fill the space. This is a very powerful technique for making 2D levels and backgrounds, as one sprite
+can be used to make entire levels of a game.
+
+In order to set up 9-Slicing, drag and drop your 9-Slice sprite artwork into the assets pane and follow the [sprite import instructions](#asset-import) above.
+When you are finished, under the Sprite Mode section, change Mesh Type from Tight to Full Rect. Then click the Open Sprite Editor
+Button. Along the edges of your sprite bounds you should see green dots. Click and drag those in towards the center of your sprite.
+After doing this for all 4 edges, you should have green lines defining 9 rectangular sections of your sprite within the sprite bounds.
+Click Apply in the Sprite Editor, close it, and click Apply on the Sprite Import Settings.
+
+To use your 9-Sliced sprite, click and drag it from the assets pane into the scene. Go to its Sprite Renderer Component, and change
+the Draw Mode from Simple to either Sliced or Tiled. Sliced will stretch the individual sections of the 9-Slice, and Tiled will tile
+them. Choose one, change the size of your sprite, and see how it looks! NOTE: 9-Slicing only works when you change the width or height
+of the sprite in the SpriteRenderer component or using the Rect tool in the scene window. Scaling the transform will still stretch the sprite.
+
+## Sprite Sheets
+Sprite sheets allow you to have many sprites and/or sprite animation frames all on one image file. This is better for performance,
+since the GPU just has to shift UV coordinates instead of uploading an entire new image for each sprite or animation frame.
+
+In order to set up a sprite sheet, drag and drop your sprite sheet file into the assets pane and follow the [sprite import instructions](#asset-import).
+After you are finished, click the Open Sprite Editor Button. In the top left, click the Slice Button. The first option is Slice Type. There 
+are a few options, but I find Grid by Cell Count easiest, so we will do that. Click the dropdown next to Type and choose Grid by Cell Count.
+Put in the number of columns and rows of sprites on your sprite sheet, and include any offsets or padding if you used those when drawing. When you are happy
+with where the red lines are slicing your sheet, hit slice! Now your sprite is a grid of individual sprites. You can now go in
+and individually change the bounds of any sprite, or even 9-slice some of them. When you are happy, hit Apply in the top right
+and close the Sprite Editor.
+
+Now, your sprite sheet asset in the assets pane will have an arrow pointing to the right over the image. Click that to expand it.
+A list of every sprite in the sprite sheet will appear in the assets pane. Click and drag any of them into your scene to add them,
+just like with any other sprite!
+
+## Tile Maps
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/tilemaps/tilemaps-landing.html)  
+Tile Maps are a package in Unity that allows you to turn sprite sheets into a set of brushes to quickly paint levels! I'm just
+going to go over rectangular tile maps here, but there are also hexagonal and isometric tile maps as well! Check the documentation
+or look up guides for those styles if you need them.
+
+To create a tile map, Click GameObject > 2D Object > Tilemap > Rectangular. This creates a grid and a Tilemap below it. You can
+have multiple tilemaps per grid for different layers. To do that, right-click the Grid gameobject in the scene hierarchy, then click
+2D Object > Tilemap > Rectangular.
+
+Select your tilemap gameobject in the scene hierarchy. In the bottom right of the scene view, there will be a little button that
+says Open Tile Palette. Click it! This window has the tile palette for your tilemap. Drag and drop any number of sprites or
+sprites from a spritesheet into the section where it says to do so. The editor will prompt you to select a folder. It doesn't 
+tell you this, but it is about to put a ton of new files in whatever folder you select, so make sure to make a new folder for your
+tilemap and choose that one.
+
+Once you have some sprites, the tile palette is split into three sections. The top one has a bar of tools that you can use to paint
+your tilemap with sprites. There is also a dropdown to select which tilemap you are editing if you have multiple. The middle section
+is a grid of every sprite in your tile palette. You can keep dragging more sprite assets in here to build your palette. There is a dropdown to switch which tile palette you are painting with. Tile maps and
+tile palettes are totally separate from each other, so you can make multiple tile palettes to your liking and use them on any tile map
+in your game! To the right of that dropdown there are 3 buttons. The pencil button lets you use the tools in the top bar to edit and move
+the sprites in your tile palette instead of sprites in the tile map. Use this to organize your palette. The other two buttons are options
+to show the grid and show gizmos in your palette. The bottom section holds scriptable brushes. There are a few defaults, but you
+can also create your own or find some online. Press the gear icon to hide this section if you aren't using it.
+
+If you aren't happy with the size of your sprites in a grid space, change their pixels per unit in their import settings. By default,
+one tilemap cell is one unit by one unit. If you would like to change this, select the Grid gameobject in your scene hierarchy and change the grid size.
+
+A quick note on Physics: you can add a TilemapCollider2D Component to your tile map gameobject, and it will automagically generate 
+colliders for every tile in your tile map!!
+
+## Sprite Shapes
+[📓](https://docs.unity3d.com/Packages/com.unity.2d.spriteshape@3.0/manual/index.html)  
+If you want an alternative to tilemaps that is less of a rigid grid and allows for fluid curves and angles, sprite shape is for you!
+Sprite Shapes is a package that lets you set up sprites to be drawn along lines you draw in the editor in any shape you please. There is
+a lot of depth and functionality here I'm going to gloss over, but know there are a lot more options if you need them!
+
+There are two parts to make a sprite shape: sprite shape profiles and sprite shape controllers. Sprite shape profiles can be thought of
+as the material for your sprite shape. To create one, click Assets > Create > 2D > Shape Sprite Profile. There sure are a lot of
+settings to tweak, lets go through them! The fill sprite is what is tiled to fill in a closed shape. If you make an open shape (a line),
+this goes unused. Below that there is a large circle. The way this works is you can define an angle range by dragging the handles
+at the bottom or typing in values at the bottom. The blue handle at the top is your preview angle. If you drag the preview angle beyond your
+allowed angle range, a Create Range button appears. Click this to add another set of handles to define a second range! Each angle range has
+its own sprite(s) that it uses. You can assign the sprite(s) it will use below the angle limit variables. This allows you to use different sprites
+for flat ground versus steep slopes or walls. Also, make sure any sprites you use are set to the Full Rect mesh type, and have their
+wrap mode set to Repeat. There are also options below this to use bespoke sprites for various corner types if you use any sharp corners.
+
+Create a sprite shape controller by clicking GameObject > 2D Object > Sprite Shape > Open Shape or Closed Shape. Open shapes are just
+lines with control points. Closed shapes are polygons with a closed interior that will be filled with your fill sprite. Select your
+shape after you create it and look at its Sprite Shape Controller component. Assign you sprite shape profile to the variable named profile.
+under that there is a button to edit the shape. Click that. You can drag any control points to anywhere you like. Click on a line between 
+two points to add a new control point there. Press the delete key with a control point selected to delete it. In the bottom right of the
+scene view, you can select which type of control point you would like it to be and manually type in values for it. There are other
+options in the sprite shape controller but honestly the defaults seem fine.
+
+Attach a PolygonCollider2D or an EdgeCollider2D to you sprite shape controller to enable collision!
+
+## Animations
+2D animations are actually super easy to do! Easy once you have the sprites done 😬. Animations in general are covered in the main [Animations](#-animations) section,
+but here is how to set up an animation for sprites specifically.
+
+To set up your animated character or whatever, you could add an Animator component to your gameobject with a Sprite Renderer,
+create an Animation Controller Asset, assign that controller to the Animator Component, Click Window > Animation > Animation to
+open the Animation Window, select your character, click Create Animation, save the file in your project, click Add Property,
+select the Sprite variable under Sprite Renderer, and add keyframes for each sprite of your animation, OR, you could do the shortcut.
+Select multiple sprites from a sprite sheet in the asset pane, then click and drag them into the scene hierarchy. Give your animation
+a name and save it somewhere nice in your project. Now all of what I just described has been done for you automatically. Adjust the 
+auto-generated keyframes as necessary. To make more animations, click the dropdown in the top left of the animation window,
+then click Create New Clip. Give it a name and save it. In the new clip, click Add Property, then select Sprite under Sprite Renderer.
+Add keyframes for the various sprites you want. This new animation will show up in your animation controller, and you can set up
+the transitions from there. Happy animating!
+
+(If you want you can also just change the active sprite in the Sprite Renderer component in code and just make your own animation
+system if you don't like how Unity does it)
+```csharp
+public Sprite sprite;//asign sprite asset to this in the editor
+------
+SpriteRenderer sr = GetComponent<SpriteRenderer>();
+sr.sprite = sprite;//do this a bunch for every animation frame
+```
+
+## Physics2D
+2D Physics uses all the same class, component, and collider names as normal 3D physics, just with a 2D stuck on the end.
+2D Rigidbodies are Rigidbody2D, Colliders are of type Collider2D, you do raycasts with Physics2D.Raycast(), yada yada. This
+means if you are comfortable with 3D physics, using 2D physics is actually a pretty easy transition! If you aren't comfortable
+with 3D physics, check out the [Physics Section](#-physics). I will just be covering the specific differences to 2D physics here.
+
+Rigidbody2D is pretty much the same as the normal Rigidbody. Add it to things to give them physics simulation. Angular Velocity,
+Rotation, and Angular Inertia are all just floats now because it's 2D. I think that's all!
+
+All your favorite Collider types are back! BoxCollider is now BoxCollider2D, CapsuleCollider is now CapsuleCollider2D, and 
+SphereCollider is now CircleCollider2D! Because 2D physics is computationally so much lighter than 3D, there are also a lot 
+more options for colliders that don't have 3D equivalents. CompositeCollider2D will merge the shape of any other colliders into
+one big collider. EdgeCollider2D lets you draw a line that will collide with things from both sides of the line. PolygonCollider2D
+does the same, but instead lets you define your own wacky closed shape to match any sprite you wish. Keep in mind, unlike with 3D
+physics, there is no restriction on concave colliders. You can make your rigidbody colliders whatever wacky shape you please. Also 
+keep in mind the Z coordinate is completely ignored for calculations. Use layers if you need objects to pass through each other.
+
+The Physics2D class is very similar to the Physics class. It has a lot of functions, the most useful ones being the overlap functions,
+collider cast functions, and ray cast functions. These are all similar to their 3D equivalents, except they use Vector2s instead of
+Vector3s. You can find documentation for all these functions [here](https://docs.unity3d.com/ScriptReference/Physics2D.html).
+
+There are also more joints available for 2D physics than for 3D. Unity has support for distance joints, fixed joints, friction
+joints, hinge joints, relative joints, slider joints, spring joints, target joints, and wheel (suspension) joints. Have fun!
+
+2D physics has a concept of its own that is missing from 3D physics: effectors. Effectors are basically built in functionality 
+for trigger colliders. You set one up by first creating a trigger collider. Anything inside this trigger collider will be effected
+by the effector. Make sure both Is Trigger and Used by Effector are both ticked. Then, all you have to do is add an effector as a component to the gameobject.
+Your options are: Area effector, buoyancy effector, platform effector, point effector, and surface effector. The area effector 
+just constantly applies a force in a specified direction. The buoyancy effector "simulates" a fluid with a specified density and
+surface level. Platform effectors are meant for platformers. They make their colliders have one way collisions, remove side friction,
+remove bounciness, and quote, "more". Don't make your collider(s) a trigger when using this effector. Point effectors will apply a force
+towards a specified point, like a magnet. Surface effectors simulate a movement speed along their edges without actually moving, useful
+for conveyor belts and such. Again with this one, don't use trigger colliders, make them normal colliders.
+
+## Lighting
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/urp/Lights-2D-intro.html)  
+If you are using the 2D version of the Universal Render Pipeline (setup automatically with the 2D project template), then Unity
+actually has some really cool 2D lighting options available to you! By adding 2D lights and shadows to your scene, Unity will generate
+render textures on top of all your sprites to make them appear as if they are being lit and casting shadows in certain directions.
+Note: This is not physically accurate AT ALL, it's just a neat aesthetic. This only works if your project is set up in a very specific
+way. If you are interested, I highly recommend making your project from the 2D template so it just works out of the box.
+
+If your project is set up right, to add a light, just click GameObject > Light > select any light ending in 2D. Your new light will
+now shine onto any sprite in its range. Keep in mind, if your sprite is white, it can't get any brighter so you won't see anything.
+Spot lights are point lights that let u define an angle range for them. Sprite lights cast light in the shape of any sprite you select.
+Freeform lights let you draw a polygon that will cast light a set distance away from it. Global lights just add light to everything globally (only seems to work with the additive blend mode for some reason?).
+
+To add shadows, first make sure you have a 2D light in your scene that isn't a global light, and that light has shadows enabled. Also make
+sure you have some kind of background sprite, shadows will not cast over the skybox. For every sprite that you want to have shadows,
+add a Shadow Caster 2D component to it. Tada! Shadows! If you want shadows from multiple objects to play nicely with each other, make sure
+each object also has the Composite Shadow Caster 2D component attached to it as well in addition to the Shadow Caster 2D component.
+
+Lights and shadows can both be restricted to various sorting layers to achieve complex layered results. The sprite Z coordinate is not considered
+at all, so you must use sorting layers.
+
+
 # 🌐 Meshes
+
+# 🏃 Animations
+
+# 🎥 Rendering
 
 # 🥏 Physics
 
 # 🔊 Audio
 
-# 🎥 Rendering
-
 # 🖥️ UI
 
-# 🏃 Animations
+# 🗄️ Multiplayer
 
 # 🏗️ Probuilder
 
@@ -1371,6 +2348,11 @@ void Start(){
 # 🎆 VFX Graph
 
 - add images for prefab open and override buttons?
-- hotkeys? like search is Alt + K?
+- hotkeys? like search is Ctrl + K?
+- Color and Gradient?
+- animation curve
 - Gizmos!
+- custom inspector buttons and sliders and stuff
+- new things: scriptable objects/new asset management thingy?
+- player prefs
 
