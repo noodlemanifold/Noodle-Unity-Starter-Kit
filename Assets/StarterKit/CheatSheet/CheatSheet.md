@@ -1793,7 +1793,7 @@ Here is how you should create Quaternions:
 ```csharp
 // useful Quaternion creation functions
 Quaternion rot = transform.rotation;//just yoink an existing object's rotation
-Quaternion default = Quaternion.identity;//same as a Euler rotation of 0,0,0
+Quaternion defaultRot = Quaternion.identity;//same as a Euler rotation of 0,0,0
 Quaternion y90 = Quaternion.AngleAxis(90f, Vector3.up);//creates a rotational movement 90 degrees around the y axis.
                               //when multiplied with another Quaternion, it will rotate it around the axis by the given angle.
 Quaternion ew = Quaternion.Euler(20f,30f,45f);//creates a quaternion from a euler rotation. 
@@ -1872,6 +1872,66 @@ the most common of them is Matrix4x4, so I will be covering that. Matrices are m
 
 Matrices in Unity are column-major and use homogenous coordinates. For the 4x4 matrix, the first column represents the X axis, 
 second the Y axis, third the Z axis, and 4th the translation. 
+```csharp
+//creation
+Matrix4x4 emptyMat = Matrix4x4.identity;
+Matrix4x4 identityMat = Matrix4x4.identity;
+Vector4 column0, column1, column2, column3;
+Matrix4x4 initialized = new Matrix4x4(column0,column1,column2,column3);
+
+Vector3 position;
+Quaternion rotation;
+Vector3 scale;
+Matrix4x4 posMat = Matrix4x4.Translate(position);//creates a translation matrix that translates by the specified point
+Matrix4x4 rotMat = Matrix4x4.Rotate(rotation);//creates a rotation matrix that matches the specified quaternion's rotation
+Matrix4x4 sclMat = Matrix4x4.Scale(scale);//creates a scaling matrix that has the same scaling as the specified scaling vector
+Matrix4x4 allTogetherNow = Matrix4x4.TRS(position,rotation,scale);//creates a full transformation matrix with the specified
+                                        //position, rotation, and scale
+Vector3 fromPos, toPos, upDirection;
+Martix4x4 peep = Matrix4x4.LookAt(fromPos,toPos,upDirection);//creates a transform matrix at fromPos looking at toPos
+
+//these use the OpenGL convention. these may be wrong if Unity is using another graphics API. Use GL.GetGPUProjectionMatrix if so
+float fov, aspectRatio, nearClippingDist, farClippingDist;
+Matrix4x4 perspective = Matrix4x4.Perspective(fov, aspectRatio, nearClippingDist, farClippingDist);//creates perpective view matrix
+float leftCoord, rightCoord, bottomCoord, topCoord, nearDist, farDist;
+Matrix4x4 ortho = Matrix4x4.Orthographic(leftCoord, rightCoord, bottomCoord, topCoord, nearDist, farDist);
+Matrix4x4 viewMat = Matrix4x4.Frustum(leftCoord, rightCoord, bottomCoord, topCoord, nearDist, farDist);//different that Ortho somehow?
+```
+```csharp
+//variables
+FrustumPlanes projectionFrustum = mat.decomposeProjection;//if  a projection matrix, returns the 6 planes that define the frustum
+float determinant = mat.determinant;//determinant. yup.
+Matrix4x4 inverse = mat.inverse;//returns a new matrix that is the inverse of mat
+bool isIdentity = mat.isIdentity;//returns true if mat is an identity matrix
+Vector3 lossyScale = mat.lossyScale;//attempts to return scaling in a Vector3. may be wrong if other transformations are applied.
+Quaternion rotation = mat.rotation;//gets just the rotation described in this matrix
+Matrix4x4 transpose = mat.transpose;//returns a new matrix that is the transpose of mat
+
+int a,b;
+float element = mat[a,b];//gets an element of the matrix. a is the row, b is the column. both must be between 0->3 inclusive.
+```
+```csharp
+//functions
+Vector4 lastColumn = mat.GetColumn(3);//returns the nth column. parameter is an int thats 0->3 inclusive
+Vector4 firstRow = mat.GetRow(0);//returns the nth row. parameter is an int thats 0->3 inclusive
+Vector4 bla = Vector4.one;
+mat.SetColumn(0,bla);//replaces the specified column with the Vector4 given.
+mat.SetRow(3,bla);//replaces the specified row with the Vector4 given.
+
+Vector3 pos = mat.GetPosition();//returns the position encoded inside of this matrix
+Vector3 newPoint = mat.MultiplyPoint(Vector3.one);//returns the point multiplied by this matrix
+Vector3 newDirection = mat.MultiplyVector(Vector3.up);//returns the direction multiplied by this matrix.
+Plane plane;
+Plane newPlane = mat.TransformPlane(plane);//transforms a plane with this matrix
+
+Vector3 position;
+Quaternion rotation;
+Vector3 scale;
+mat.SetTRS(position,rotation,scale);//sets this matrix to be a translation-rotation-scale matrix with the specified 
+                            //position, rotation, and scale
+bool isTRS = mat.ValidTRS();//returns true if this matrix is a valid translation-rotation-scale matrix
+```
+
 
 ## Time
 [📓](https://docs.unity3d.com/ScriptReference/Time.html)  
@@ -2269,15 +2329,15 @@ at all, so you must use sorting layers.
 
 # 🌐 Meshes
 
+# 🏃 Animations
+
+# 🎥 Rendering
+
 # 🥏 Physics
 
 # 🔊 Audio
 
-# 🎥 Rendering
-
 # 🖥️ UI
-
-# 🏃 Animations
 
 # 🗄️ Multiplayer
 
@@ -2289,10 +2349,10 @@ at all, so you must use sorting layers.
 
 - add images for prefab open and override buttons?
 - hotkeys? like search is Ctrl + K?
-- Gizmos!
 - Color and Gradient?
-- custom inspector buttons and sliders and stuff
 - animation curve
+- Gizmos!
+- custom inspector buttons and sliders and stuff
 - new things: scriptable objects/new asset management thingy?
 - player prefs
 
