@@ -1865,8 +1865,16 @@ transform.rotation = Quaternion.LookRotation(lookDir,Vector3.up);//make Vector3.
 ```
 
 ## Matrices
+[📓](https://docs.unity3d.com/ScriptReference/Matrix4x4.html)  
+Matrices are a mathematical structure that stores a small grid of numbers. Unity has a few Matrix types, but by far and away
+the most common of them is Matrix4x4, so I will be covering that. Matrices are most used for representing transformations
+(positions, rotation, scale) of objects in various coordinate spaces (world, local, view); Here is how to use them in Unity!
+
+Matrices in Unity are column-major and use homogenous coordinates. For the 4x4 matrix, the first column represents the X axis, 
+second the Y axis, third the Z axis, and 4th the translation. 
 
 ## Time
+[📓](https://docs.unity3d.com/ScriptReference/Time.html)  
 All the stuff you need related to time is just a static variable you can get from the Time class.
 ```csharp
 float delta = Time.deltaTime;//time since last frame
@@ -1882,6 +1890,7 @@ float levelTime = Time.timeSinceLevelLoad;//time in seconds since the last *non 
 ```
 
 ## RNG
+[📓](https://docs.unity3d.com/ScriptReference/Random.html)  
 Unity has a Random class for all the fun quirky random needs you may have. Note: there is also a built-in C# class called
 Random, and if you are `using System;` in your script, they will conflict. To use Unity's, either don't include System,
 call it using UnityEngine.Random, or put `using Random = UnityEngine.Random;` at the top of your file.
@@ -1908,7 +1917,118 @@ float range = Random.Range(3f,5.5f);//returns a random float between the two par
 ```
 
 ## Misc
-Plane, Ray, Rect
+These are some miscellaneous math classes you may run into but are not super common.
+
+### Ray
+[📓](https://docs.unity3d.com/ScriptReference/Ray.html)  
+A Ray represents an infinite line starting at one point, and then going off to infinity in some direction.
+```csharp
+Vector3 point;
+Vector3 direction;
+Ray ray = new Ray(point, direction);
+
+ray.origin = Vector3.one;//ray starting point
+ray.direction = Vector3.up;//ray direction
+
+Vector3 alongBy10 = ray.GetPoint(10f);//returns a point some distance along the ray from its starting point.
+```
+
+### Rect
+[📓](https://docs.unity3d.com/ScriptReference/Rect.html)  
+Rect is a class that represents a 2D rectangle. It simultaneously supports two ways to represent the rectangle. One way 
+is specifying a point, and then storing the width and height of the rectangle from that point. The other is storing the x coordinate
+for the left and right sides of the box, called xMin and xMax, and the y coordinates of the top and bottom of the box, called
+yMin and yMax. You can use either representation method or use them interchangeably with the same Rect object.
+
+```csharp
+//create a Rect
+float pointX, pointY, width, height;
+Rect rect = new Rect(pointX, pointY, width, height);
+float xMin, yMin, xMax, yMax;
+Rect rect2 = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+```
+```csharp
+//variables
+float pX = rect.x;//x coord of point size representation. Modifying this will translate the rect
+float pY = rect.y;//y coord of point size representation. Modifying this will translate the rect
+float w = rect.width;//width of point size representation. Modifying this will resize the rect
+float h = rect.height;//height of point size representation. Modifying this will resize the rect
+
+float xMi = rect.xMin;//left side coord . Modifying this will resize the rect
+float yMi = rect.yMin;//bottom side coord. Modifying this will resize the rect
+float xMa = rect.xMax;//right side coord. Modifying this will resize the rect
+float yMa = rect.yMax;//top side coord. Modifying this will resize the rect
+
+Vector2 center = rect.center;//center point of the rect
+Vector2 min = rect.min;//bottom left point of the rect
+Vector2 max = rect.max;//top right point of the rect
+Vector2 size = rect.size;//the width and height of the rect
+```
+```csharp
+Vector2 point = new Vector2(0f,1f);
+bool inside = rect.Contains(point);//returns true if the point is in the rect, false otherwise
+Rect rect2;
+bool overlap = rect.Overlaps(rect2);//returns true if the two rects overlap each other
+```
+
+### Bounds
+[📓](https://docs.unity3d.com/ScriptReference/Bounds.html)  
+This class is similar to Rect, but for 3D. It represents an axis-aligned bounding box, which you may have seen abreviated 
+as AABB. Since the box is never rotated, it can be represented with just a center point and a size.
+
+```csharp
+Vector3 centerPoint;
+Vector3 sideLengths;
+Bounds bounds = new Bounds(centerPoint,sideLengths);
+```
+```csharp
+Vector3 center = bounds.center;//center point of the bounds.
+Vector3 size = bounds.size;//lengths of the 3 sides of the bounding box
+Vector3 extents = bounds.extents;//half the length of the sides. always equivalent to bounds.size/2f;
+Vector3 min = bounds.min;//the corner of the box that has the smallest x,y,and z coords. equal to center - extents.
+Vector3 max = bounds.max;//the corner of the box that has the largest x,y,and z coords. equal to center + extents.
+```
+```csharp
+Vector3 closest = bounds.ClosestPoint(Vector3.one);//returns closest point on or inside the bounds
+bool inside = bounds.Contains(Vector3.one);//returns if the point is inside the bounds or not
+bounds.Encapsulate(Vector3.zero);//grows the bounds to include the point if it is not included already
+bounds.Expand(5f);//grows the length of each side by the specified amount
+Ray ray;
+bool touches = Bounds.IntersectRay(ray);//returns true if the ray intersects these bounds
+Bounds bounds2;
+bool intersect = bounds.Intersects(bounds2);//returns true if the two bounds intersect each other at all
+float sqrDist = bounds.SqrDistance(Vector3.one);//returns the distance to the closest point on or in the bounds squared.
+```
+
+### Plane
+[📓](https://docs.unity3d.com/ScriptReference/Plane.html)  
+This class just represents a mathematical plane that extends off to infinity. It has a normal vector that is orthogonal to
+the plane, and a single point that the plane goes through. This is enough information to define any plane.
+```csharp
+//creating a plane
+Vector3 normal = Vector3.up;
+Vector3 point = Vector3.one;
+Plane plane = new Plane(normal, point);
+```
+```csharp
+//variables
+float dist = plane.distance;//smallest distance from the plane to the origin
+Plane flip = plane.flipped;//returns this plane with its normal vector inverted
+Vector3 normal = plane.normal;//the normal vector of the plane
+```
+```csharp
+//functions
+Vector3 closest = plane.ClosestPointOnPlane(Vector3.one);//returns the closest point to the specified point on the plane
+plane.Flip();//flips the normal vector of the plane
+float signedDist = plane.GetDistanceToPoint(Vector3.one);//returns the distance to the point from the plane. 
+                                                //distance is negative if the point is below the plane.
+bool side = plane.GetSide(Vector3.one);//returns if the point is above the plane or not
+
+float enterDist;
+Ray ray;
+bool intersects = plane.Raycast(ray, out enterDist);//returns true if the ray intersects the plane. 
+                               //if it does, enterDist is set to the distance along the ray the intersection occured at
+```
 
 # 📄 2D
 [📓](https://docs.unity3d.com/6000.0/Documentation/Manual/Unity2D.html)  
@@ -2042,6 +2162,7 @@ A quick note on Physics: you can add a TilemapCollider2D Component to your tile 
 colliders for every tile in your tile map!!
 
 ## Sprite Shapes
+[📓](https://docs.unity3d.com/Packages/com.unity.2d.spriteshape@3.0/manual/index.html)  
 If you want an alternative to tilemaps that is less of a rigid grid and allows for fluid curves and angles, sprite shape is for you!
 Sprite Shapes is a package that lets you set up sprites to be drawn along lines you draw in the editor in any shape you please. There is
 a lot of depth and functionality here I'm going to gloss over, but know there are a lot more options if you need them!
@@ -2125,6 +2246,7 @@ towards a specified point, like a magnet. Surface effectors simulate a movement 
 for conveyor belts and such. Again with this one, don't use trigger colliders, make them normal colliders.
 
 ## Lighting
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/urp/Lights-2D-intro.html)  
 If you are using the 2D version of the Universal Render Pipeline (setup automatically with the 2D project template), then Unity
 actually has some really cool 2D lighting options available to you! By adding 2D lights and shadows to your scene, Unity will generate
 render textures on top of all your sprites to make them appear as if they are being lit and casting shadows in certain directions.
@@ -2170,4 +2292,7 @@ at all, so you must use sorting layers.
 - Gizmos!
 - Color and Gradient?
 - custom inspector buttons and sliders and stuff
+- animation curve
+- new things: scriptable objects/new asset management thingy?
+- player prefs
 
