@@ -1145,15 +1145,7 @@ void OnTriggerStay(Collider col){}//called every tick for every collider is insi
 void OnTriggerExit(Collider col){}//called once the tick a collider exits a trigger
                             //called on both the trigger and the entering collider
                             //parameter col is the other collider of the interaction
-void OnCollisionEnter(Collision col){}//called once the tick two colliders start colliding
-                            //called on both involved colliders
-                            //parameter col contains all the info of the collision
-void OnCollisionStay(Collision col){}//called every tick for every collision this object is involved in
-                            //called on both involved colliders
-                            //parameter col contains all the info of the collision
-void OnCollisionExit(Collision col){}//called once the tick two colliders start colliding
-                            //called on both involved colliders
-                            //parameter col contains all the info of the collision
+
 //loop ends here
 ```
 
@@ -2326,16 +2318,186 @@ each object also has the Composite Shadow Caster 2D component attached to it as 
 Lights and shadows can both be restricted to various sorting layers to achieve complex layered results. The sprite Z coordinate is not considered
 at all, so you must use sorting layers.
 
+# 🎥 Rendering
 
-# 🌐 Meshes
+## Universal Render Pipeline
+
+## Camera
+
+## Importing Models
+
+## MeshRenderer
+
+## Materials
+
+## Lighting
+
+### Realtime Lights
+
+### Baked Lights
+
+### Environment & Skybox
+
+## Shadows
+
 
 # 🏃 Animations
 
-# 🎥 Rendering
+## Animation Window
+
+## Animation Clips
+
+## Animation Manager
+
+## Playing Animations
+
+## Rigging & Procedural Animation
 
 # 🥏 Physics
+[📓](https://docs.unity3d.com/ScriptReference/UnityEngine.PhysicsModule.html)  
+
+Unity has a built-in implementation of the Phys-X physics engine that is designed to be easy to set up and use. Lets 
+get started!
+
+## Rigidbody
+[📓](https://docs.unity3d.com/ScriptReference/Rigidbody.html)  
+The Rigidbody Component adds a  rigidbody physics simulation to any GameObject it is attached to. Rigidbody physics simuate 
+objects with no flexing or squishing or bending. There are other simulation types, for instance 
+softbody physics, but none of them are implemented in Unity. Generally, anytime you want any GameObject to interact with the
+physics system, add the Rigidbody Component to it!
+
+Rigidbodies will use all the collider components on the gameobject they are attached to, *and all the collider components on
+all of its children as well*. This allows you to build some pretty complex collision objects and keep colliders on the same
+gameobject as the mesh they represent. Unity will let you make rigidbodies children of other rigidbodies, but the behavior is
+not really useful. If you want relationships between rigidbodies, in most cases it is better to use joints.
+
+### Variables & Settings
+
+```csharp
+//useful variables!
+Rigidbody rb = GetComponent<Rigidbody>();
+
+float mass = rb.mass;//get or set the mass of this rigidbody
+bool gravity = rb.useGravity;//get or set if this rigidbody is affected by gravity
+bool canMove = rb.isKinematic;//get or set if this rigidbody is kinematic
+                //kinematic means the rigidbody will never move or rotate, but will still interact with other rigidbodies.
+                //to move a kinematic rigidbody, use rb.MovePosition or rb.MoveRotation, don't edit the transform
+
+Vector3 position = rb.position;//get or set the rigibody's position. use rb.MovePosition tho, this doesnt do interpolation 
+Vector3 vel = rb.linearVelocity;//get or set the velocity. Use .AddForce() unless you rly know what you are doing.
+Quaternion rotation = rb.rotation;//get or set the rigibody's rotation. use rb.MoveRotation tho, this doesnt do interpolation 
+Vector3 angVel = rb.angularVelocity;//returns rotational velocity around each axis in radians/second
+
+//This is called Drag in the inspector
+float linearDamping = rb.linearDamping;//slows down linear velocity. The higher the value, the more it slows.
+//This is called Angular Drag in the inspector
+float angularDamping = rb.angularDamping;//slows down rotational velocity. The higher the value, the more it slows.
+Vector3 centerOfMass = rb.centerOfMass;//get or set the center of mass in local space
+//theres a lot more in the documentation, but you very likely will never need to touch them :)
+```
+In addition to these, there are some settings in the Rigidbody Component in the inspector window that are important.  
+
+Interpolate: This setting changes how rigidbodies are visually positioned between physics ticks.  
+- None: Apply no interpolation. This is fine most of the time, unless the rigidbody appears to jitter.
+- Interpolate: Use the last 2 physics frames to pose the rigidbody this frame. Can be more accurate, but may make the rigidbody visibly lag behind where it actually is.
+- Extrapolate: Use the last physics frame position and velocity to guess where the rigidbody should be right now. This can make the rigidbody appear slightly ahead of where it really is, and is best when accuracy is not important, or the object is moving at a mostly constant velocity.  
+
+Collision Detection: This setting changes the method Unity uses to detect collisions.
+- Discrete: Just check for intersections at each physics tick. Much faster than the other methods, but is only accurate at small/medium relative velocities.
+- Continuous: Sweep-based collision detection against colliders *without a rigidbody*. Uses discrete for other rigidbodies. This is best for objects travelling fast enough to clip through terrain, but still interacts with other objects fine.
+- Continuous Discrete: Sweep-based collision detection against colliders without a rigidbody and any other rigidbodies that are also set to Continuous Discrete collision detection. This is the laggiest method, so only use it if necessary.
+- Continuous Speculative: Increases rigidbody collision detection radius with its velocity. Less accurate than Continuous Discrete, but also faster!
+
+Constraints: Lock the rigidbodies ability to move or rotate along some axises!
+
+There is also a section at the bottom to override what layers this rigidbody will or will not collide with. If these are 
+not modified, it will follow the normal collision rules for its layer.
+
+### Functions
+
+```csharp
+Rigidbody rb = GetComponent<Rigidbody>();
+
+float explosionForce,explosionRadius,upwardsCoefficient;
+Vector3 explosionPos;
+ForceMode forceType;//more on this bad boy in the Writing Physics Code Section!
+rb.AddExplosionForce(explosionForce, explosionPos, explosionRadius, upwardsCoefficient, forceType);//applys the force to simulate and explosion
+                            //This function is best utilized when put on a trigger collider and called on all objects inside the trigger.
+Vector3 forceVector;
+rb.AddForce(forceVector, forceType);
+Vector3 torqueVector;
+rb.AddTorque(torqueVector, forceType);
+Vector3 worldPosition;
+rb.AddForceAtPosition(forceVector, worldPosition, forceType);//imparts a force and torque based on the force's position. All in world space.
+```
+```csharp
+Vector3 worldPos;
+Vector3 pointVel = rb.GetPointVelocity(worldPos);//returns the velocity of the body at worldPos. Accounts for angular velocity.
+Vector3 position;
+Quaternion rotation;
+rb.MovePosition(position);//moves the rigidbody to the specified position in the physics simulation
+rb.MoveRotation(rotation);//rotates the rigidbody to the specified rotation in the physics simulation
+rb.Move(position, rotation);//combination of MovePosition() and MoveRotation()
+
+rb.ResetCenterOfMass();//restores the auto-calculated center of mass if you changed it at runtime.
+rb.ResetInertiaTensor();//restores the auto-calculated inertia tensor if you changed it at runtime.
+rb.SetDensity(5f);//sets the mass of the rigidbody based on the specified density and the volume of all attached colliders.
+
+RaycastHit hitInfo;//more on this bad body in the Writing Physics Code Section!
+float distance;
+Vector3 direction;
+QueryTriggerInteraction hitTriggers;//more on this bad boy in the Writing Physics Code Section!
+if (rb.SweepTest(direction, out hitInfo, distance, hitTriggers)){
+    //we hit something! :D
+}
+
+RaycastHit[] allHits = rb.SweepTestAll(direction, distance,hitTriggers);
+if (allHits.Length > 0){
+    //we hit something! :D
+}
+```
+
+### Messages
+```csharp
+void OnCollisionEnter(Collision col){}//called once the tick two colliders start colliding
+                            //called on both involved colliders
+                            //parameter col contains all the info of the collision
+void OnCollisionStay(Collision col){}//called every tick for every collision this object is involved in
+                            //called on both involved colliders
+                            //parameter col contains all the info of the collision
+void OnCollisionExit(Collision col){}//called once the tick two colliders start colliding
+                            //called on both involved colliders
+                            //parameter col contains all the info of the collision
+```
+
+## Colliders
+Colliders are components that define the shape of an object inside the physics simulation.
+If they will never ever move ever, they can be placed in the scene on their own. However, if you ever need to move them ever,
+they *need* to be attached to a rigidbody component. If you don't want the collider to react to collisions, make the rigidbody kinematic.
+
+The colliders in Unity are the BoxCollider, SphereCollider, CapsuleCollider, and MeshCollider. All of them inherit from the Collider
+class. I will list all the variables and functions in the Collider class common to all the Collider types, and then put anything unique 
+to a Collider in its own section below.
+```csharp
+
+```
+
+## Joints
+
+## Writing Physics Code
+cover ForceMode!! and RaycastHit!!! and QueryTriggerInteraction!!
+
+## The Physics Class
+
+## Physics Settings
 
 # 🔊 Audio
+
+## Audio Listener
+
+## Audio Clip
+
+## Audio Source
 
 # 🖥️ UI
 
