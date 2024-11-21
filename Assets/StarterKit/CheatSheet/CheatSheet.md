@@ -2361,10 +2361,10 @@ get started!
 
 ## Rigidbody
 [📓](https://docs.unity3d.com/ScriptReference/Rigidbody.html)  
-The Rigidbody Component adds a  rigidbody physics simulation to any GameObject it is attached to. Rigidbody physics simuate 
+The Rigidbody Component adds a  rigidbody physics simulation to any gameobject it is attached to. Rigidbody physics simulate 
 objects with no flexing or squishing or bending. There are other simulation types, for instance 
-softbody physics, but none of them are implemented in Unity. Generally, anytime you want any GameObject to interact with the
-physics system, add the Rigidbody Component to it!
+softbody physics, but none of them are implemented in Unity. Generally, anytime you want any gameobject to interact with the
+physics system, add the rigidbody component to it!
 
 Rigidbodies will use all the collider components on the gameobject they are attached to, *and all the collider components on
 all of its children as well*. This allows you to build some pretty complex collision objects and keep colliders on the same
@@ -2379,7 +2379,7 @@ Rigidbody rb = GetComponent<Rigidbody>();
 
 float mass = rb.mass;//get or set the mass of this rigidbody
 bool gravity = rb.useGravity;//get or set if this rigidbody is affected by gravity
-bool canMove = rb.isKinematic;//get or set if this rigidbody is kinematic
+bool cantMove = rb.isKinematic;//get or set if this rigidbody is kinematic
                 //kinematic means the rigidbody will never move or rotate, but will still interact with other rigidbodies.
                 //to move a kinematic rigidbody, use rb.MovePosition or rb.MoveRotation, don't edit the transform
 
