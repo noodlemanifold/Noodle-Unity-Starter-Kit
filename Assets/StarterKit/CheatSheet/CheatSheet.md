@@ -2598,6 +2598,80 @@ float maxSpeed = Physics.defaultMaxAngularSpeed;//max speed things can rotate in
 bool backfaces = Physics.queriesHitBackfaces;//get or set if ray/shape casts hit the back faces of colliders. default is false.
 bool triggers = Physics.queriesHitTriggers;//get or set is ray/shape casts hit triggers by default.
 ```
+```csharp
+//cast functions
+Vector3 position, direction;
+Quaternion rotation;
+float distance;
+LayerMask mask;
+QueryTriggerInteraction triggers;
+RaycastHit hitInfo;
+
+Vector3 halfExtents;//half the length of each side of the box in each axis.
+if (Physics.BoxCast(position,halfExtents,direction,out hitInfo, rotation, distance, mask, triggers)){
+    // the box we sent out into the scene hit something!!
+}
+RaycastHit[] allHits = Physics.BoxCastAll(position,halfExtents,direction,out hitInfo, rotation, distance, mask, triggers);
+
+float radius;
+if (Physics.SphereCast(position, radius, direction, out hitInfo, distance, mask, triggers)){
+    // the sphere we sent out into the scene hit something!!
+}
+RaycastHit[] allHits = Physics.SphereCastAll(position, radius ,direction, out hitInfo, distance, mask, triggers);
+
+Vector3 sphereCenter1, sphereCenter2;//centers of two spheres that are connected to form a capsule
+if (Physics.CapsuleCast(sphereCenter1, sphereCenter2, radius, direction, out hitInfo, distance, mask, triggers)){
+    // the capsule we sent out into the scene hit something!!
+}
+RaycastHit[] allHits = Physics.CapsuleCastAll(sphereCenter1, sphereCenter2, radius, direction, out hitInfo, distance, mask, triggers);
+
+if (Physics.RayCast(position, direction, out hitInfo, distance, mask, triggers)){
+    // the ray we sent out into the scene hit something!!
+}
+RaycastHit[] allHits = Physics.RayCastAll(position, direction, out hitInfo, distance, mask, triggers);
+
+Vector3 startPos, endPos;
+if (Physics.LineCast(startPos, endPos, out hitInfo, mask, triggers)){
+    // the line we put into the scene hit something!!
+}
+```
+```csharp
+//overlap functions
+Vector3 position;
+Quaternion rotation;
+LayerMask mask;
+QueryTriggerInteraction triggers;
+
+Vector3 halfExtents;//half the length of each side of the box in each axis.
+if (Physics.CheckBox(position, halfExtents, rotation, mask, triggers)){
+    // There is at least one collider overlapping this box!!
+}
+Collider[] allColldiers = Physics.OverlapBox(position, halfExtents, rotation, mask, triggers);
+
+float radius;//half the length of each side of the box in each axis.
+if (Physics.CheckSphere(position, radius, mask, triggers)){
+    // There is at least one collider overlapping this sphere!!
+}
+Collider[] allColldiers = Physics.OverlapSphere(position, radius, mask, triggers);
+
+Vector3 sphereCenter1, sphereCenter2;//centers of two spheres that are connected to form a capsule
+if (Physics.CheckCapsule(sphereCenter1, sphereCenter2, radius, mask, triggers)){
+    // There is at least one collider overlapping this box!!
+}
+Collider[] allColldiers = Physics.OverlapCapsule(sphereCenter1, sphereCenter2, radius, mask, triggers);
+```
+```csharp
+//other functions
+Vector3 position;
+Quaternion rotation;
+Collider collider;
+Vector3 point;
+Vector3 closestPoint = Physics.ClosestPoint(point, collider, position, rotation);//closest point on or in the collider to point.
+
+Collider collider, collider2;
+bool ignored = Physics.GetIgnoreCollision(collider,collider2);//gets if 2 colliders ignore collisions regardless of layer
+Physics.IgnoreCollision(collider, collider2);//set 2 colliders to never collide regardless of their layer.
+```
 
 
 ## Writing Physics Code
