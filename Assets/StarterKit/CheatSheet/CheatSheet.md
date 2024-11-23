@@ -1128,25 +1128,9 @@ void OnApplicationPause(bool pauseStatus){}//sent when game is paused or unpause
 void OnApplicationQuit(){}//called if the game is closed :(
 void OnDisable(){}//called when monobehaviour is disabled. if reenabled, OnEnable() is called again
 void OnDestroy(){}//called right before this monobehaviour is unloaded
-```
 
-```csharp
 //Physics Loop
-
-//loop starts here
 void FixedUpdate(){}//called on every physics loop before the interal physics is advanced
-//internal physics update happens here
-void OnTriggerEnter(Collider col){}//called once the tick a collider enters a trigger
-                            //called on both the trigger and the entering collider
-                            //parameter col is the other collider of the interaction
-void OnTriggerStay(Collider col){}//called every tick for every collider is inside a trigger
-                            //called on both the trigger and the entering collider
-                            //parameter col is the other collider of the interaction
-void OnTriggerExit(Collider col){}//called once the tick a collider exits a trigger
-                            //called on both the trigger and the entering collider
-                            //parameter col is the other collider of the interaction
-
-//loop ends here
 ```
 
 ## Managing in Code
@@ -2369,7 +2353,7 @@ physics system, add the rigidbody component to it!
 Rigidbodies will use all the collider components on the gameobject they are attached to, *and all the collider components on
 all of its children as well*. This allows you to build some pretty complex collision objects and keep colliders on the same
 gameobject as the mesh they represent. Unity will let you make rigidbodies children of other rigidbodies, but the behavior is
-not really useful. If you want relationships between rigidbodies, in most cases it is better to use joints.
+not really useful in most cases. If you want relationships between rigidbodies, you likely want to use [articulation bodies](#articulationbody)!
 
 ### Variables & Settings
 
@@ -2441,7 +2425,6 @@ rb.Move(position, rotation);//combination of MovePosition() and MoveRotation()
 
 rb.ResetCenterOfMass();//restores the auto-calculated center of mass if you changed it at runtime.
 rb.ResetInertiaTensor();//restores the auto-calculated inertia tensor if you changed it at runtime.
-rb.SetDensity(5f);//sets the mass of the rigidbody based on the specified density and the volume of all attached colliders.
 
 RaycastHit hitInfo;//more on this bad body in the Writing Physics Code Section!
 float distance;
@@ -2459,13 +2442,14 @@ if (allHits.Length > 0){
 
 ### Messages
 ```csharp
+//These are called in the physics loop *after* the internal physics update
 void OnCollisionEnter(Collision col){}//called once the tick two colliders start colliding
                             //called on both involved colliders
                             //parameter col contains all the info of the collision
 void OnCollisionStay(Collision col){}//called every tick for every collision this object is involved in
                             //called on both involved colliders
                             //parameter col contains all the info of the collision
-void OnCollisionExit(Collision col){}//called once the tick two colliders start colliding
+void OnCollisionExit(Collision col){}//called once the tick two colliders stop colliding
                             //called on both involved colliders
                             //parameter col contains all the info of the collision
 ```
@@ -2478,16 +2462,146 @@ they *need* to be attached to a rigidbody component. If you don't want the colli
 The colliders in Unity are the BoxCollider, SphereCollider, CapsuleCollider, and MeshCollider. All of them inherit from the Collider
 class. I will list all the variables and functions in the Collider class common to all the Collider types, and then put anything unique 
 to a Collider in its own section below.
-```csharp
 
+### Base Class
+```csharp
+//useful variables
+Collider collider = GetComponent<Collider>();
+Bounds bounds = collider.bounds;//get a bounding box for the collider
+bool enabled = collider.enabled;//enables or disables collisions with this collider
+
+bool trigger = collider.isTrigger;//gets or sets if this collider is a trigger collider or a normal collider.
+                                //trigger colliders dont apply collision forces to rigidbodies. 
+                                //Instead they just detect intersections with them.
+                                //this is very useful for triggering dialogue, explosions, or whenever you want detect presence.
+
+Layermask maskInc = collider.includeLayers;//overrides what a collider could normally collide with given its gameobject's layer.
+Layermask maskExc = collider.excludeLayers;//overrides what a collider could normally can't collide with given its gameobject's layer.
+
+PhysicsMaterial material = collider.material;//specific instance of this physics material used by this collider only
+PhysicsMaterial sharedMaterial = collider.sharedMaterial;//physics material for the collider. modification may affect other colliders.
+```
+```csharp
+//functions!
+Vector3 pos;
+Vector3 closest = collider.ClosestPoint(pos);//returns the closest point to pos that is on the surface of this collider.
+
+Ray ray;
+RaycastHit hit; //more on this bad body in the Writing Physics Code Section!
+float maxDistance;
+if (collider.Raycast(ray, out hit, maxDistance){//cast a ray that can only intersect with this collider, no others.
+    //ray intersects this collider!
+}
+```
+```csharp
+//messages!
+//These are called in the physics loop *after* the internal physics update
+void OnTriggerEnter(Collider col){}//called once the tick a collider enters a trigger
+                            //called on both the trigger and the entering collider
+                            //parameter col is the other collider of the interaction
+void OnTriggerStay(Collider col){}//called every tick for every collider is inside a trigger
+                            //called on both the trigger and the entering collider
+                            //parameter col is the other collider of the interaction
+void OnTriggerExit(Collider col){}//called once the tick a collider exits a trigger
+                            //called on both the trigger and the entering collider
+                            //parameter col is the other collider of the interaction
+```
+### BoxCollider
+```csharp
+BoxCollider box = GetComponent<BoxCollider>();
+
+Vector3 center = box.center;//center point of the collider in *local* space. basically just an offset.
+Vector3 size = box.size;//size of the box on each axis in *local* space. This does not include transform scaling.
 ```
 
-## Joints
+### SphereCollider
+```csharp
+SphereCollider sphere = GetComponent<SphereCollider>();
+
+Vector3 center = sphere.center;//center point of the collider in *local* space. basically just an offset.
+float rad = sphere.radius;//radius of the sphere in *local* space. This does not include transform scaling.
+```
+
+### CapsuleCollider
+```csharp
+CapsuleCollider cap = GetComponent<SphereCollider>();
+
+Vector3 center = cap.center;//center point of the collider in *local* space. basically just an offset.
+float rad = cap.radius;//radius of the sphere the capsule is based on in *local* space. This does not include transform scaling.
+int dir = cap.direction;//axis the capsule extends into. X axis = 0, Y axis = 1, Z axis = 2.
+float height == cap.height;//height of the capsule from tip to tip in *local* space.
+```
+
+### MeshCollider
+Mesh colliders will generate a collider from a mesh, but this comes with some restrictions. Mesh colliders essentially have 
+two modes: Convex and Non-Convex. Non-convex is the default, and will generate a collider that closely matches the given mesh.
+However, in this mode the collider cannot be used on non-kinematic rigidbodies. It will also never collide with other 
+non-convex mesh colliders. Enabling convex mode will change how the collider is calculated. It will now sort of shrink-wrap a
+sphere around your mesh. If the mesh has any large concave areas, this may result in incorrect collision. Use multiple colliders
+if you really need concave collision. When convex, mesh colliders can be used like any other collider. They can be on 
+dynamic rigidbodies, and they can be triggers.
+```csharp
+MeshCollider meshCollider = GetComponent<MeshCollider>();
+
+//warning: changing either of these are runtime will cause the collider to be re-calculated, which can be expensive!
+bool convex = meshCollider.convex;//get or set if the collider is in convex mode or not
+Mesh mesh = meshCollider.sharedMesh;//get or set the mesh this collider is based on.
+```
+
+## ArticulationBody
+Back in my day, when I was a young whippersnapper like yourself, rigidbody connections in Unity were done with joint components.
+There were several types, and you could place them on rigidbodies to connect them in various ways. This system was clunky, 
+inaccurate for objects with greatly different masses, and infamously unstable. This system has now been replaced with articulation bodies!
+Well, both systems are still supported, but as far as I can tell articulation bodies are just better in every way, so I will
+only cover them here.
+
+The ArticulationBody component is essentially the rigidbody component and an old joint component merged into one. To start,
+add an ArticulationBody component (and a collider if you want) to a gameobject. To make a connection, add a child gameobject to
+this one and add another ArticulationBody component to it! The scene hierarchy itself defines what is connected to what.
+
+Every articulation body in the hierarchy except the root articulation body will have options in their inspector to configure
+the connection they have to their parent. There is a dropdown at the bottom of the inspector to selection the articulation joint
+type. Fixed is a static welded connection, prismatic is a telescopic/slider connection, revolute is a hinge joint connection,
+and spherical is a ball joint connection. For every axis the joint allows motion on, settings will appear to configure that axis.
+Changing an axis from free to limited will let you define a swing range either in numbers or with a gizmo in the scene view.
+You can also specify stiffness, dampening, or a drive, which acts as a motor that applies a torque to the hinge. The rabbit hole
+here is deep, I won't cover every possibility here. Have fun experimenting!
+
+ArticulationBody has a lot of variables and functions that are similar to their counterparts in the Rigidbody component. I 
+will only be covering the unique ones here.
+```csharp
+ArticulationBody art = GetComponent<ArticulationBody>();
+Vector3 hingePos = art.anchorPosition;//joint position in local space
+Quaternion hingeRot = art.anchorRotation;//joint rotation in local space
+
+bool kinematic = art.immovable;//sets the body to be basically kinematic. only meant to work on the root body.
+bool root = art.isRoot;//returns true if this articulation body is the root of a hierarchy or not.
+
+//there are a ton of variables for configuring the joints in code.
+//here are some of them, theres a lot more in the documentation!!
+ArticulationReducedSpace force = art.driveForce;//force the drive is applying on each axis
+                                //ArticulationReducedSpace is basically just an array long enough for each appplicable axis
+ArticulationReducedSpace pos = art.jointPosition;//meters or radians the joint is currently along in its path of travel
+ArticulationReducedSpace vel = art.jointVelocity;//meters/sec or radians/sec the joint is currently moving at
+```
+
+## The Physics Class
+The physics class is a static class that you can use to interact with the entire physics world as a whole. In practice, it
+is mostly used for raycasting, but there are some other useful things in it as well!
+
+```csharp
+//variables!
+float bounceThreshold = Physics.bounceThreshold;//minimum relative speed things need to bounce. default is 2.
+Vector3 gravity = Physics.gravity;//gravity vector of the physics simultaion
+Vector3 clothGravity = Physics.clothGravity;//gravity vector used for cloth physics
+float maxSpeed = Physics.defaultMaxAngularSpeed;//max speed things can rotate in radians/sec. default is 50
+bool backfaces = Physics.queriesHitBackfaces;//get or set if ray/shape casts hit the back faces of colliders. default is false.
+bool triggers = Physics.queriesHitTriggers;//get or set is ray/shape casts hit triggers by default.
+```
+
 
 ## Writing Physics Code
 cover ForceMode!! and RaycastHit!!! and QueryTriggerInteraction!!
-
-## The Physics Class
 
 ## Physics Settings
 
