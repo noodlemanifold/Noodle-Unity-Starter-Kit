@@ -1,100 +1,100 @@
 
 # Welcome!
 
-This is Roxy's Cheatsheet for developing games in Unity! It has notes, syntax, and guides for a lot of things in the 
-engine! I wrote this with beginners in mind, but there are still advanced sections for more experienced developers. 
-If you see a section and have no idea whats going on, thats ok! All the necessary sections are accessible and easy. 
-All the content in this document is layed out in the table of contents below. Click on any section to jump to it. 
-Section headers may be followed with a 📓. Clicking 📓 will take you to any relevant documentation. Let me know if there is anything left out that you would like me to include! Take a 
+This is Roxy's Cheatsheet for developing games in Unity! It has notes, syntax, and guides for a lot of things in the
+engine! I wrote this with beginners in mind, but there are still advanced sections for more experienced developers.
+If you see a section and have no idea whats going on, thats ok! All the necessary sections are accessible and easy.
+All the content in this document is layed out in the table of contents below. Click on any section to jump to it.
+Section headers may be followed with a 📓. Clicking 📓 will take you to any relevant documentation. Let me know if there is anything left out that you would like me to include! Take a
 deep breath, relax, and have fun creating! 💗
 
 # Table of Contents
 
 * [🎓 Reference](#-reference)
-  * [Unity Documentation](#unity-documentation)
-  * [Tutorials](#tutorials)
+    * [Unity Documentation](#unity-documentation)
+    * [Tutorials](#tutorials)
 * [🔥 Hotkeys](#-hotkeys)
 * [🎼 C# Syntax](#-c-syntax)
-  * [Types](#types)
-  * [Fields](#fields)
-  * [Properties](#properties)
-  * [Functions](#functions)
-  * [Classes & Structs](#classes--structs)
-  * [Interfaces](#interfaces)
-  * [Collections](#collections)
-  * [Delegates](#delegates)
-  * [Generics](#generics)
-  * [Misc](#misc)
+    * [Types](#types)
+    * [Fields](#fields)
+    * [Properties](#properties)
+    * [Functions](#functions)
+    * [Classes & Structs](#classes--structs)
+    * [Interfaces](#interfaces)
+    * [Collections](#collections)
+    * [Delegates](#delegates)
+    * [Generics](#generics)
+    * [Misc](#misc)
 * [🖼️ Scenes](#-scenes)
-  * [Scene Templates](#scene-templates)
-  * [Multiple Scenes](#multiple-scenes)
-  * [Managing Scenes in Code](#managing-scenes-in-code)
+    * [Scene Templates](#scene-templates)
+    * [Multiple Scenes](#multiple-scenes)
+    * [Managing Scenes in Code](#managing-scenes-in-code)
 * [🦴 GameObjects](#-gameobjects)
 * [🫙 MonoBehaviours](#-monobehaviours)
-  * [Messages](#messages)
-  * [Managing in Code](#managing-in-code)
-  * [Coroutines](#coroutines)
+    * [Messages](#messages)
+    * [Managing in Code](#managing-in-code)
+    * [Coroutines](#coroutines)
 * [🚋 Transforms](#-transforms)
-  * [Position, Rotation, and Scale](#position-rotation-and-scale)
-  * [Hierarchy](#hierarchy)
+    * [Position, Rotation, and Scale](#position-rotation-and-scale)
+    * [Hierarchy](#hierarchy)
 * [📦️ Prefabs](#-prefabs)
-  * [Overrides](#overrides)
-  * [Variants](#variants)
-  * [Using at Runtime](#using-at-runtime)
+    * [Overrides](#overrides)
+    * [Variants](#variants)
+    * [Using at Runtime](#using-at-runtime)
 * [🕹️ Inputs](#-inputs)
-  * [Terminology](#terminology)
-  * [Theory](#theory)
-  * [Setting up Actions](#setting-up-actions)
-  * [Implementation in Code](#implementation-in-code)
-  * [Actions API](#actions-api)
-  * [PlayerInput Events](#playerinput-events)
-  * [Quick & Dirty Hardcoding](#quick--dirty-hardcoding)
-  * [Reading Values](#reading-values)
-  * [Runtime Rebinding](#runtime-rebinding)
+    * [Terminology](#terminology)
+    * [Theory](#theory)
+    * [Setting up Actions](#setting-up-actions)
+    * [Implementation in Code](#implementation-in-code)
+    * [Actions API](#actions-api)
+    * [PlayerInput Events](#playerinput-events)
+    * [Quick & Dirty Hardcoding](#quick--dirty-hardcoding)
+    * [Reading Values](#reading-values)
+    * [Runtime Rebinding](#runtime-rebinding)
 * [🧮 Math](#-math)
-  * [Floats](#floats)
-  * [Vectors](#vectors)
-  * [Quaternions](#quaternions)
-  * [Matrices](#matrices)
-  * [Time](#time)
-  * [RNG](#rng)
-  * [Misc](#misc-1)
+    * [Floats](#floats)
+    * [Vectors](#vectors)
+    * [Quaternions](#quaternions)
+    * [Matrices](#matrices)
+    * [Time](#time)
+    * [RNG](#rng)
+    * [Misc](#misc-1)
 * [📄 2D](#-2d)
-  * [Perspective](#perspective)
-  * [Depth](#depth)
-  * [Sprites](#sprites)
-  * [Sprite Sheets](#sprite-sheets)
-  * [Tile Maps](#tile-maps)
-  * [Sprite Shapes](#sprite-shapes)
-  * [Animations](#animations)
-  * [Physics2D](#physics2d)
-  * [Lighting](#lighting)
+    * [Perspective](#perspective)
+    * [Depth](#depth)
+    * [Sprites](#sprites)
+    * [Sprite Sheets](#sprite-sheets)
+    * [Tile Maps](#tile-maps)
+    * [Sprite Shapes](#sprite-shapes)
+    * [Animations](#animations)
+    * [Physics2D](#physics2d)
+    * [Lighting](#lighting)
 * [🎥 Rendering](#-rendering)
-  * [Universal Render Pipeline](#universal-render-pipeline)
-  * [Camera](#camera)
-  * [Importing Models](#importing-models)
-  * [MeshRenderer](#meshrenderer)
-  * [Materials](#materials)
-  * [Lighting](#lighting-1)
-  * [Shadows](#shadows)
+    * [Universal Render Pipeline](#universal-render-pipeline)
+    * [Camera](#camera)
+    * [Importing Models](#importing-models)
+    * [MeshRenderer](#meshrenderer)
+    * [Materials](#materials)
+    * [Lighting](#lighting-1)
+    * [Shadows](#shadows)
 * [🏃 Animations](#-animations)
-  * [Animation Window](#animation-window)
-  * [Animation Clips](#animation-clips)
-  * [Animation Manager](#animation-manager)
-  * [Playing Animations](#playing-animations)
-  * [Rigging & Procedural Animation](#rigging--procedural-animation)
-  * [Animating Variables](#animating-variables)
+    * [Animation Window](#animation-window)
+    * [Animation Clips](#animation-clips)
+    * [Animation Manager](#animation-manager)
+    * [Playing Animations](#playing-animations)
+    * [Rigging & Procedural Animation](#rigging--procedural-animation)
+    * [Animating Variables](#animating-variables)
 * [🥏 Physics](#-physics)
-  * [Rigidbody](#rigidbody)
-  * [Colliders](#colliders)
-  * [ArticulationBody](#articulationbody)
-  * [The Physics Class](#the-physics-class)
-  * [Writing Physics Code](#writing-physics-code)
-  * [Physics Settings](#physics-settings)
+    * [Rigidbody](#rigidbody)
+    * [Colliders](#colliders)
+    * [ArticulationBody](#articulationbody)
+    * [The Physics Class](#the-physics-class)
+    * [Writing Physics Code](#writing-physics-code)
+    * [Physics Settings](#physics-settings)
 * [🔊 Audio](#-audio)
-  * [Audio Listener](#audio-listener)
-  * [Audio Clip](#audio-clip)
-  * [Audio Source](#audio-source)
+    * [Audio Listener](#audio-listener)
+    * [Audio Clip](#audio-clip)
+    * [Audio Source](#audio-source)
 * [🖥️ UI](#-ui)
 * [💾 Save Data](#-save-data)
 * [✏️ Editor Scripts](#-editor-scripts)
@@ -110,7 +110,7 @@ deep breath, relax, and have fun creating! 💗
 [Unity 6 Resources](https://unity.com/campaign/unity-6-resources)  
 [Unity 6 Documentation](https://docs.unity3d.com/Manual/index.html)  
 [Unity 6 Package Documentation](https://docs.unity3d.com/Manual/pack-safe.html)  
-[Universal RP Shader Documentation](https://www.cyanilux.com/tutorials/urp-shader-code/)  
+[Universal RP Shader Documentation](https://www.cyanilux.com/tutorials/urp-shader-code/)
 
 ## Tutorials
 
@@ -202,7 +202,7 @@ Input Action Window:
 ### Overview
 Types in C# define what kind of information can be stored in a variable. It is important to note, there are two
 categories of types: Value types and Reference Types. Value types can be thought of as variables that are
-the data itself. Assigning a value type variable to another variable duplicates the data. Reference type variables 
+the data itself. Assigning a value type variable to another variable duplicates the data. Reference type variables
 point to the location where the actual data is stored. Passing around or assigning multiple variables to a
 reference type just moves around and duplicates this pointer without changing or duplicating the data itself.
 Here are good ones to know:
@@ -420,7 +420,7 @@ public const float pi = 3.14159f; //can never be changed
 [📓](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/properties)
 
 Properties allow you to specify custom behavior for reading or writing to a value while still appearing as a variable
-to code in other classes. They are not actually a variable and do not hold any data themselves. For that, they need a 
+to code in other classes. They are not actually a variable and do not hold any data themselves. For that, they need a
 backing field (variable).
 
 Property Examples:
@@ -942,7 +942,7 @@ Delegates allow you to store and pass functions around inside of a variable, jus
 
 ### Callbacks
 There are many use cases for delegates, but callbacks are one of the most common. If there is a slow function that takes
-a long time, like a file download, it may allow the caller to give it a callback funtion that it will call when the 
+a long time, like a file download, it may allow the caller to give it a callback funtion that it will call when the
 download/task is complete, to notify the caller.
 ```csharp
 //simple callback example
@@ -1043,7 +1043,7 @@ public void ExecuteStep<T>(float time) where T : IState{
 
 ### Lambdas
 [📓](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/lambda-expressions)  
-Lambdas (=>) are a way to create a function without explicitly making a function with a signature and a block. They are 
+Lambdas (=>) are a way to create a function without explicitly making a function with a signature and a block. They are
 never required, but they can make switch statements, properties, and delegates with simple functionality much more readable.
 I am not totally comfortable with them and they are much more powerful than these examples show, this is just the tip of the iceberg.
 ```csharp
@@ -1131,29 +1131,29 @@ Scenes are assets that store a heirarchy of gameobjects that make up a level or 
 such as the skybox and light maps.
 
 You can create a scene by clicking File > New Scene > Select a Template > Create. Save any open scene(s) by pressing
-Ctrl+S or clicking File > Save. Open a scene by double-clicking the scene asset in the assets pane or clicking 
+Ctrl+S or clicking File > Save. Open a scene by double-clicking the scene asset in the assets pane or clicking
 File > Open Scene.
 
 ## Scene Templates
 [📓](https://docs.unity3d.com/Manual/scene-templates.html)  
-Scene Templates allow you to create a blueprint for the starting settings and objects in a scene that can be selected from 
+Scene Templates allow you to create a blueprint for the starting settings and objects in a scene that can be selected from
 in the scene creation window.
 
 To create a scene template, right-click a scene asset in the assets pane and click Create > Scene > Create Template from Scene.
 
-Edit a scene template by selecting it in the assets pane. The top section specifies the template name, description, and 
+Edit a scene template by selecting it in the assets pane. The top section specifies the template name, description, and
 the thumbnail that will appear in the scene creation window. The bottom section contains a list of assets in the template,
-along with tickboxes to specify if they are cloned or not. Objects that are not cloned will behave a bit like prefabs. 
+along with tickboxes to specify if they are cloned or not. Objects that are not cloned will behave a bit like prefabs.
 If the object is modified in the scene template, those changes will also show up in scenes created from that template.
 However, if the object is cloned, any changes to the scene template will not be copied over to the created scene.
 
 ## Multiple Scenes
 [📓](https://docs.unity3d.com/Manual/setupmultiplescenes.html)  
 You can have multiple scenes open at once! This is useful for managers or UI or anything that should persist between levels.
-To open a second scene, just click and drag it into the scene hierarchy.  
+To open a second scene, just click and drag it into the scene hierarchy.
 
-When multiple scenes are open, the lighting and skybox settings are pulled from the active scene. You can set the active 
-scene by right-clicking it in the scene hierarchy and clicking Set Active Scene.  
+When multiple scenes are open, the lighting and skybox settings are pulled from the active scene. You can set the active
+scene by right-clicking it in the scene hierarchy and clicking Set Active Scene.
 
 Right-Click a scene and select Remove Scene
 to remove it.
@@ -1218,7 +1218,7 @@ SceneManager.sceneUnloaded += UnloadSceneCallback;//delegate that fires when a s
 [📓](https://docs.unity3d.com/ScriptReference/GameObject.html)  
 GameObject is the base class anything in the scene must be derived from. This includes lights, particle systems, characters,
 levels, props, or anything in the scene hierarchy. Because GameObjects are so universal, they are also very generic, so there is not much
-functionality to cover, but here are a few useful things about them! 
+functionality to cover, but here are a few useful things about them!
 
 ```csharp
 GameObject go = new GameObject("Nice Name");//creates an empty gameobject and assigns it to go
@@ -1415,10 +1415,10 @@ firstChild.SetSiblingIndex(1);//reorder a transform relative to its siblings. th
 ```
 
 # 📦️ Prefabs
-[📓](https://docs.unity3d.com/Manual/Prefabs.html)  
+[📓](https://docs.unity3d.com/Manual/Prefabs.html)
 
 Prefabs allow you to save a gameobject and its children as an asset in your project that can be resued multiple times or
-created at runtime. When you edit the prefab asset, any changes you make are automatically sent to any instances in any 
+created at runtime. When you edit the prefab asset, any changes you make are automatically sent to any instances in any
 of your scenes.
 
 To create a prefab, simply drag and drop a gameobject from the scene hierarchy into a folder in the assets pane. Prefabs
@@ -1437,14 +1437,14 @@ altering the exposed variables of any component on any object in the prefab. You
 Overridden settings will be bolded in the inspector pane.
 
 To manage overrides, select a prefab instance in the scene hierarchy, and click the Overrides button at the top of the
-inspector pane. This will show you everything that is overridden in the instance, and allows you to revert it to the 
+inspector pane. This will show you everything that is overridden in the instance, and allows you to revert it to the
 way it is in the prefab, or apply those changes to the root prefab asset so all other instances have that change
 as well.
 
 ## Variants
 
-Prefab variants allow you to make a copy of a prefab with some alterations, and use that as its own prefab. It works the 
-same as material variants. 
+Prefab variants allow you to make a copy of a prefab with some alterations, and use that as its own prefab. It works the
+same as material variants.
 
 To create a variant, right-click a prefab and select Create > Prefab Variant. Editing them is the same as editing normal
 prefabs. Any changes you make in an prefab instance work just like the overrides system. Values you change yourself will
@@ -1465,22 +1465,22 @@ void Start(){
 
 # 🕹️ Inputs
 [📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/index.html)  
-In Unity 6, game input is handled with the Input System package. This is different from the old built in Input Manager, 
-so be careful when looking up guides. The Input System supports actions, action maps, runtime rebinding, and a ton of 
+In Unity 6, game input is handled with the Input System package. This is different from the old built in Input Manager,
+so be careful when looking up guides. The Input System supports actions, action maps, runtime rebinding, and a ton of
 devices! There's a ton of theory for this one, so I've broken it up into sections. Good luck!
 
 ## Terminology
-[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Concepts.html)  
-- A **user** is a player of your game. 
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Concepts.html)
+- A **user** is a player of your game.
 - A **device** is the input hardware they are using (controller, keyboard & mouse, pen, etc...).
 - A **control** is an individual sensor or group of sensors on a device. Most commonly these are buttons, but they also include
-joysticks, triggers, and mouse movement.
+  joysticks, triggers, and mouse movement.
 - An **action** is a verb or, well, action, that happens in your game. Common ones are "Move", "Jump", and "Fire". Actions
-have a type as well. They can be a bool, float, Vector2, and other exotic things I've never used.
+  have a type as well. They can be a bool, float, Vector2, and other exotic things I've never used.
 - An **action map** is a group of actions that go with a scenario in your game. By default, there are two: "Player" and "UI".
-Additional ones could be "Vehicle", "Battle", or "Editor".
+  Additional ones could be "Vehicle", "Battle", or "Editor".
 - A **binding** is a link between an action and a control. The most common example is a bool action triggered by a button.
-One action can have multiple bindings. These can be for different devices or multiple controls on the same device. 
+  One action can have multiple bindings. These can be for different devices or multiple controls on the same device.
 
 ## Theory
 The idea behind the Input System is to have one actions asset for your entire project, with all the actions maps, actions, and bindings
@@ -1492,10 +1492,10 @@ actions in it.
 
 ## Setting up Actions
 Unity 6 will generate an actions asset for you in the Assets folder of your project. Double-click it to open it. Save your changes
-or enable Auto Save in the top right. 
+or enable Auto Save in the top right.
 
 To add an Action Map, click the Plus at the top of the Action Maps section, type in a name,
-and press enter. Left-click an action map to edit its actions. 
+and press enter. Left-click an action map to edit its actions.
 
 To add an action, click the plus at the top of the Actions section,
 type in a name, and press enter. To edit an action, left click it, and options will appear in the Properties panel on the
@@ -1503,8 +1503,8 @@ right. Select button to make it a simple on or off, or select value to make it a
 also add Interactions to make things like double click or hold, and Processors to invert, normalize, add deadzones, and more
 to input values.
 
-To add a binding, select an action and click the plus to the right of its name. Most of the time you will just want to 
-click Add Binding, but if you wish to make a multi-key combo, like WASD for movement, click Add Composite (Modifier bindings are used 
+To add a binding, select an action and click the plus to the right of its name. Most of the time you will just want to
+click Add Binding, but if you wish to make a multi-key combo, like WASD for movement, click Add Composite (Modifier bindings are used
 for things like Shift+Click. I've never used them). Left-click a binding to edit it, and its settings will appear in the Properties
 section on the right. Click the box to the right of path and navigate through the menus to select which input you would like, or
 search for it at the top. Below that it asks which control scheme you wish for that binding to be active in. Select the scheme
@@ -1515,7 +1515,7 @@ that matches the input device you set the bind for. Interactions and Processors 
 Unity intends for there to be 3 different ways for you to interact with the Input System, each with different pros and cons.
 The next 3 sections will each cover one. They are using the Actions API, PlayerInput Events, and Quick & Dirty Hardcoding. The Actions API
 is the recommended method and has all input behavior defined in code, as opposed to having links in the editor, which can make debugging easier. It also allows
-for more custom behavior. However, it does require more code. PlayerInput Events lets you set up events that will trigger your code 
+for more custom behavior. However, it does require more code. PlayerInput Events lets you set up events that will trigger your code
 when needed. This results in less code, but can make de-bugging trickier. This approach does have a baked in solution for local
 multiplayer when combined with the PlayerInputManager. Quick & Dirty Hardcoding completely bypasses action maps, actions, and bindings,
 and just lets you quickly check if a button is pressed. This is good for prototyping and game jams, but shouldn't be used for anything serious.
@@ -1613,7 +1613,7 @@ public void MoveCallback(InputAction.CallbackContext context){
 Now, in the Unity Editor, select the GameObject with your Player Input Component. In the inspector, go to the PlayerInput
 component, and expand the section for Events. Open the Action Map you want, scroll down to the action you want, and click the
 plus at the bottom of the box below it. Drag the GameObject with your input script into the field that says "None (Object)".
-Now click the dropdown to the right of that field. Hover over your input script, and then select the appropriate method 
+Now click the dropdown to the right of that field. Hover over your input script, and then select the appropriate method
 from the section at the top labelled Dynamic CallbackContext. If you don't see it, make sure it matches the function above.
 All Done! ^-^
 
@@ -1624,7 +1624,7 @@ playerInput.SwitchCurrentActionMap("Player");
 ```
 
 ## Quick & Dirty Hardcoding
-[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflow-Direct.html)  
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflow-Direct.html)
 ```csharp
 //sometimes we like it a little quick and dirty
 using UnityEngine.InputSystem;
@@ -1655,7 +1655,7 @@ public void MoveCallback(InputAction.CallbackContext context){
 ```
 
 ## Runtime Rebinding
-[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/ActionBindings.html#interactive-rebinding)  
+[📓](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/ActionBindings.html#interactive-rebinding)
 ```csharp
 //interactive rebinding where the user presses the button they want bound
 //this will work for most cases but not all. For those cases, look at the documentation for changing the default rebinding settings.
@@ -1878,9 +1878,9 @@ Vector3 noSlamps = Vector3.SlerpUnclamped(vecA, vecB, 1.3f);//same as slerp, but
 
 ## Quaternions
 [📓](https://docs.unity3d.com/ScriptReference/Quaternion.html)  
-Quaternions are 4 dimensional unit vectors that lie on the surface of a 4 dimensional sphere with a radius of one. 
+Quaternions are 4 dimensional unit vectors that lie on the surface of a 4 dimensional sphere with a radius of one.
 By the magic of group theory, those vectors can be used to represent rotations for objects in 3D space.
-Fortunately, Unity hides all that complexity, and gives us an API to work with them in a simple way. 
+Fortunately, Unity hides all that complexity, and gives us an API to work with them in a simple way.
 Remember, they are not Vector4s, they work differently and have different rules!
 
 Quaternions are used exclusively for working with rotations in Unity. They are better than Euler Angles because they interpolate
@@ -1890,7 +1890,7 @@ smoothly from one rotation to another, they never experience gimbal lock, and th
 Quaternions can be thought of as not storing rotations, but storing a rotational movement from a starting rotation, if that
 makes any sense. It is the rotational equivalent of storing a distance, not a location. If you just have one Quaternion, it represents a movement from the default (identity) rotation to a new rotation.
 When you combine Quaternions, these movements can instead start from a different rotation. This is how you do math with Quaternions,
-by combining different rotational movements to build a new rotation. If you play with this idea in your head, you can see 
+by combining different rotational movements to build a new rotation. If you play with this idea in your head, you can see
 why Quaternion combinations are not commutative. The order in which you apply them matters.
 
 There are almost no circumstances where you will create or modify the individual components of a Quaternion. In 99% of cases
@@ -1985,8 +1985,8 @@ Matrices are a mathematical structure that stores a small grid of numbers. Unity
 the most common of them is Matrix4x4, so I will be covering that. Matrices are most used for representing transformations
 (positions, rotation, scale) of objects in various coordinate spaces (world, local, view); Here is how to use them in Unity!
 
-Matrices in Unity are column-major and use homogenous coordinates. For the 4x4 matrix, the first column represents the X axis, 
-second the Y axis, third the Z axis, and 4th the translation. 
+Matrices in Unity are column-major and use homogenous coordinates. For the 4x4 matrix, the first column represents the X axis,
+second the Y axis, third the Z axis, and 4th the translation.
 ```csharp
 //creation
 Matrix4x4 emptyMat = Matrix4x4.identity;
@@ -2110,7 +2110,7 @@ Vector3 alongBy10 = ray.GetPoint(10f);//returns a point some distance along the 
 
 ### Rect
 [📓](https://docs.unity3d.com/ScriptReference/Rect.html)  
-Rect is a class that represents a 2D rectangle. It simultaneously supports two ways to represent the rectangle. One way 
+Rect is a class that represents a 2D rectangle. It simultaneously supports two ways to represent the rectangle. One way
 is specifying a point, and then storing the width and height of the rectangle from that point. The other is storing the x coordinate
 for the left and right sides of the box, called xMin and xMax, and the y coordinates of the top and bottom of the box, called
 yMin and yMax. You can use either representation method or use them interchangeably with the same Rect object.
@@ -2148,7 +2148,7 @@ bool overlap = rect.Overlaps(rect2);//returns true if the two rects overlap each
 
 ### Bounds
 [📓](https://docs.unity3d.com/ScriptReference/Bounds.html)  
-This class is similar to Rect, but for 3D. It represents an axis-aligned bounding box, which you may have seen abreviated 
+This class is similar to Rect, but for 3D. It represents an axis-aligned bounding box, which you may have seen abreviated
 as AABB. Since the box is never rotated, it can be represented with just a center point and a size.
 
 ```csharp
@@ -2215,12 +2215,12 @@ for making 2D games in Unity!
 This is necessary so players can't feel how flat the game truly is. When making a 2D game, there are still all kinds of perspective styles you can choose.
 There is top down, where you look at the world from the perspective of a cloud. The straight side on view from Mario is a classic. You can pick a middle ground between side
 view and top down that looks down at the world at an angle, like in Stardew Valley. If you then rotate the Camera on an imaginary
-vertical axis, your camera is angled in two different axises, and the result is the Isometric Perspective, as seen in Monument Valley. 
+vertical axis, your camera is angled in two different axises, and the result is the Isometric Perspective, as seen in Monument Valley.
 If you have another idea, feel free to try it, the only rule here is that it must be fun!
 
 
 ## Depth
-In order to make a 2D game in Unity, you don't have to change anything in the editor. Just enable the "View Options" scene 
+In order to make a 2D game in Unity, you don't have to change anything in the editor. Just enable the "View Options" scene
 view toolbar and hit the 2D button. This just changes the scene view Camera to be orthographic and to look down the Z axis.
 2D games in Unity are still 3D and fully capable of being a 3D game. This means it is possible to make 2.5D games, but it
 also means every 2D Unity game still has the third dimension. The Z coordinate is used to determine which sprites are drawn
@@ -2235,9 +2235,9 @@ Sprites are just 2D images for your 2D game. It may seem simple, but they can ge
 If you just drag and drop an image into your Unity project, it won't work as a sprite. You must first change its import settings.
 Single click the image in the assets pane, and its import settings will appear in the inspector pane. Change the Texture Type
 at the top from Default to Sprite (2D and UI). When you do this, new options will appear. Change the pixels per unit variable to
-determine how large your sprite is rendered in the world. The higher the number, the smaller it will be. Click the button labelled Open Sprite Editor. A preview of your sprite will appear. 
-Left-click hold the top left of your sprite, drag to the bottom right of your sprite, and release. A bounding box defining your 
-sprite will appear. You can click and drag the corners to adjust it. This is the workflow for simple object sprites, there is 
+determine how large your sprite is rendered in the world. The higher the number, the smaller it will be. Click the button labelled Open Sprite Editor. A preview of your sprite will appear.
+Left-click hold the top left of your sprite, drag to the bottom right of your sprite, and release. A bounding box defining your
+sprite will appear. You can click and drag the corners to adjust it. This is the workflow for simple object sprites, there is
 more you can do later with tile maps and 9-slicing. When you are happy, click Apply in the top right, and close the sprite editor.
 Back in the inspector, tick the Alpha is Transparency box if your sprite has any
 transparency in it. The other important settings are found at the bottom. Wrap mode changes how the texture behaves if it
@@ -2294,7 +2294,7 @@ Sprite sheets allow you to have many sprites and/or sprite animation frames all 
 since the GPU just has to shift UV coordinates instead of uploading an entire new image for each sprite or animation frame.
 
 In order to set up a sprite sheet, drag and drop your sprite sheet file into the assets pane and follow the [sprite import instructions](#asset-import).
-After you are finished, click the Open Sprite Editor Button. In the top left, click the Slice Button. The first option is Slice Type. There 
+After you are finished, click the Open Sprite Editor Button. In the top left, click the Slice Button. The first option is Slice Type. There
 are a few options, but I find Grid by Cell Count easiest, so we will do that. Click the dropdown next to Type and choose Grid by Cell Count.
 Put in the number of columns and rows of sprites on your sprite sheet, and include any offsets or padding if you used those when drawing. When you are happy
 with where the red lines are slicing your sheet, hit slice! Now your sprite is a grid of individual sprites. You can now go in
@@ -2317,7 +2317,7 @@ have multiple tilemaps per grid for different layers. To do that, right-click th
 
 Select your tilemap gameobject in the scene hierarchy. In the bottom right of the scene view, there will be a little button that
 says Open Tile Palette. Click it! This window has the tile palette for your tilemap. Drag and drop any number of sprites or
-sprites from a spritesheet into the section where it says to do so. The editor will prompt you to select a folder. It doesn't 
+sprites from a spritesheet into the section where it says to do so. The editor will prompt you to select a folder. It doesn't
 tell you this, but it is about to put a ton of new files in whatever folder you select, so make sure to make a new folder for your
 tilemap and choose that one.
 
@@ -2333,7 +2333,7 @@ can also create your own or find some online. Press the gear icon to hide this s
 If you aren't happy with the size of your sprites in a grid space, change their pixels per unit in their import settings. By default,
 one tilemap cell is one unit by one unit. If you would like to change this, select the Grid gameobject in your scene hierarchy and change the grid size.
 
-A quick note on Physics: you can add a TilemapCollider2D Component to your tile map gameobject, and it will automagically generate 
+A quick note on Physics: you can add a TilemapCollider2D Component to your tile map gameobject, and it will automagically generate
 colliders for every tile in your tile map!!
 
 ## Sprite Shapes
@@ -2355,7 +2355,7 @@ wrap mode set to Repeat. There are also options below this to use bespoke sprite
 Create a sprite shape controller by clicking GameObject > 2D Object > Sprite Shape > Open Shape or Closed Shape. Open shapes are just
 lines with control points. Closed shapes are polygons with a closed interior that will be filled with your fill sprite. Select your
 shape after you create it and look at its Sprite Shape Controller component. Assign you sprite shape profile to the variable named profile.
-under that there is a button to edit the shape. Click that. You can drag any control points to anywhere you like. Click on a line between 
+under that there is a button to edit the shape. Click that. You can drag any control points to anywhere you like. Click on a line between
 two points to add a new control point there. Press the delete key with a control point selected to delete it. In the bottom right of the
 scene view, you can select which type of control point you would like it to be and manually type in values for it. There are other
 options in the sprite shape controller but honestly the defaults seem fine.
@@ -2371,7 +2371,7 @@ create an Animation Controller Asset, assign that controller to the Animator Com
 open the Animation Window, select your character, click Create Animation, save the file in your project, click Add Property,
 select the Sprite variable under Sprite Renderer, and add keyframes for each sprite of your animation, OR, you could do the shortcut.
 Select multiple sprites from a sprite sheet in the asset pane, then click and drag them into the scene hierarchy. Give your animation
-a name and save it somewhere nice in your project. Now all of what I just described has been done for you automatically. Adjust the 
+a name and save it somewhere nice in your project. Now all of what I just described has been done for you automatically. Adjust the
 auto-generated keyframes as necessary. To make more animations, click the dropdown in the top left of the animation window,
 then click Create New Clip. Give it a name and save it. In the new clip, click Add Property, then select Sprite under Sprite Renderer.
 Add keyframes for the various sprites you want. This new animation will show up in your animation controller, and you can set up
@@ -2395,12 +2395,12 @@ with 3D physics, check out the [Physics Section](#-physics). I will just be cove
 Rigidbody2D is pretty much the same as the normal Rigidbody. Add it to things to give them physics simulation. Angular Velocity,
 Rotation, and Angular Inertia are all just floats now because it's 2D. I think that's all!
 
-All your favorite Collider types are back! BoxCollider is now BoxCollider2D, CapsuleCollider is now CapsuleCollider2D, and 
-SphereCollider is now CircleCollider2D! Because 2D physics is computationally so much lighter than 3D, there are also a lot 
+All your favorite Collider types are back! BoxCollider is now BoxCollider2D, CapsuleCollider is now CapsuleCollider2D, and
+SphereCollider is now CircleCollider2D! Because 2D physics is computationally so much lighter than 3D, there are also a lot
 more options for colliders that don't have 3D equivalents. CompositeCollider2D will merge the shape of any other colliders into
 one big collider. EdgeCollider2D lets you draw a line that will collide with things from both sides of the line. PolygonCollider2D
 does the same, but instead lets you define your own wacky closed shape to match any sprite you wish. Keep in mind, unlike with 3D
-physics, there is no restriction on concave colliders. You can make your rigidbody colliders whatever wacky shape you please. Also 
+physics, there is no restriction on concave colliders. You can make your rigidbody colliders whatever wacky shape you please. Also
 keep in mind the Z coordinate is completely ignored for calculations. Use layers if you need objects to pass through each other.
 
 The Physics2D class is very similar to the Physics class. It has a lot of functions, the most useful ones being the overlap functions,
@@ -2410,10 +2410,10 @@ Vector3s. You can find documentation for all these functions [here](https://docs
 There are also more joints available for 2D physics than for 3D. Unity has support for distance joints, fixed joints, friction
 joints, hinge joints, relative joints, slider joints, spring joints, target joints, and wheel (suspension) joints. Have fun!
 
-2D physics has a concept of its own that is missing from 3D physics: effectors. Effectors are basically built in functionality 
+2D physics has a concept of its own that is missing from 3D physics: effectors. Effectors are basically built in functionality
 for trigger colliders. You set one up by first creating a trigger collider. Anything inside this trigger collider will be effected
 by the effector. Make sure both Is Trigger and Used by Effector are both ticked. Then, all you have to do is add an effector as a component to the gameobject.
-Your options are: Area effector, buoyancy effector, platform effector, point effector, and surface effector. The area effector 
+Your options are: Area effector, buoyancy effector, platform effector, point effector, and surface effector. The area effector
 just constantly applies a force in a specified direction. The buoyancy effector "simulates" a fluid with a specified density and
 surface level. Platform effectors are meant for platformers. They make their colliders have one way collisions, remove side friction,
 remove bounciness, and quote, "more". Don't make your collider(s) a trigger when using this effector. Point effectors will apply a force
@@ -2480,15 +2480,15 @@ at all, so you must use sorting layers.
 AnimationCurve pog
 
 # 🥏 Physics
-[📓](https://docs.unity3d.com/ScriptReference/UnityEngine.PhysicsModule.html)  
+[📓](https://docs.unity3d.com/ScriptReference/UnityEngine.PhysicsModule.html)
 
-Unity has a built-in implementation of the Phys-X physics engine that is designed to be easy to set up and use. Lets 
+Unity has a built-in implementation of the Phys-X physics engine that is designed to be easy to set up and use. Lets
 get started!
 
 ## Rigidbody
 [📓](https://docs.unity3d.com/ScriptReference/Rigidbody.html)  
-The Rigidbody Component adds a  rigidbody physics simulation to any gameobject it is attached to. Rigidbody physics simulate 
-objects with no flexing or squishing or bending. There are other simulation types, for instance 
+The Rigidbody Component adds a  rigidbody physics simulation to any gameobject it is attached to. Rigidbody physics simulate
+objects with no flexing or squishing or bending. There are other simulation types, for instance
 softbody physics, but none of them are implemented in Unity. Generally, anytime you want any gameobject to interact with the
 physics system, add the rigidbody component to it!
 
@@ -2521,12 +2521,12 @@ float angularDamping = rb.angularDamping;//slows down rotational velocity. The h
 Vector3 centerOfMass = rb.centerOfMass;//get or set the center of mass in local space
 //theres a lot more in the documentation, but you very likely will never need to touch them :)
 ```
-In addition to these, there are some settings in the Rigidbody Component in the inspector window that are important.  
+In addition to these, there are some settings in the Rigidbody Component in the inspector window that are important.
 
-Interpolate: This setting changes how rigidbodies are visually positioned between physics ticks.  
+Interpolate: This setting changes how rigidbodies are visually positioned between physics ticks.
 - None: Apply no interpolation. This is fine most of the time, unless the rigidbody appears to jitter.
 - Interpolate: Use the last 2 physics frames to pose the rigidbody this frame. Can be more accurate, but may make the rigidbody visibly lag behind where it actually is.
-- Extrapolate: Use the last physics frame position and velocity to guess where the rigidbody should be right now. This can make the rigidbody appear slightly ahead of where it really is, and is best when accuracy is not important, or the object is moving at a mostly constant velocity.  
+- Extrapolate: Use the last physics frame position and velocity to guess where the rigidbody should be right now. This can make the rigidbody appear slightly ahead of where it really is, and is best when accuracy is not important, or the object is moving at a mostly constant velocity.
 
 Collision Detection: This setting changes the method Unity uses to detect collisions.
 - Discrete: Just check for intersections at each physics tick. Much faster than the other methods, but is only accurate at small/medium relative velocities.
@@ -2536,7 +2536,7 @@ Collision Detection: This setting changes the method Unity uses to detect collis
 
 Constraints: Lock the rigidbodies ability to move or rotate along some axises!
 
-There is also a section at the bottom to override what layers this rigidbody will or will not collide with. If these are 
+There is also a section at the bottom to override what layers this rigidbody will or will not collide with. If these are
 not modified, it will follow the normal collision rules for its layer.
 
 ### Functions
@@ -2603,7 +2603,7 @@ If they will never ever move ever, they can be placed in the scene on their own.
 they *need* to be attached to a rigidbody component. If you don't want the collider to react to collisions, make the rigidbody kinematic.
 
 The colliders in Unity are the BoxCollider, SphereCollider, CapsuleCollider, and MeshCollider. All of them inherit from the Collider
-class. I will list all the variables and functions in the Collider class common to all the Collider types, and then put anything unique 
+class. I will list all the variables and functions in the Collider class common to all the Collider types, and then put anything unique
 to a Collider in its own section below.
 
 ### Base Class
@@ -2650,7 +2650,7 @@ void OnTriggerExit(Collider col){}//called once the tick a collider exits a trig
                             //parameter col is the other collider of the interaction
 ```
 ### BoxCollider
-[📓](https://docs.unity3d.com/ScriptReference/BoxCollider.html)  
+[📓](https://docs.unity3d.com/ScriptReference/BoxCollider.html)
 ```csharp
 BoxCollider box = GetComponent<BoxCollider>();
 
@@ -2659,7 +2659,7 @@ Vector3 size = box.size;//size of the box on each axis in *local* space. This do
 ```
 
 ### SphereCollider
-[📓](https://docs.unity3d.com/ScriptReference/SphereCollider.html)  
+[📓](https://docs.unity3d.com/ScriptReference/SphereCollider.html)
 ```csharp
 SphereCollider sphere = GetComponent<SphereCollider>();
 
@@ -2668,7 +2668,7 @@ float rad = sphere.radius;//radius of the sphere in *local* space. This does not
 ```
 
 ### CapsuleCollider
-[📓](https://docs.unity3d.com/ScriptReference/CapsuleCollider.html)  
+[📓](https://docs.unity3d.com/ScriptReference/CapsuleCollider.html)
 ```csharp
 CapsuleCollider cap = GetComponent<SphereCollider>();
 
@@ -2680,12 +2680,12 @@ float height == cap.height;//height of the capsule from tip to tip in *local* sp
 
 ### MeshCollider
 [📓](https://docs.unity3d.com/ScriptReference/MeshCollider.html)  
-Mesh colliders will generate a collider from a mesh, but this comes with some restrictions. Mesh colliders essentially have 
+Mesh colliders will generate a collider from a mesh, but this comes with some restrictions. Mesh colliders essentially have
 two modes: Convex and Non-Convex. Non-convex is the default, and will generate a collider that closely matches the given mesh.
-However, in this mode the collider cannot be used on non-kinematic rigidbodies. It will also never collide with other 
+However, in this mode the collider cannot be used on non-kinematic rigidbodies. It will also never collide with other
 non-convex mesh colliders. Enabling convex mode will change how the collider is calculated. It will now sort of shrink-wrap a
 sphere around your mesh. If the mesh has any large concave areas, this may result in incorrect collision. Use multiple colliders
-if you really need concave collision. When convex, mesh colliders can be used like any other collider. They can be on 
+if you really need concave collision. When convex, mesh colliders can be used like any other collider. They can be on
 dynamic rigidbodies, and they can be triggers.
 ```csharp
 MeshCollider meshCollider = GetComponent<MeshCollider>();
@@ -2697,14 +2697,14 @@ Mesh mesh = meshCollider.sharedMesh;//get or set the mesh this collider is based
 
 ### Physics Material
 [📓](https://docs.unity3d.com/ScriptReference/PhysicsMaterial.html)  
-Physics materials are a neat little asset that let you specify the friction and bounciness of a material. These can be 
+Physics materials are a neat little asset that let you specify the friction and bounciness of a material. These can be
 applied to any collider. You can create one by clicking Assets > Create > Physics Material (at the bottom of the list ;)).
 Single click the file once you have created it to adjust its settings, and then drag and drop it onto any collider to apply it.
 
 ## ArticulationBody
 [📓](https://docs.unity3d.com/ScriptReference/ArticulationBody.html)  
 Back in my day, when I was a young whippersnapper like yourself, rigidbody connections in Unity were done with joint components.
-There were several types, and you could place them on rigidbodies to connect them in various ways. This system was clunky, 
+There were several types, and you could place them on rigidbodies to connect them in various ways. This system was clunky,
 inaccurate for objects with greatly different masses, and infamously unstable. This system has now been replaced with articulation bodies!
 Well, both systems are still supported, but as far as I can tell articulation bodies are just better in every way, so I will
 only cover them here.
@@ -2721,7 +2721,7 @@ Changing an axis from free to limited will let you define a swing range either i
 You can also specify stiffness, dampening, or a drive, which acts as a motor that applies a torque to the hinge. The rabbit hole
 here is deep, I won't cover every possibility here. Have fun experimenting!
 
-ArticulationBody has a lot of variables and functions that are similar to their counterparts in the Rigidbody component. I 
+ArticulationBody has a lot of variables and functions that are similar to their counterparts in the Rigidbody component. I
 will only be covering the unique ones here.
 ```csharp
 ArticulationBody art = GetComponent<ArticulationBody>();
@@ -2830,7 +2830,7 @@ Physics.IgnoreCollision(collider, collider2);//set 2 colliders to never collide 
 ```
 
 ## Writing Physics Code
-In Unity, physics is not tied to the framerate. It is on its own physics loop. That way, frame rate does not affect the 
+In Unity, physics is not tied to the framerate. It is on its own physics loop. That way, frame rate does not affect the
 simulation. This means that anytime you want to interact with anything in physics, it is best to do it inside the physics loop.
 You can do this by putting your physics code in the FixedUpdate() function instead of the Update() function. FixedUpdate()
 is called right before every physics step.
@@ -2878,7 +2878,7 @@ The ones you are most likely to need to change are:
 - Enable Enhanced Determinism: Makes simulation deterministic at the cost of some performance
 - Default Max Angular Speed: Maximum speed anything can rotate at
 
-Cloth lets you override the shared gravity with a separate gravity for cloth (idk why they made it work like this), and enable 
+Cloth lets you override the shared gravity with a separate gravity for cloth (idk why they made it work like this), and enable
 cloth inter-collisions.
 
 # 🔊 Audio
@@ -2892,10 +2892,10 @@ cloth inter-collisions.
 # 🖥️ UI
 
 # 💾 Managing Data
-The easiest way to track data in Unity is to add a variable to the top of your monobehaviour script. However, this has 
-several disadvantages. It is tied to that specific instance of that class, which can make it difficult to reference it 
+The easiest way to track data in Unity is to add a variable to the top of your monobehaviour script. However, this has
+several disadvantages. It is tied to that specific instance of that class, which can make it difficult to reference it
 elsewhere in a spaget-free manner. When there are multiple instances of the object, it can be tricky to keep them in sync.
-The variable is also tied to the lifecycle of the gameobject is it attached to. This 
+The variable is also tied to the lifecycle of the gameobject is it attached to. This
 means if the gameobject is destroyed or the scene is unloaded, the variable and its data are also lost. This section has
 some (but not all) methods for solving this problem, as well as saving and loading data to and from disk to persist between
 launches.
@@ -2954,7 +2954,7 @@ This is great for debugging and rapid prototyping. They can also be used as mana
 belong to any one monobehaviour.
 
 To create a new ScriptableObject script, click Assets > Create > Scripting > ScriptableObject Script. The tag at the top of
-your new class places it in the Assets > Create menu. Feel free to modify this. To create an new instance of your class, 
+your new class places it in the Assets > Create menu. Feel free to modify this. To create an new instance of your class,
 Click Assets > Create > Place you specified in your script file.
 
 For a scriptable object with the class name GameState, you can access and edit it like this:
@@ -2996,7 +2996,7 @@ keep changes between runs of a build of your game. You must still explicitly sav
 ## Serialization & Saving to Disk
 [📓](https://docs.unity3d.com/6000.0/Documentation/Manual/script-serialization.html)  
 Serialization is a complex subject with lots of gotchas. I will touch on it at a really high level, but if you are doing anything
-serious with it, check the documentation and look up some guides. Keep in mind, Unity has its own serialization process 
+serious with it, check the documentation and look up some guides. Keep in mind, Unity has its own serialization process
 built on top of from the one built in to C#.
 
 Serialization is the process of taking variables and objects, and converting them to a file that can be saved on a disk.
@@ -3005,7 +3005,7 @@ private variabes to the inspector is called [SerializeField]. We can hook into t
 
 To mark a custom class as serializable, put the [System.Serializable] tag above its header. Any variable that is public
 (or marked with [SerializeField]) *and* is compatible will be serialized when an object of the class is serialized.
-There are a lot of compatability rules, but the biggest two are that the variable cannot be static and that is must be a 
+There are a lot of compatability rules, but the biggest two are that the variable cannot be static and that is must be a
 compatible type. Compatible types are either primitive types or classes that also have the [System.Serializable] tag themself.
 If you want to serialize a variable of an unsupported type, you must [make your own custom serialization for it like this](https://docs.unity3d.com/6000.0/Documentation/Manual/script-serialization-custom-serialization.html).
 
@@ -3072,7 +3072,7 @@ public class GameState : ScriptableObject {
 PlayerPrefs are a quick and dirty way to save individual variables that are primitive data types. It is whats known as a
 Keystore system, where you give unity a string, which acts as the key, and the variable you want to save. Later, you can ask
 Unity for the value associated with that key and it will give it to you! PlayerPrefs persist on disk across different runs
-of your game, so they are great for saving settings or little pieces of data. This system is super perfomant, so don't use 
+of your game, so they are great for saving settings or little pieces of data. This system is super perfomant, so don't use
 it for anything big.
 ```csharp
 //saving variables into PlayerPrefs
@@ -3101,10 +3101,183 @@ for instance if there is a procedural world, it may be best to create your own d
 with some C# functions. How you choose to save the data, as well as get and set the data to the rest of your project, is
 up to you!
 
-# ✏️ Editor Scripts
-- Gizmos!
-- custom inspector buttons and sliders and stuff]
-- property drawers?
+# ✏️ Editor Scripting
+Editor scripting is truly what makes big projects in Unity possible. It is how you extend the tools Unity gives to make any game
+and create tools to make your game specifically. There is an entire world of making editor scripts, here is just the tip of
+the iceberg.
+
+IMPORTANT NOTE: The Editor class is not included in builds of your game, so any class that extends it for an editor script
+will cause the build to fail. To fix this, either put your editor scripts in a folder named Editor inside
+your project's Assets folder, or surround any code depending on the Editor class with a `#if UNITY_EDITOR ... #endif` preprocessor
+directive.
+
+## Attributes
+Attributes are a quick and easy way to customize the way your variables will look in the inspector without having to write
+any code! You can put multiple of these before a variable and they will all still work. 
+
+### Unity Attributes
+There are a ton of attributes included in Unity, these are just my favorites.
+```csharp
+public class MyClass{
+    [Header("My Variables")]//adds a text header above the variable this attribute precedes
+    
+    [SerializeField] //makes non-public variables visible in the inspector (and serializes them)
+    private float youCanStillSeeMe = 0f;
+    
+    [HideInInspector] //hides public or serialized variables from the inspector
+    public float youCantSeeMeTho = 1f;
+    
+    [Space(10)] //adds a spacing of a number of pixels before the variable this attribute precedes
+    
+                   //displays this int or float as a slider between the two specified values. 
+    [Range(0,20)] //Does not prevent this variable from exceeding those bounds when set via code
+    public float range = 0f;
+    
+    [ToolTip("I'm so fun and helpful ^-^")]//displays a string when you hover over the variable name in the inspector.
+    public int crypticVariableName;
+    
+                    //displays a string variable as an expanded text box. 
+    [TextArea(5,10)]//Parameters are the minimum and maximum number of lines to display before switching to a scrollbar.
+    public string smallNovel = "Hey Roxy how are you?";
+}
+```
+
+### Custom Attributes
+Property Drawers: [📓](https://docs.unity3d.com/ScriptReference/PropertyDrawer.html)  
+Decoration Drawers: [📓](https://docs.unity3d.com/ScriptReference/DecoratorDrawer.html)  
+You can make your own attributes!! :O  
+As always, the rabbit hole here is very deep, but here is a basic example that adds a divider line between variables:
+```csharp
+public class DividerAttribute : PropertyAttribute {
+    public float thickness;
+    public float margin;
+
+    public DividerAttribute(float thickness = 1, float margin = 20) {
+        this.thickness = thickness;
+        this.margin = margin;
+    }
+}
+
+[CustomPropertyDrawer(typeof(DividerAttribute))]
+public class DividerDrawer : DecoratorDrawer { //inherit from property drawer to change how a property is drawn
+
+    public override VisualElement CreatePropertyGUI() {
+        VisualElement container = new VisualElement();
+        DividerAttribute divider = attribute as DividerAttribute;
+        
+        //optionally you can load in a .uxml file instead of defining the UI in code.
+        //VisualTreeAsset tree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/DividerAttribute.uxml");
+        //container = tree.Instantiate();
+        
+        VisualElement bar = new VisualElement();
+        bar.style.backgroundColor = Color.gray;
+        bar.style.height = divider!.thickness;
+        bar.style.marginTop = divider!.margin;
+        bar.style.marginBottom = divider!.margin;
+        container.Add(bar);
+        return container;
+    }
+}
+```
+```csharp
+// our custom property works just like this!
+public class SuperCoolScript : MonoBehaviour {
+    public float coolFloat;
+    [Divider(2, 20)]
+    public int totallySeparateInt;
+}
+```
+
+## Gizmos
+[📓](https://docs.unity3d.com/ScriptReference/Gizmos.html)  
+Gizmos are the quirky little overlays Unity draws when you select an object in the scene view. You can make your own 
+custom ones! Here is how:
+```csharp
+public class MyComponent : MonoBehaviour {
+    //very good very important game code goes here yes yes
+}
+    
+#if UNITY_EDITOR
+public class MyComponent : Editor {
+    //Gizmo types: https://docs.unity3d.com/ScriptReference/GizmoType.html
+    [DrawGizmo(GizmoType.InSelectionHierarchy)]
+    static void DrawMyGizmos(MyComponent script, GizmoType type){//you can call this anything
+        //gizmos are drawn in a nanoVG/immediate-esque style.
+        //If you've never used something like this, just know you have to call functions to set drawing settings
+        //and then also call functions to actually draw separately after. 
+        Gizmos.color = Color.magenta;//sets color of all gizmos drawn after this to pink
+        Gizmos.matrix = Matrix4x4.identity;//set a transformation matrix to apply to all future gizmos
+                                        //use this to rotate and scale Gizmos.
+                                        //set this to transform.worldToLocalMatrix to draw gizmos on a transform
+        Vector3 center, Vector3 size;
+        Gizmos.DrawCube(center, size);
+        Gizmos.DrawWireCube(center, size);
+        Gizmos.DrawSphere(center, radius);
+        Gizmos.DrawWireSphere(center, radius);
+        Mesh mesh;
+        Quaternion rotation;
+        Gizmos.DrawMesh(mesh, center, rotation, size);//this one has its own transformation stuff for some reason.
+        Gizmos.DrawWireMesh(mesh, center, rotation, size);
+        Vector3 direction;
+        Gizmos.DrawRay(center, direction);
+        
+        Gizmos.DrawFrustum(center,fov,farPlaneDist,nearPlaneDist,aspectRatio);
+        
+        Vector3 from, to;
+        Gizmos.DrawLine(from,to);
+        Vector3[] points;//must be an even number of points
+        Gizmos.DrawLineList(points);//draws a line between points as from,to,from,to... till the end of the array.
+        Vector3 pointsStrip;//can be odd
+        bool loopToStart;
+        Gizmos.DrawLineStrip(pointsStrip, loopToStart);//draws lines connecting all the points. useful for splines and stuff!
+        
+        //There are functions to draw icons but theyre annoying and I hate them so look that up if you want it :3
+    }
+}
+#endif
+```
+
+## Custom Inspectors
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/UIE-HowTo-CreateCustomInspector.html)  
+You can modify or completely redefine how your component looks in the inspector window. We can use [UI Toolkit](#-ui) to
+define our own layout!
+
+### Adding a Button
+```csharp
+public class CoolScript : MonoBehaviour {
+    public float favoriteNumber;
+    public void Clicked() {
+        Debug.Log("Clicked!");
+    }
+}
+
+#if UNITY_EDITOR
+[CustomEditor ( typeof(CoolScript))]
+public class InspectorCoolScript : Editor {
+    public override VisualElement CreateInspectorGUI() {
+        VisualElement container = new VisualElement();//create root element of our inspector UI
+        CoolScript script = (CoolScript)target;//the component this is an inspector for
+        
+        InspectorElement.FillDefaultInspector(container, serializedObject, this);//draw the default inspector
+
+        Button button = new Button();//make a new button
+        button.text = "Click!";//set button text
+        button.clickable = new Clickable(() => { script.Clicked(); });//lambda function called on button click
+        button.style.marginTop = 10;//set some nice spacing
+        
+        container.Add(button);//append our button to the UI layout
+        
+        return container;//return our super cool layout
+    }
+}
+#endif
+```
+
+### Complex Example
+
+### Loading a UXML Layout from File
+
+## Custom Windows
 
 # 🗄️ Multiplayer
 
