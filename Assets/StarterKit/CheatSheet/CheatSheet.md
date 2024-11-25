@@ -9,34 +9,99 @@ Section headers may be followed with a 📓. Clicking 📓 will take you to any 
 deep breath, relax, and have fun creating! 💗
 
 # Table of Contents
-1. [🎓 Reference (Documentation & Tutorials)](#-reference)
-2. [🎼 C# Syntax](#-c-syntax)
-    1. [Types](#types)
-    2. [Fields](#fields)
-    3. [Properties](#properties)
-    4. [Functions](#functions)
-    5. [Classes & Structs](#classes--structs)
-    6. [Interfaces](#interfaces)
-    7. [Collections](#collections)
-    8. [Delegates](#delegates)
-    9. [Generics](#generics)
-    10. [Misc](#misc)
-3. [🖼️ Scenes](#-scenes)
-4. [🦴 GameObjects](#-gameobjects)
-5. [🫙 MonoBehaviors](#-monobehaviours)
-6. [🚋 Transforms](#-transforms)
-7. [📦️ Prefabs](#-prefabs)
-8. [🕹️ Inputs](#-inputs)
-9. [🧮 Math](#-math)
-10. [🌐 Meshes](#-meshes)
-11. [🥏 Physics](#-physics)
-12. [🔊 Audio](#-audio)
-13. [🎥 Rendering](#-rendering)
-14. [🖥️ UI](#-ui)
-15. [🏃‍➡️ Animations](#-animations)
-16. [🏗️ Probuilder](#-probuilder)
-17. [📉 Shader Graph](#-shader-graph)
-18. [🎆 VFX Graph](#-vfx-graph)
+
+* [🎓 Reference](#-reference)
+  * [Unity Documentation](#unity-documentation)
+  * [Tutorials](#tutorials)
+* [🔥 Hotkeys](#-hotkeys)
+* [🎼 C# Syntax](#-c-syntax)
+  * [Types](#types)
+  * [Fields](#fields)
+  * [Properties](#properties)
+  * [Functions](#functions)
+  * [Classes & Structs](#classes--structs)
+  * [Interfaces](#interfaces)
+  * [Collections](#collections)
+  * [Delegates](#delegates)
+  * [Generics](#generics)
+  * [Misc](#misc)
+* [🖼️ Scenes](#-scenes)
+  * [Scene Templates](#scene-templates)
+  * [Multiple Scenes](#multiple-scenes)
+  * [Managing Scenes in Code](#managing-scenes-in-code)
+* [🦴 GameObjects](#-gameobjects)
+* [🫙 MonoBehaviours](#-monobehaviours)
+  * [Messages](#messages)
+  * [Managing in Code](#managing-in-code)
+  * [Coroutines](#coroutines)
+* [🚋 Transforms](#-transforms)
+  * [Position, Rotation, and Scale](#position-rotation-and-scale)
+  * [Hierarchy](#hierarchy)
+* [📦️ Prefabs](#-prefabs)
+  * [Overrides](#overrides)
+  * [Variants](#variants)
+  * [Using at Runtime](#using-at-runtime)
+* [🕹️ Inputs](#-inputs)
+  * [Terminology](#terminology)
+  * [Theory](#theory)
+  * [Setting up Actions](#setting-up-actions)
+  * [Implementation in Code](#implementation-in-code)
+  * [Actions API](#actions-api)
+  * [PlayerInput Events](#playerinput-events)
+  * [Quick & Dirty Hardcoding](#quick--dirty-hardcoding)
+  * [Reading Values](#reading-values)
+  * [Runtime Rebinding](#runtime-rebinding)
+* [🧮 Math](#-math)
+  * [Floats](#floats)
+  * [Vectors](#vectors)
+  * [Quaternions](#quaternions)
+  * [Matrices](#matrices)
+  * [Time](#time)
+  * [RNG](#rng)
+  * [Misc](#misc-1)
+* [📄 2D](#-2d)
+  * [Perspective](#perspective)
+  * [Depth](#depth)
+  * [Sprites](#sprites)
+  * [Sprite Sheets](#sprite-sheets)
+  * [Tile Maps](#tile-maps)
+  * [Sprite Shapes](#sprite-shapes)
+  * [Animations](#animations)
+  * [Physics2D](#physics2d)
+  * [Lighting](#lighting)
+* [🎥 Rendering](#-rendering)
+  * [Universal Render Pipeline](#universal-render-pipeline)
+  * [Camera](#camera)
+  * [Importing Models](#importing-models)
+  * [MeshRenderer](#meshrenderer)
+  * [Materials](#materials)
+  * [Lighting](#lighting-1)
+  * [Shadows](#shadows)
+* [🏃 Animations](#-animations)
+  * [Animation Window](#animation-window)
+  * [Animation Clips](#animation-clips)
+  * [Animation Manager](#animation-manager)
+  * [Playing Animations](#playing-animations)
+  * [Rigging & Procedural Animation](#rigging--procedural-animation)
+  * [Animating Variables](#animating-variables)
+* [🥏 Physics](#-physics)
+  * [Rigidbody](#rigidbody)
+  * [Colliders](#colliders)
+  * [ArticulationBody](#articulationbody)
+  * [The Physics Class](#the-physics-class)
+  * [Writing Physics Code](#writing-physics-code)
+  * [Physics Settings](#physics-settings)
+* [🔊 Audio](#-audio)
+  * [Audio Listener](#audio-listener)
+  * [Audio Clip](#audio-clip)
+  * [Audio Source](#audio-source)
+* [🖥️ UI](#-ui)
+* [💾 Save Data](#-save-data)
+* [✏️ Editor Scripts](#-editor-scripts)
+* [🗄️ Multiplayer](#-multiplayer)
+* [🏗️ Probuilder](#-probuilder)
+* [📉 Shader Graph](#-shader-graph)
+* [🎆 VFX Graph](#-vfx-graph)
 
 # 🎓 Reference
 
@@ -49,11 +114,85 @@ deep breath, relax, and have fun creating! 💗
 
 ## Tutorials
 
-[Editor Tutorial (GMTK)](https://www.youtube.com/watch?v=XtQMytORBmM&t=146s)  
+[Unity Editor Tutorial (GMTK)](https://www.youtube.com/watch?v=XtQMytORBmM&t=146s)  
 [Unity Basics Tutorials (Code Monkey)](https://www.youtube.com/watch?v=E6A4WvsDeLE&list=PLzDRvYVwl53vxdAPq8OznBAdjf0eeiipT)  
 [Beginner Project Tutorials (Unity)](https://learn.unity.com/courses/?k=%5B%22lang%3Aen%22%2C%22sl%3Afoundational%22%2C%22sl%3Abeginner%22%2C%22ind%3A5816ce9a32b30600171bef5a%22%5D&ob=recency)  
 [Advanced Project Tutorials (Catlike Coding)](https://catlikecoding.com/unity/tutorials/)  
-[Game Development Mathematics (Freya Holmér)](https://www.youtube.com/watch?v=fjOdtSu4Lm4&list=PLImQaTpSAdsArRFFj8bIfqMk2X7Vlf3XF)  
+[Game Development Mathematics (Freya Holmér)](https://www.youtube.com/watch?v=fjOdtSu4Lm4&list=PLImQaTpSAdsArRFFj8bIfqMk2X7Vlf3XF)
+
+# 🔥 Hotkeys
+All key binds are searchable and changeable in Edit > Shortcuts. Here are the bangers:
+
+Editor:
+- Project Search: Ctrl + k
+- Reload Assets Folder: Ctrl + R
+- Invert Selection: Ctrl + I
+- Select Children: Shift + C
+- Add Component: Ctrl + Shift + A
+- Duplicate: Ctrl + D
+- Enter Play Mode: Ctrl + P
+- Pause Play Mode: Ctrl + Shift + P
+- Undo: Ctrl + Z
+- Redo: Ctrl + Y
+- Build and Run: Ctrl + B
+- Build Profiles: Ctrl + Shift + B
+- New Scene: Ctrl + N
+- Open Scene: Ctrl + O
+- Save Scene: Ctrl + S
+- Create Empty GameObject: Ctrl + Shift + N
+- Create Empty GameObject Child: Alt + Shift + N
+- Toggle Grid Snapping: \
+- Increase Grid Size: Ctrl + ]
+- Decrease Grid Size: Ctrl + [
+- Create Folder: Ctrl + Shift + N
+
+Scene View:
+- Select: Left Click
+- Menu: Rick Click
+- Focus: Middle Click
+- Box Select: Hold Left Click
+- Look: Hold Right Click
+- Pan: Hold Middle Click
+- Pan: Ctrl + Alt + Left Click
+- Orbit: Alt + Left Click
+- Zoom: Alt + Right Click
+- Render Wireframe: Alt + 1
+- Render Shaded Wireframe: Alt + 2
+- Render Unlit: Alt + 3
+- Render Shaded: Alt + 4
+
+Scene Tools:
+- Grabby Hand: Q
+- Move: W
+- Rotate: E
+- Scale: R
+- Rect: T
+- Transform: Y
+- Toggle Pivot or Center: Z
+- Toggle Global or Local: X
+
+Windows:
+- Scene Window: Ctrl + 1
+- Game Window: Ctrl + 2
+- Inspector Window: Ctrl + 3
+- Hierarchy Window: Ctrl + 4
+- Project Window: Ctrl + 5
+- Animation Window: Ctrl + 6
+- Profiler Window: Ctrl + 7
+- Audio Mixer Window: Ctrl + 8
+- Lighting Window: Ctrl + 9
+- Package Manager Window: Ctrl + 0
+
+Animation:
+- Play: Space
+- Keyframe Selected: K
+- Keyframe Modified: Shift + K
+
+Input Action Window:
+- Save : Ctrl + s
+- Add Action Map: Alt + M
+- Add Action: Alt + A
+- Add Binding: Alt + B
 
 # 🎼 C# Syntax
 
@@ -2337,6 +2476,9 @@ at all, so you must use sorting layers.
 
 ## Rigging & Procedural Animation
 
+## Animating Variables
+AnimationCurve pog
+
 # 🥏 Physics
 [📓](https://docs.unity3d.com/ScriptReference/UnityEngine.PhysicsModule.html)  
 
@@ -2429,7 +2571,7 @@ rb.ResetInertiaTensor();//restores the auto-calculated inertia tensor if you cha
 RaycastHit hitInfo;//more on this bad body in the Writing Physics Code Section!
 float distance;
 Vector3 direction;
-QueryTriggerInteraction hitTriggers;//more on this bad boy in the Writing Physics Code Section!
+QueryTriggerInteraction hitTriggers;//whether or not to count interactions with trigger colliders
 if (rb.SweepTest(direction, out hitInfo, distance, hitTriggers)){
     //we hit something! :D
 }
@@ -2455,6 +2597,7 @@ void OnCollisionExit(Collision col){}//called once the tick two colliders stop c
 ```
 
 ## Colliders
+[📓](https://docs.unity3d.com/ScriptReference/Collider.html)  
 Colliders are components that define the shape of an object inside the physics simulation.
 If they will never ever move ever, they can be placed in the scene on their own. However, if you ever need to move them ever,
 they *need* to be attached to a rigidbody component. If you don't want the collider to react to collisions, make the rigidbody kinematic.
@@ -2507,6 +2650,7 @@ void OnTriggerExit(Collider col){}//called once the tick a collider exits a trig
                             //parameter col is the other collider of the interaction
 ```
 ### BoxCollider
+[📓](https://docs.unity3d.com/ScriptReference/BoxCollider.html)  
 ```csharp
 BoxCollider box = GetComponent<BoxCollider>();
 
@@ -2515,6 +2659,7 @@ Vector3 size = box.size;//size of the box on each axis in *local* space. This do
 ```
 
 ### SphereCollider
+[📓](https://docs.unity3d.com/ScriptReference/SphereCollider.html)  
 ```csharp
 SphereCollider sphere = GetComponent<SphereCollider>();
 
@@ -2523,6 +2668,7 @@ float rad = sphere.radius;//radius of the sphere in *local* space. This does not
 ```
 
 ### CapsuleCollider
+[📓](https://docs.unity3d.com/ScriptReference/CapsuleCollider.html)  
 ```csharp
 CapsuleCollider cap = GetComponent<SphereCollider>();
 
@@ -2533,6 +2679,7 @@ float height == cap.height;//height of the capsule from tip to tip in *local* sp
 ```
 
 ### MeshCollider
+[📓](https://docs.unity3d.com/ScriptReference/MeshCollider.html)  
 Mesh colliders will generate a collider from a mesh, but this comes with some restrictions. Mesh colliders essentially have 
 two modes: Convex and Non-Convex. Non-convex is the default, and will generate a collider that closely matches the given mesh.
 However, in this mode the collider cannot be used on non-kinematic rigidbodies. It will also never collide with other 
@@ -2548,7 +2695,14 @@ bool convex = meshCollider.convex;//get or set if the collider is in convex mode
 Mesh mesh = meshCollider.sharedMesh;//get or set the mesh this collider is based on.
 ```
 
+### Physics Material
+[📓](https://docs.unity3d.com/ScriptReference/PhysicsMaterial.html)  
+Physics materials are a neat little asset that let you specify the friction and bounciness of a material. These can be 
+applied to any collider. You can create one by clicking Assets > Create > Physics Material (at the bottom of the list ;)).
+Single click the file once you have created it to adjust its settings, and then drag and drop it onto any collider to apply it.
+
 ## ArticulationBody
+[📓](https://docs.unity3d.com/ScriptReference/ArticulationBody.html)  
 Back in my day, when I was a young whippersnapper like yourself, rigidbody connections in Unity were done with joint components.
 There were several types, and you could place them on rigidbodies to connect them in various ways. This system was clunky, 
 inaccurate for objects with greatly different masses, and infamously unstable. This system has now been replaced with articulation bodies!
@@ -2560,7 +2714,7 @@ add an ArticulationBody component (and a collider if you want) to a gameobject. 
 this one and add another ArticulationBody component to it! The scene hierarchy itself defines what is connected to what.
 
 Every articulation body in the hierarchy except the root articulation body will have options in their inspector to configure
-the connection they have to their parent. There is a dropdown at the bottom of the inspector to selection the articulation joint
+the connection they have to their parent. There is a dropdown at the bottom of the inspector to select the articulation joint
 type. Fixed is a static welded connection, prismatic is a telescopic/slider connection, revolute is a hinge joint connection,
 and spherical is a ball joint connection. For every axis the joint allows motion on, settings will appear to configure that axis.
 Changing an axis from free to limited will let you define a swing range either in numbers or with a gizmo in the scene view.
@@ -2586,11 +2740,13 @@ ArticulationReducedSpace vel = art.jointVelocity;//meters/sec or radians/sec the
 ```
 
 ## The Physics Class
+[📓](https://docs.unity3d.com/ScriptReference/Physics.html)  
 The physics class is a static class that you can use to interact with the entire physics world as a whole. In practice, it
 is mostly used for raycasting, but there are some other useful things in it as well!
 
 ```csharp
 //variables!
+//These are also all in the project physics settings if you just want to change them permanently
 float bounceThreshold = Physics.bounceThreshold;//minimum relative speed things need to bounce. default is 2.
 Vector3 gravity = Physics.gravity;//gravity vector of the physics simultaion
 Vector3 clothGravity = Physics.clothGravity;//gravity vector used for cloth physics
@@ -2604,7 +2760,7 @@ Vector3 position, direction;
 Quaternion rotation;
 float distance;
 LayerMask mask;
-QueryTriggerInteraction triggers;
+QueryTriggerInteraction triggers;//whether or not to count interactions with trigger colliders
 RaycastHit hitInfo;
 
 Vector3 halfExtents;//half the length of each side of the box in each axis.
@@ -2640,7 +2796,7 @@ if (Physics.LineCast(startPos, endPos, out hitInfo, mask, triggers)){
 Vector3 position;
 Quaternion rotation;
 LayerMask mask;
-QueryTriggerInteraction triggers;
+QueryTriggerInteraction triggers;//whether or not to count interactions with trigger colliders
 
 Vector3 halfExtents;//half the length of each side of the box in each axis.
 if (Physics.CheckBox(position, halfExtents, rotation, mask, triggers)){
@@ -2673,11 +2829,57 @@ bool ignored = Physics.GetIgnoreCollision(collider,collider2);//gets if 2 collid
 Physics.IgnoreCollision(collider, collider2);//set 2 colliders to never collide regardless of their layer.
 ```
 
-
 ## Writing Physics Code
-cover ForceMode!! and RaycastHit!!! and QueryTriggerInteraction!!
+In Unity, physics is not tied to the framerate. It is on its own physics loop. That way, frame rate does not affect the 
+simulation. This means that anytime you want to interact with anything in physics, it is best to do it inside the physics loop.
+You can do this by putting your physics code in the FixedUpdate() function instead of the Update() function. FixedUpdate()
+is called right before every physics step.
 
+All functions to add a force to a physics object in Unity have a parameter at the end of type ForceMode. ForceMode is a struct
+that lets you decide how the force is calculated. Here are the options:
+- ForceMode.Force: Input vector is treated as a force in newtons. The change to velocity = forceVector * Time.deltaTime / mass.
+- ForceMode.Impulse: Input vector is treated as an impulse in newton-seconds. The change to velocity = forceVector / mass.
+- ForceMode.Acceleration: Input vector is treated as an acceleration in m/s/s. The change to velocity = forceVector * Time.deltaTime.
+- ForceMode.VelocityChange: Input vector is treated as a delta-V in m/s. The change to velocity = forceVector.
+
+When you do a cast of any time (BoxCast, RayCast, LineCast, etc.), the function will output a struct of type RaycastHit. This
+struct holds all the information you need about the collision. Here is some of the most useful stuff:
+```csharp
+RaycastHit hit;
+
+//one or both of these can be null!!!
+ArticulationBody ab = hit.articulationBody;//articulation body for the collider we hit
+RigidBody rb = hit.rigidbody;//rigidbody for the collider we hit
+
+Collider col = hit.collider;//the collider we hit
+Transform trans = hit.transform;//transform of the collider or rigidbody we hit
+
+Vector3 hitPos = hit.point;//position of the collision point in world space
+Vector3 normal = hit.normal;//normal direction of the surface we hit in world space
+float distance = hit.distance;//distance from the cast's starting location to where the collision occured
+
+//for mesh colliders. check the type of hit.collider if you don't know what collider type you hit.
+Vector3 bary = hit.barycentricCoordinate;//barycentric coordinate of the hit point on the triangle we hit. useful for interpolation.
+Vector2 uvs = hit.textureCoord;
+Vector2 uvChannel2 = hit.textureCoord2;
+```
 ## Physics Settings
+If you click Edit > Project Settings > Physics > Settings, there are project-wide settings to configure about how physics
+works. It is separated into Shared, Game Object, and Cloth. Shared applies to both gameobjects and cloth simulations.
+
+Shared lets you specify the gravity vector that is applied to all rigidbodies or articulation bodies with gravity enabled.
+The layer collision matrix lets you specify which layers collide with which other layers.
+
+The Game Object tab has a ton of settings, most of which I think are either self-explanatory or don't need to be touched.
+The ones you are most likely to need to change are:
+- Default Material: Physics Material used when a collider has no Physics Material assigned.
+- Queries Hit Backfaces: If Cast or Overlap functions hit the backside of colliders
+- Queries Hit Triggers: If Cast or Overlap function hit colliders marked as trigger
+- Enable Enhanced Determinism: Makes simulation deterministic at the cost of some performance
+- Default Max Angular Speed: Maximum speed anything can rotate at
+
+Cloth lets you override the shared gravity with a separate gravity for cloth (idk why they made it work like this), and enable 
+cloth inter-collisions.
 
 # 🔊 Audio
 
@@ -2689,6 +2891,221 @@ cover ForceMode!! and RaycastHit!!! and QueryTriggerInteraction!!
 
 # 🖥️ UI
 
+# 💾 Managing Data
+The easiest way to track data in Unity is to add a variable to the top of your monobehaviour script. However, this has 
+several disadvantages. It is tied to that specific instance of that class, which can make it difficult to reference it 
+elsewhere in a spaget-free manner. When there are multiple instances of the object, it can be tricky to keep them in sync.
+The variable is also tied to the lifecycle of the gameobject is it attached to. This 
+means if the gameobject is destroyed or the scene is unloaded, the variable and its data are also lost. This section has
+some (but not all) methods for solving this problem, as well as saving and loading data to and from disk to persist between
+launches.
+
+## Static Class
+Static C# classes solve these problems. They are created once at the start of the program and last until the program is
+terminated, which means they can be referenced anywhere always. There will also only ever be one of them, which makes them
+a single point of truth. However, because they are static, they cannot be [serialized](#serialization--saving-to-disk). This
+means their state cannot be easily saved to disk and you cannot see or modify their contents in the inspector, which makes
+them very opaque.
+```csharp
+//class declaration:
+public static class GameState{
+    public static float lookAtMe = 1f;
+}
+----
+//Anywhere in the project:
+float look = GameState.lookAtMe;
+```
+
+## Singleton Class
+Singletons are a programming pattern that guarantees only one instance of a class will ever be created. This preserves the
+single point of truth and makes the instance accessible everywhere, just as with static classes. However, singletons don't have
+to always be loaded. You can create them only when they are needed. They are also compatible with [serialization](#serialization--saving-to-disk).
+However, you still cannot see or edit their contents in the inspector, since they are not a Monobehaviour. They are also not a language feature, which means you have to make sure there is only ever one class instance yourself.
+Here is a good way of doing that!
+```csharp
+public class GameState{
+    //static variable to hold our one instance
+    private static GameState instance;
+    //private constructor, so no more instances can be made
+    private GameState() {}
+
+    public static GameState Instance(){
+        if (instance == null){
+            instance = new GameState();
+        }
+        return instance;
+    }
+    //actual data and functions below here!
+    public float lookAtMeImNotStatic = 1f;
+}
+------
+//anywhere in the project
+float look = GameState.Instance().lookAtMeImNotStatic;
+```
+
+## ScriptableObject
+[📓](https://docs.unity3d.com/Manual/class-ScriptableObject.html)  
+Scriptable Objects are the hottest thing since sliced bread. They are very similar to monobehaviours. The only difference
+is that they live in the project as an asset, instead of being attached to a gameobject in the scene hierarchy. This means
+they persist independent of objects and scenes. There can be multiple instances of the same scriptable object class, but because
+each instance is a named file, it is still easy to maintain a single point of truth. They also support serialization for easy saving of state. However, unlike
+the two methods above, you can select them in the assets window to see and modify all their variables in the inspector window!
+This is great for debugging and rapid prototyping. They can also be used as managers that house functionality that should not
+belong to any one monobehaviour.
+
+To create a new ScriptableObject script, click Assets > Create > Scripting > ScriptableObject Script. The tag at the top of
+your new class places it in the Assets > Create menu. Feel free to modify this. To create an new instance of your class, 
+Click Assets > Create > Place you specified in your script file.
+
+For a scriptable object with the class name GameState, you can access and edit it like this:
+```csharp
+public class GameState : ScriptableObject {
+    public float lookAtMe;
+}
+------
+//in a monobehaviour, you can do this:
+public GameState gameState;//drag and drop the GameState asset into this field in the editor
+
+void Start(){
+    float look = gameState.lookAtMe;
+}
+```
+You can also make singleton scriptable objects!
+```csharp
+public class GameState : ScriptableObject {
+
+    public static GameState instance { get; private set;}
+
+    void Awake() {
+        if (instance != null) {
+            Debug.LogError("More than one instance of me, please fix!!!!!");
+        }
+        instance = this;
+    }
+    
+    public float lookAtMe = 1f;
+}
+------
+//elsewhere in the project:
+float look = GameState.instance.lookAtMe;
+```
+
+NOTE: Even though scriptable objects will not revert if they are changed in play mode in the editor, they will not automatically
+keep changes between runs of a build of your game. You must still explicitly save and load their state to and from disk.
+
+## Serialization & Saving to Disk
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/script-serialization.html)  
+Serialization is a complex subject with lots of gotchas. I will touch on it at a really high level, but if you are doing anything
+serious with it, check the documentation and look up some guides. Keep in mind, Unity has its own serialization process 
+built on top of from the one built in to C#.
+
+Serialization is the process of taking variables and objects, and converting them to a file that can be saved on a disk.
+Unity uses this to store all the public variables of all your gameobjects to the scene file. This is why the tag for exposing
+private variabes to the inspector is called [SerializeField]. We can hook into this to save objects to our own files on disk.
+
+To mark a custom class as serializable, put the [System.Serializable] tag above its header. Any variable that is public
+(or marked with [SerializeField]) *and* is compatible will be serialized when an object of the class is serialized.
+There are a lot of compatability rules, but the biggest two are that the variable cannot be static and that is must be a 
+compatible type. Compatible types are either primitive types or classes that also have the [System.Serializable] tag themself.
+If you want to serialize a variable of an unsupported type, you must [make your own custom serialization for it like this](https://docs.unity3d.com/6000.0/Documentation/Manual/script-serialization-custom-serialization.html).
+
+Here is how to save and load a serializable singleton to disk:
+```csharp
+using System.IO;
+using UnityEngine;
+
+[System.Serializable]
+public class GameState{
+    private static GameState instance;
+    private GameState() {}
+    public static string saveFilePath;
+
+    public static GameState Instance(){
+        if (instance == null){
+            instance = new GameState();
+        }
+        return instance;
+    }
+    
+    public static void Save(){
+        string json = JsonUtility.ToJson(myObject);
+        File.WriteAllText(saveFilePath,json);
+    }
+    
+    public static void Load(){
+        if (!File.Exists(saveFilePath)) return;
+        string json = File.ReadAllText(saveFilePath);
+        JsonUtility.FromJsonOverwrite(json, instance);
+    }
+    
+    public float lookMaImOnDisk = 1f;
+}
+```
+
+And here is how to save and load a serializable scriptable object:
+```csharp
+using System.IO;
+using UnityEngine;
+
+[System.Serializable]
+[CreateAssetMenu(fileName = "GameState", menuName = "Scriptable Objects/GameState")]
+public class GameState : ScriptableObject {
+    
+    public float lookMaImOnDisk = 1f;
+    
+    public static string saveFilePath;
+    
+    void Save(){
+        string json = JsonUtility.ToJson(this);
+        File.WriteAllText(saveFilePath,json);
+    }
+    
+    void Load(){
+        if (!File.Exists(saveFilePath)) return;
+        string json = File.ReadAllText(saveFilePath);
+        JsonUtility.FromJsonOverwrite(json, this);
+    }
+}
+```
+
+## PlayerPrefs
+PlayerPrefs are a quick and dirty way to save individual variables that are primitive data types. It is whats known as a
+Keystore system, where you give unity a string, which acts as the key, and the variable you want to save. Later, you can ask
+Unity for the value associated with that key and it will give it to you! PlayerPrefs persist on disk across different runs
+of your game, so they are great for saving settings or little pieces of data. This system is super perfomant, so don't use 
+it for anything big.
+```csharp
+//saving variables into PlayerPrefs
+int num;
+float flo;
+string str;
+PlayerPrefs.SetInt("MY_INT", num);
+PlayerPrefs.SetFloat("MY_FLOAT", flo);
+PlayerPrefs.SetString("MY_STRING", str);
+
+//get variables from PlayerPrefs
+//second parameter to these functions is the default value if the key doesn't have a value
+num = PlayerPrefs.GetInt("MY_INT", 0);
+flo = PlayerPrefs.GetFloat("MY_FLOAT", 0f);
+str = PlayerPrefs.GetString("MY_STRING", "bla");
+
+PlayerPrefs.DeleteKey("BEGONE_KEY");//deletes data for this key if it exists
+bool keyStored = PlayerPrefs.HasKey("MY_INT");//returns true if the key has a value stored
+```
+
+## A Note on Save Files
+There is no single best way to create a save file system for your game. If you only need to save a level number and a few
+other numbers, you can get away with just using PlayerPrefs to store everything. If your game has more information that needs
+to be saved and loaded, make a serialized class or scriptable object and save that to disk. If your game has a ton of data,
+for instance if there is a procedural world, it may be best to create your own data storage scheme and save it to disk yourself
+with some C# functions. How you choose to save the data, as well as get and set the data to the rest of your project, is
+up to you!
+
+# ✏️ Editor Scripts
+- Gizmos!
+- custom inspector buttons and sliders and stuff]
+- property drawers?
+
 # 🗄️ Multiplayer
 
 # 🏗️ Probuilder
@@ -2697,12 +3114,6 @@ cover ForceMode!! and RaycastHit!!! and QueryTriggerInteraction!!
 
 # 🎆 VFX Graph
 
-- add images for prefab open and override buttons?
-- hotkeys? like search is Ctrl + K?
-- Color and Gradient?
-- animation curve
-- Gizmos!
-- custom inspector buttons and sliders and stuff
-- new things: scriptable objects/new asset management thingy?
-- player prefs
 
+- Color and Gradient?
+- new things: scriptable objects/new asset management thingy?
