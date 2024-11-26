@@ -131,7 +131,6 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
-  - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -257,19 +256,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!114 &330585548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec3b5c640d9793f4a85d4001033b9278, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  favoriteNumber: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1142,7 +1128,6 @@ GameObject:
   - component: {fileID: 1590536193}
   - component: {fileID: 1590536192}
   - component: {fileID: 1590536191}
-  - component: {fileID: 1590536189}
   - component: {fileID: 1590536190}
   m_Layer: 0
   m_Name: Cube
@@ -1151,19 +1136,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1590536189
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1590536188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec3b5c640d9793f4a85d4001033b9278, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  favoriteNumber: 0
 --- !u!65 &1590536190
 BoxCollider:
   m_ObjectHideFlags: 0

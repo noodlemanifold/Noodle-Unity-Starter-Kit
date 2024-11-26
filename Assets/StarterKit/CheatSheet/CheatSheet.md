@@ -110,6 +110,7 @@ deep breath, relax, and have fun creating! 💗
 [Unity 6 Resources](https://unity.com/campaign/unity-6-resources)  
 [Unity 6 Documentation](https://docs.unity3d.com/Manual/index.html)  
 [Unity 6 Package Documentation](https://docs.unity3d.com/Manual/pack-safe.html)  
+[Unity 6 Editor Design System](https://www.foundations.unity.com/)  
 [Universal RP Shader Documentation](https://www.cyanilux.com/tutorials/urp-shader-code/)
 
 ## Tutorials
@@ -2890,6 +2891,266 @@ cloth inter-collisions.
 ## Audio Source
 
 # 🖥️ UI
+For the longest time, UI in Unity used a gameobject-based system called Unity UI. It was crytpic and difficult to achieve
+the result you wanted, and also made a huge screen in your scene that was annoying. There is now a new system that is based
+on a Unity specific version of html & css called UI Toolkit! (formerly UI Elements) It is much better in every way, but
+it currently does no support world space UI or custom shaders. Use the old system if you need either of those features.
+
+UI Toolkit is designed to be very similar to building a webpage but customized for use in Unity. Instead of html, css,
+and javascript, we have uxml, uss, and C#. UXML uses a document hierarchy system just like html with flexbox-style layouts.
+USS is just like css, where you can select classes and tag types and define style properties for them. UI Toolkit UIs are
+designed to be very reusable. You can make UI layouts for different game functions and use them with different style sheets
+in different projects, and you can define one project-wide style sheet to use with all of your UI layouts!
+
+## Building a UI
+
+### The UI Builder
+To get started, click Window > UI Toolkit > UI Builder. This window lets you visually build uxml and uss files. You can still
+make them by hand but I will not assist your masochism. The UI Builder is overwhelming at first, but if you take a deep breath
+and look a little closer, it is very similar to the main Unity interface. The center pane is your preview of the UI, and the
+right pane is your inspector that holds all the options for any selected object. The left pane is split in 3 parts. The top
+pane lets you select a stylesheet from your project and edit it. The middle pane displays the hierarchy of your currently open
+uxml file. The bottom pane is a library of all the components you can add to your UI. There is a selection of built in Unity
+components, and you can also create your own! If you would like to preview the raw uxml and uss files, drag the bottom bar of
+the preview window up.
+
+### Setup
+If you click the root .uxml file in the Hierarchy pane, you will get some options for the file in the Inspector pane. I recommend
+ticking Match Game View, and ticking the Background checkbox. You can choose a solid color, an image, or a game camera.
+Note, this background is just a preview and is not actually saved into you UI. If you
+are making an editor tool, make sure to tick the Editor Extension Authoring box to enable some Editor-Exclusive components.
+Hit Ctrl + S to save your uxml file, and give it a name. Also create a new style or add one from your project by clicking
+the + in the top left of the SheetStyles pane, and selecting one of the options.
+
+### Adding and Styling Components
+Lets just make a simple menu with a button. Click and drag a Visual Element component into your hierarchy. In the Inspector,
+in the StyleSheet section, type .Background into the top text field and press enter. This adds a Background uss class to this
+component. Now select your uss file in the top StyleSheets pane, and type .Background into the first test field in the Inspector
+to add Background as a class in your stylesheet. Expand the arrow next to your stylesheet in the StyleSheets pane if it is
+not already, and select the .Background selector. Now, in the inspector, you can modify any properties you like, and now any
+component you add the .Background class to will inherit your style choices made here. You can also add multiple classes to
+the same UI Component. Because you can add and remove classes in code in C#, making classes for separate behaviours lets you
+easily trigger complex behaviour with one line of code. For instance, you could have a .Hide class that hides anything, and then
+add or remove that class from components as needed in code. For this example, just change the color under the Background section
+of the inspector. This should fill your UI preview with the color you selected.
+
+Next, add a text label as a child of your background visual element in the hierarchy. There are ways to drive text labels
+with code, but just hard code a string for now. Under Attributes, set the Label field to the name of your menu. You can either
+customize this field directly, or add a class to it, for instance .Header, and then set up that header in your uss stylesheet,
+just like we did for the background. Components will inherit the style of any classes attached to them, but they can also
+have their own personal style overrides. These are called inline styles. Make sure to pay attention if your are editing a
+component style or a stylesheet class style, it can be easy to mix them up! To position the label, you can hard code in position offsets, but in most cases it
+is better to use flex. Select the .Background class selector in your uss file, and got to the flex section in the inspector.
+Here, you can define the positioning behaviour of all child components. Set Align Items to center and Justify Items to center.
+This will center the label. Any more components we add will form a nice little stack in the middle.
+
+Add two more buttons as children to the background pane below the label component. You can do this by clicking and dragging
+to the very bottom edge of the label component, and a blue line will appear. That's how you know it will be a child with the
+same parent as the label component. As our hierarchy gets more complicated, the default component names will make our UI
+hard to work with. Click each component and give it a good name at the very top of their inspectors. You can also select for
+component names in your stylesheets by using a # instead of a . before the selector. If you put nothing before the selector,
+that will look for component types of that name, for instance Button or Label. Anyways, add a .Button class to all of your
+buttons, and customize them in your stylesheet as you please! However, when we hover over the buttons, nothing happens. We can
+fix this with pseudo classes! Pseudo classes will only be selected/active when the component is in some state. Add a .Button:hover
+class to your stylesheet and change the background color. Now in the Viewport pane, click preview in the top right, and hover
+over your buttons. They should change color! Feel free to add .Button:active class for when the button is clicked! Note at the bottom of the inspector there are settings for transitions, so that the
+color change fades in and out instead of changing instantly. I cannot understate how powerful this whole system is.
+
+### Adding to the Scene
+To add our UI to the scene, add an empty gameobject to the scene hierarchy and add a UI Document component. You may get an error
+that you do not have a PanelSettings asset. To create one, click Assets > Create > UI Toolkit > Panel Settings Asset. Give it a name
+and drag it into this component's Panel Settings field. Then drag the *uxml* file you just made into the Source Asset field.
+If you click the Game tab, your UI should appear! You can use the panel settings asset you made to adjust the UI output camera
+and its scaling settings, among other things.
+
+## Hooking UI Components Up to Code
+You can interact with UI Toolkit UI in code by getting a reference to the UI Document component that is rendering it.
+
+### Button Clicks
+```csharp
+private UIDocument document;
+private VisualElement rootUI;
+
+private Button button1;
+private Button button2;
+
+void Start() {
+    document = GetComponent<UIDocument>();
+    rootUI = document.rootVisualElement;//get our UI hierarchy
+
+    button1 = rootUI.Q<Button>("Button1");//find our buttons in the hierarchy by name
+    button2 = rootUI.Q<Button>("Button2");
+    
+    button1.clickable = new Clickable(() => { Debug.Log("Lambda Function Click!");});//set up click functions
+    button2.clicked += Clicked;//there are two ways of doing it, pick whichever you like best!
+}
+
+void Clicked() {
+    Debug.Log("Delegate Event Click!");
+}
+
+private void OnDestroy() {
+    button2.clicked -= Clicked;//you might not need this but I don't wanna risk it
+}
+```
+
+### Doing Stuff
+[📓](https://docs.unity3d.com/ScriptReference/UIElements.VisualElement.html)  
+You can do anything in code at runtime that you can do in the UI Builder. Here is just some stuff I think is useful.
+```csharp
+UIDocument document = GetComponent<UIDocument>();//document component
+VisualElement rootUI = document.rootVisualElement;//actual UI hierarchy
+
+document.enabled = false;//disable drawing of the UI
+document.enabled = true;//enable drawing of the UI
+
+Label label = rootUI.Q<Label>("Label");//find UI components by name
+label.style.color = Color.red;//change any style properties you want!
+button1.style.visibility = Visibility.Hidden;//hide component
+button1.style.visibility = Visibility.Visible;//show component
+
+label.transform.scale = Vector3.one * 1.2f;//change scale without affecting neighbors
+
+int childCount = label.childCount;
+VisualElement lastChild = label.ElementAt(childCount-1);//get child element by index
+VisualElement parent = label.parent;
+label.Add(new VisualElement());//add a component as a child to this one
+
+label.AddToClassList("Hide");//add any uss class to the component
+label.RemoveFromClassList("Header");//remove any uss class to the component
+```
+
+## Custom UI Components
+You can create custom UI components that either extend or modify existing built in components, or define a completely 
+brand new component!
+
+If you want to make a component that modifies a Unity component, make a new class extending from it. I am going to make 
+a new custom component here, so I will derive from `VisualElement`. This code block is gonna be a doozy, I'm sorry thats 
+just how it be sometimes.
+```csharp
+using Unity.Properties;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+[UxmlElement]
+public partial class DialComponent: VisualElement {
+    //Code based on this fantastic tutorial!: https://www.youtube.com/watch?v=6DcwHPxCE54
+    
+    //custom color stylesheet fields
+    //unfort you gotta add these to your style sheets manually. Its really not bad but still :(
+    static CustomStyleProperty<Color> FillColorProperty = new CustomStyleProperty<Color>("--fill-color");
+    static CustomStyleProperty<Color> BackgroundColorProperty = new CustomStyleProperty<Color>("--background-color");
+
+    private Color fillColor;//local color variables we update from stylesheet
+    private Color backgroundColor;
+    
+    
+    [SerializeField] [DontCreateProperty] 
+    private float progressBack;//backing variable for our property
+
+    [UxmlAttribute]
+    [CreateProperty]//Create Property allows data binding with a C# class variable!
+    public float progress {//property that is exposed in the UI Builder
+        get => progressBack;
+        set {
+            progressBack = Mathf.Clamp(value, 0f, 100f);//clamp between 0-100%
+            MarkDirtyRepaint();//trigger a redraw of our UI component
+        }
+    }
+
+    public DialComponent() {
+        RegisterCallback<CustomStyleResolvedEvent>(CustomStylesResolved);//get stylesheet updates
+        generateVisualContent += GenerateVisualContent;//subscribe to the event to draw UI
+    }
+
+    void GenerateVisualContent(MeshGenerationContext context) {//draw our component
+        float width = contentRect.width;
+        float height = contentRect.height;
+        //nanoVG/Immediate style screen drawing
+        //here is a good tutorial for this kinda stuff from Miss ^-^ https://openplanet.dev/docs/tutorials/nanovg-introduction
+        Painter2D painter = context.painter2D;
+        painter.BeginPath();
+        painter.lineWidth = 5f;
+        painter.strokeColor = Color.black;
+        painter.Arc(new Vector2(width/2f,height), width/2f, 180f, 0f);
+        painter.ClosePath();
+        painter.fillColor = backgroundColor;
+        painter.Fill();
+        painter.Stroke();
+        
+        float arcAngle = 180f * ((100f-progress) / 100f);
+        arcAngle = Mathf.Clamp(arcAngle, 0f, 179.9f);//prevent drawing weirdness
+        
+        painter.BeginPath();
+        painter.LineTo(new Vector2(width/2f,height));
+        painter.lineWidth = 3f;
+        painter.strokeColor = Color.black;
+        painter.Arc(new Vector2(width/2f,height), width/2f, 180f, 0f-arcAngle);
+        painter.ClosePath();
+        painter.fillColor = fillColor;
+        painter.Fill();
+        painter.Stroke();
+        
+        painter.BeginPath();
+        painter.Arc(new Vector2(width/2f,height), width/2f*0.75f, 180f, 0f);
+        painter.ClosePath();
+        painter.fillColor = Color.black;
+        painter.Fill();
+    }
+    
+    void CustomStylesResolved(CustomStyleResolvedEvent eventData){//uss styles being resolved
+        if (eventData.currentTarget == this) {//if our uss was changed
+            DialComponent us = (DialComponent)eventData.currentTarget;
+            us.UpdateCustomStyles();//update our colors!!
+        }
+
+    }
+
+    void UpdateCustomStyles() {//update our local colors with the static style colors
+        bool repaint = false;
+        if (customStyle.TryGetValue(FillColorProperty, out fillColor))
+            repaint = true;
+        if (customStyle.TryGetValue(BackgroundColorProperty, out backgroundColor))
+            repaint = true;
+        if (repaint)
+            MarkDirtyRepaint();//redraw if any of the colors changed
+        
+    }
+}
+```
+In this code block, we marked the progress property as being able to bind data. To actually bind data to it, hover over it
+in the UI Builder, click the three little dots to the left of it, and click Bind Data. Click Type, then the class you will
+put your data you wish to bind in. For Data Source Path, type in the name of the variable being bound. Optionally, change the
+binding mode as well. In a script on your UI object, give it a refence to an object of the type you specified like this:
+```csharp
+public ClassWithRelevantData dataSource;//assign in inspector or get a reference your favorite way
+----
+VisualElement rootUI = GetComponet<UIDocument>().rootVisualElement;
+root.Q<DialComponent>("CoolDialName").dataSource = dataSource
+```
+
+## Composing UI in Code
+You can compose UI Toolkit UI completely in code. This is useful for small editor scripts, or baking functionality into
+one C# file you can move around. There are a ton of functions to do everything you can do in the UI Builder, but here is
+the basics to get you started!
+```csharp
+VisualElement root = new VisualElement();
+
+root.style.alignContent = Align.Center;//center children in the container
+root.style.justifyContent = Justify.Center;
+
+Label label = new Label("Hiii");//create label
+label.style.fontSize = 24;//change any styling you wish
+
+Button button = new Button();//make a new button
+button.text = "Click!";//set button text
+button.clickable = new Clickable(() => { Debug.Log("Clicked"); });//lambda function called on button click
+button.style.marginTop = 10;//set some nice spacing
+
+root.Add(label);//add components in the order you want
+root.Add(button);
+```
+
 
 # 💾 Managing Data
 The easiest way to track data in Unity is to add a variable to the top of your monobehaviour script. However, this has
@@ -3113,7 +3374,7 @@ directive.
 
 ## Attributes
 Attributes are a quick and easy way to customize the way your variables will look in the inspector without having to write
-any code! You can put multiple of these before a variable and they will all still work. 
+any code! You can put multiple of these before a variable and they will all still work.
 
 ### Unity Attributes
 There are a ton of attributes included in Unity, these are just my favorites.
@@ -3190,7 +3451,7 @@ public class SuperCoolScript : MonoBehaviour {
 
 ## Gizmos
 [📓](https://docs.unity3d.com/ScriptReference/Gizmos.html)  
-Gizmos are the quirky little overlays Unity draws when you select an object in the scene view. You can make your own 
+Gizmos are the quirky little overlays Unity draws when you select an object in the scene view. You can make your own
 custom ones! Here is how:
 ```csharp
 public class MyComponent : MonoBehaviour {
@@ -3245,7 +3506,7 @@ define our own layout!
 ### Adding a Button
 ```csharp
 public class CoolScript : MonoBehaviour {
-    public float favoriteNumber;
+    public float favoriteNumber = 24f;
     public void Clicked() {
         Debug.Log("Clicked!");
     }
@@ -3273,11 +3534,68 @@ public class InspectorCoolScript : Editor {
 #endif
 ```
 
-### Complex Example
+### Completely Custom Example
+```csharp
+public class CoolScript : MonoBehaviour {
+    public int hugMe;
+    public float butDont;
+    public Color touchMe;
+}
+
+#if UNITY_EDITOR
+[CustomEditor ( typeof(CoolScript))]
+public class InspectorCoolScript : Editor {
+    public override VisualElement CreateInspectorGUI() {
+        VisualElement container = new VisualElement();//create root element of our inspector UI
+        CoolScript script = (CoolScript)target;//the component this is an inspector for
+
+        PropertyField f1 = new PropertyField(serializedObject.FindProperty("hugMe"));//auto creates the right filed type
+        f1.style.fontSize = new StyleLength(24);
+        PropertyField f2 = new PropertyField(serializedObject.FindProperty("butDont"));
+        f2.style.backgroundColor = Color.black; 
+        PropertyField f3 = new PropertyField(serializedObject.FindProperty("touchMe"));
+        f3.label = "";
+        
+        container.Add(f1);
+        container.Add(f2);
+        container.Add(f3);
+        
+        return container;//return our super cool layout
+    }
+}
+#endif
+```
 
 ### Loading a UXML Layout from File
+For detailed instructions on how to configure your .uxml file see [this unity page](https://docs.unity3d.com/6000.0/Documentation/Manual/UIE-HowTo-CreateCustomInspector.html).
+This is just a simple code example! Make sure that for any variables you want to bind to elements, their Binding Path is
+set to the variable name you want bound.
+```csharp
+public class CoolScript : MonoBehaviour {
+    public int xmlMe;
+}
+
+#if UNITY_EDITOR
+[CustomEditor ( typeof(CoolScript))]
+public class InspectorCoolScript : Editor {
+    public override VisualElement CreateInspectorGUI() {
+        CoolScript script = (CoolScript)target;//the component this is an inspector for
+
+        VisualTreeAsset myLayout = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/CoolFolder/CoolScriptInspector.uxml");
+        VisualElement element = myLayout.Instantiate();//actually build our layout from the file
+        
+        return element;//if you set your binding paths right, everything just works auto-magically!
+    }
+}
+#endif
+```
 
 ## Custom Windows
+[📓](https://docs.unity3d.com/Manual/UIE-HowTo-CreateEditorWindow.html)  
+Click Assets > Create > UI Toolkit > Editor Window. Put in the names and location you would like for all the new files.
+Your new window will appear with Hello World! text! If you open the C# script for the window you just created, you can change
+where the new window lives inside the Editor Menu. This template totally sets up everything you need, just add functionality
+into the script or .uxml file from here!
 
 # 🗄️ Multiplayer
 
@@ -3287,6 +3605,8 @@ public class InspectorCoolScript : Editor {
 
 # 🎆 VFX Graph
 
+# 🫥 DOTS
+This is just here for Roxy, pay no mind, move along!
+
 
 - Color and Gradient?
-- new things: scriptable objects/new asset management thingy?
