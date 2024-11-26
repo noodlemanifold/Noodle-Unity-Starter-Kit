@@ -2883,14 +2883,184 @@ Cloth lets you override the shared gravity with a separate gravity for cloth (id
 cloth inter-collisions.
 
 # 🔊 Audio
-
-## Audio Listener
+[📓](https://docs.unity3d.com/Manual/Audio.html)  
+Unity's audio system is an old one, but a good one. I believe it is the only major engine system that did not get a total overhaul
+during Unity's annual release phase. It is quite simple, but it also leaves a lot of room for custom behavior and extensibility.
 
 ## Audio Clip
+[📓](https://docs.unity3d.com/ScriptReference/AudioClip.html)  
+Audio Clips are containers for audio data in Unity. Any supported audio file dragged into your project has an Audio Clip
+made for it. Because they are containers, they represent audio when it is loaded and unloaded. This lets you work with audio
+and even check its length without it being loaded into memory. You can control when the clip is loaded or unloaded yourself
+or have it loaded all the time, if memory is not an issue for you.
+
+Click an Audio Clip in your Assets folder, and its settings will appear in the Inspector. Most of the settings are related
+to loading or compression. Enabling Load in Background will make the audio clip load in a background thread whenever it is
+loaded. The load type gives you options for if the file stays compressed in memory or not, and if you would like to stream
+it instead. You can also set the compression algorithm and quality. Preload Audio Data is possibly the most important option here.
+Ticking this box will keep the Audio Clip loaded in memory whenever this Audio Clip asset is used in a scene. When this is
+unticked, you must manually call LoadAudioData() before the sound is played. If you do neither of these things, Unity will
+load the sound from disk the frame you play the sound, which can cause hitching and latency!
+
+```csharp
+public AudioClip audioClip;
+
+void Start(){
+    int channels = audioClip.channels;//number of channels in this clip
+    int frequency = audioClip.frequency;//sample frequency of the audio clip
+    float length = audioClip.length;//length of audio clip in seconds
+    int samples = audioClip.samples;//number of samples in the audio clip
+    
+    bool backgroundLoad = audioClip.loadInBackground;//if the audio clip is loaded in the background or not
+    bool preloading = audioClip.preloadAudioData;//if the audio clip is auto pre loaded or not
+    //if this clip does not have preloading, you must call these before you play it!!!
+    bool success = audioClip.LoadAudioData();
+    bool success = audioClip.UnloadAudioData();
+    
+    //you can also make Audio Clips procedurally :O
+    bool stream;
+    int numberOfSamples,numberOfChannels,sampleFrequency;
+    AudioClip newClip = AudioClip.Create("Name",numberOfSamples,numberOfChannels,sampleFrequency, stream);
+    int[] samples;
+    int offset;
+    newClip.SetData(samples, offset);
+    int[] getSamples = new int[newClip.samples];
+    newClip.GetData(getSamples, offset);
+}
+```
+
+## Audio Listener
+[📓](https://docs.unity3d.com/Manual/class-AudioListener.html)  
+The Audio Listener component is probably the thing you need to think about least out of anything in this document. It
+just serves as the point where all the sounds of the scene are heard.
+There can only ever be one per scene, and it is automatically added to the Camera when you create a scene. The only time
+you really have to interact with it is making sure there is still only one in the scene when you have multiple cameras or have multiple
+player characters for multiplayer. Still, here are some neat things it lets you do if you are interested:
+```csharp
+bool pause = AudioListener.pause;//get or set listener pause state. If true, all AudioSources are paused until it is false again.
+float volume = AudioListener.volume;//set master game audio volume. values must be between 0 and 1
+
+float[] samples;//size must be a power of 2
+int channel;
+AudioListener.GetOutputData(samples, channel);//fills the samples array with samples from the master output on the specified channel.
+FFTWindow window;
+AudioListener.GetSpectrumData(samples, channel, window);//fills the sample array with spectrum data from the master output with the specified channel.
+```
 
 ## Audio Source
+[📓](https://docs.unity3d.com/ScriptReference/AudioSource.html)  
+Audio Sources are the bread and butter of playing audio in Unity. They are a component that you attach to a gameobject, and they
+play AudioClips in the 3D space of the scene. The distance and relative velocity to the AudioListener are both taken into
+account when the sound is played. Unity does not simulate other effects like echoes automatically, but you can add them
+manually using [audio mixers to add effects](#audio-mixer). Audio Sources have one audio clip that they take ownership of. They manage
+how and when the clip is played. They can also play quick one-shots of other audio clips if need be.
+```csharp
+//as always, much more in the documentation
+AudioSource source = GetComponent<AudioSource>();
+AudioClip clip = source.clip;//main audio clip for this audio source
+bool bypass = source.bypassEffects;//set to ignore audio effects
+float doppler = source.dopplerLevel;//how much the doppler effect should affect this clip
+bool heckDaListener = source.ignoreListenerPause;//ignores if the scene audio listener is paused. good for pause menu music!
+bool getHecked = source.ignoreListenerVolume;//ingnore the audio listener's master volume setting
+bool playing = source.isPlaying;//returns true if the main clip is being played
+bool loop = source.loop;//set to make the clip auto-restart after it ends.
+bool mute = source.mute;//sets the clip volume to zero, but keeps playing it. Don't do this on a ton of differnt audio sources at once.
+AudioMixerGroup group = source.outputAudioMixerGroup;//what audio mixer group governs this audio source
+float pan = source.panStereo;//pans the sound left or right. values can be from -1 to 1
+float pitch = source.pitch;//modify the pitch of the audio clip. values are clamped from -3 to 3 :(
+bool gogo = source.playOnAwake;//set to have this audio source start playing automatically on load
+float spatialFactor = source.spatialBlend;//dertmines how much distance & doppler affect the sound. values must be between 0 and 1
+float time = source.time;//number of seconds that have been played of the main audio clip
+int samplesPlayed = source.timeSamples;//number of samples that have been played
+float volume = source.volume;//volume of the audio source
+int priority = source.priority;//if the platform we are on has limited audio channels, Unity will cull the lowest priority sounds first.
+                               //values are from 0 to 255, lower values have higher priority than higher ones
+```
+```csharp
+//functions!!
+AudioSource source = GetComponent<AudioSource>();
+source.Play();//start playing main audio clip
+source.Pause();//pause playing main audio clip
+source.UnPause();//resume playing main audio clip
+source.Stop();//stop playing main audio clip and reset to the beginning
+source.PlayDelayed(1f);//plays main audio clip with a delay in seconds
+
+//audio source scheduling. To be totally honest I didn't super look into this but it sounds very useful for syncing to music
+double currentAudioTime = AudioSettings.dspTime;
+source.PlayScheduled(currentAudioTime+2);//schedule 2 seconds from now
+source.SetScheduleStartTime(currentAudioTime+1);//if already scheduled, reschedule to a new time
+source.SetScheduleEndTime(currentAudioTime+1.5);//if already scheduled, set scheduled end time regardless of clip length
+
+//playing other audio clips!
+AudioClip someOtherClipIDK;
+source.PlayOneShot(someOtherClipIDK, volume);//plays another audio clip with this audio source's settings.
+                                             //does not cancel other sounds from this audio source, they can overlap
+
+Vector3 position;                                             
+AudioSource.PlayClipAtPoint(someOtherClipIDK, position, volume);//STATIC METHOD TO EASILY PLAY CLIPS LETS GOOOOO!!!! :DDDD
+
+float[] samples;//size must be a power of 2
+int channel;
+source.GetOutputData(samples, channel);//fills the samples array with samples from this audio source on the specified channel.
+FFTWindow window;
+source.GetSpectrumData(samples, channel, window);//fills the sample array with spectrum data from this audio source with the specified channel.
+```
+
+## Audio Mixer
+[📓](https://docs.unity3d.com/Manual/AudioMixer.html)  
+Audio Mixers are assets that can control the outputs of multiple audio sources at once. They have one master group, but you 
+can make more groups within the same mixer. You can have multiple mixers, and even pipe the output from one mixer into 
+another mixer to make a huge mixer chain!
+
+To make your first Audio Mixer, click Assets > Create > Audio > Audio Mixer. Give it a banger name and open it. This opens 
+up the Audio Mixer window. Along the left are 4 categories. Mixers has a list of all the audio mixer assets in your project.
+You can switch between them here. By default they output to the audio listener, but you can also route them into other mixers here.
+The second section is snapshots. Snapshots are basically keyframes. They hold the state of all the knobs and dials of the mixer.
+You can switch or fade between snapshots at runtime! The Groups section has all the audio groups of your mixer. Audio sources send their output
+to these groups. You can assign an audio source to a group by selecting the gameobject in the scene view, and then clicking and dragging
+the audio group onto the Output field of the audio source. The views section just lets you save the visibility and color of all 
+your mixer's groups, and switch between them.
+
+Click any mixer group to edit its effects in the Inspector. You can add and configure all sorts of effects. 
+I do not know enough about audio to convey how powerful these effects can be, but definitely don't gloss over this and forget about it!!
+Right click any variable and click Expose to expose it to C# scripts!
+```csharp
+public AudioMixer mixer;//assign in inspector or smth im not ur mom
+void Mixin(){
+    AudioMixerGroup groupOutput = mixer.outputAudioMixerGroup;//audio group this mixer is outputting to.
+    float outputValue;
+    bool success1 = mixer.GetFloat("ExposedVariableName", out outputVariable);//get exposed variable
+    bool success2 = mixer.SetFloat("ExposedVariableName", 1f);//set exposed variable
+    bool success3 = mixer.ClearFloat("ExposedVariableName");//reset exposed variable to its default
+    
+    AudioMixerSnapshot snap = mixer.FindSnapshot("SnapshotName");//get a mixer snapshot by its name
+    AudioMixerSnapshot[] snapshots;
+    float[] weights;
+    float transitionTime;
+    mixer.TransitionToSnapshots(snapshots,weights,transitionTime);//sets the mixer to an interpolated mix of snapshots
+                                                            //you can just pass an array of length one to set one snapshot
+}
+```
+
+## Project Audio Settings
+You can change some audio settings by going to Edit > Project Settings > Audio. You can change global volume, falloff, and 
+doppler, and some other things. Its honestly not super exciting it just felt important to mention.
+
+## Tracker Modules
+[📓](https://docs.unity3d.com/Manual/TrackerModules.html)  
+Tracker modules are a more modern version of .midi files that are supported in Unity! You may know these as .mod files.
+The supported formats are Impulse Tracker (.it), Scream Tracker (.s3m), Extended Module File Format (.xm), and the 
+original Module File Format (.mod). Drag and drop any of these into your project, and Unity will create an Audio Clip
+for them just like any other audio file!
+
+## Native Audio SDK
+[📓](https://docs.unity3d.com/Manual/AudioMixerNativeAudioPlugin.html)  
+Unity has a Native Audio Sdk for making custom audio effects, spatializers, and other things! I don't know much about this
+but the target reader of this document really likes audio and I felt like he should know about this! Just click that lil
+documentation book right above this paragraph and it'll take you to a great getting started page.
 
 # 🖥️ UI
+[📓](https://docs.unity3d.com/Manual/UIElements.html)  
 For the longest time, UI in Unity used a gameobject-based system called Unity UI. It was crytpic and difficult to achieve
 the result you wanted, and also made a huge screen in your scene that was annoying. There is now a new system that is based
 on a Unity specific version of html & css called UI Toolkit! (formerly UI Elements) It is much better in every way, but
@@ -3021,11 +3191,11 @@ label.RemoveFromClassList("Header");//remove any uss class to the component
 ```
 
 ## Custom UI Components
-You can create custom UI components that either extend or modify existing built in components, or define a completely 
+You can create custom UI components that either extend or modify existing built in components, or define a completely
 brand new component!
 
-If you want to make a component that modifies a Unity component, make a new class extending from it. I am going to make 
-a new custom component here, so I will derive from `VisualElement`. This code block is gonna be a doozy, I'm sorry thats 
+If you want to make a component that modifies a Unity component, make a new class extending from it. I am going to make
+a new custom component here, so I will derive from `VisualElement`. This code block is gonna be a doozy, I'm sorry thats
 just how it be sometimes.
 ```csharp
 using Unity.Properties;
@@ -3330,6 +3500,7 @@ public class GameState : ScriptableObject {
 ```
 
 ## PlayerPrefs
+[📓](https://docs.unity3d.com/ScriptReference/PlayerPrefs.html)  
 PlayerPrefs are a quick and dirty way to save individual variables that are primitive data types. It is whats known as a
 Keystore system, where you give unity a string, which acts as the key, and the variable you want to save. Later, you can ask
 Unity for the value associated with that key and it will give it to you! PlayerPrefs persist on disk across different runs
@@ -3599,14 +3770,14 @@ into the script or .uxml file from here!
 
 # 🗄️ Multiplayer
 
+# 📈 Profiler
+
 # 🏗️ Probuilder
 
-# 📉 Shader Graph
+# 🕶️ Shader Graph
 
 # 🎆 VFX Graph
 
 # 🫥 DOTS
 This is just here for Roxy, pay no mind, move along!
 
-
-- Color and Gradient?
