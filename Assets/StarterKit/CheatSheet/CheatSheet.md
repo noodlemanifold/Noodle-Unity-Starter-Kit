@@ -4619,3 +4619,14 @@ you wish to follow tutorials as closely as you can, but they will not work forev
 
 This is just here for Roxy, pay no mind, move along!
 
+Setup Notes:
+- Go to Edit > Project Settings > Editor > Enter Play Mode Settings, and set to "Do not Reload Domain or Scene"
+- Make sure your URP Renderer Asset had Forward+ lighting enabled
+
+Notes:
+- Add a subscene. Any gameobjects in the subscene will be converted to entities.
+- above the inspector for gameobjects in a subscene, there is a circle button. this has authoring settings. 
+  Authoring the gameobject mode that the entity is based on, and runtime is the preview of the entity that will be 
+  created! You can also have multiple inspectors with different authoring settings!
+- Click Window > Entities > Hierarchy to get the entities hierarchy window!
+- Bust can be disabled or re-enabled with Jobs > Burst > Enable Compilation
