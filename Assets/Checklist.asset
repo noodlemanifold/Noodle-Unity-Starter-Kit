@@ -12,13 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c293046b9749183479aab874fed0311f, type: 3}
   m_Name: Checklist
   m_EditorClassIdentifier: 
-  taskList:
-  - item:
-      complete: 1
-      text: 
-    subtaskList: []
-  - item:
-      complete: 0
-      text: 
-    subtaskList: []
+  taskList: []
   styleSheet: {fileID: 7433441132597879392, guid: 3612d4d31196fc445b726723504aeae0, type: 3}
