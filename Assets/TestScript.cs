@@ -1,29 +1,43 @@
 
 using System;
+using Markdig;
+using Markdig.Syntax;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Events;
 using UnityEngine.UIElements;
 using NoodleKit;
+using UnityEditor.Events;
 
-
+[ExecuteAlways]
 public class TestScript : MonoBehaviour {
     
-    public float hi;
-    public float hi2;
-    [Divider]
-    public float hi3;
-    public float hi4;
-    [Button] [SerializeField] private UnityEvent coolEvent5;
+    public MarkdownDocument document;
+    [Button("",false)] public UnityEvent ToHTML;
+    [Button("",false)] public UnityEvent ToUXML;
 
 
-    void Start() {
-        coolEvent5.AddListener(Print);
+    void Update() {
+        UnityEventTools.RemovePersistentListener(ToHTML,HTML);
+        UnityEventTools.AddPersistentListener(ToHTML,HTML);
+        ToHTML.SetPersistentListenerState(0,UnityEventCallState.EditorAndRuntime);
+        
+        UnityEventTools.RemovePersistentListener(ToUXML,UXML);
+        UnityEventTools.AddPersistentListener(ToUXML,UXML);
+        ToUXML.SetPersistentListenerState(0,UnityEventCallState.EditorAndRuntime);
     }
 
-    public void Print() {
-        Debug.Log("HI");
+    void AssignEvents() {
+        
+    }
+
+    public void HTML() {
+        document.RenderHTML();
+    }
+    
+    public void UXML() {
+        document.RenderUXML();
     }
 }
 

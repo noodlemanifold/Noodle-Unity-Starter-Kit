@@ -1,0 +1,9 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement style="flex-grow: 1; width: 33%; right: 0; align-self: flex-end;">
+        <engine:Label style="flex-grow: 1; white-space: normal; background-color: rgb(234, 234, 234); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 12px; padding-right: 12px; padding-bottom: 12px; padding-left: 16px;">
+            <Bindings>
+                <engine:DataBinding property="text" data-source-path="uxmlRichText" data-source="project://database/Assets/MarkdownTest.asset?fileID=11400000&amp;guid=81f6effee07b53b4885b1d7d3f9a7b11&amp;type=2#MarkdownTest" binding-mode="ToTarget" />
+            </Bindings>
+        </engine:Label>
+    </engine:VisualElement>
+</engine:UXML>
