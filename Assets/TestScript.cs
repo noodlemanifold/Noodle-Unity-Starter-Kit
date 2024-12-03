@@ -1,18 +1,43 @@
+
 using System;
+using Markdig;
+using Markdig.Syntax;
+using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEditor;
+using UnityEngine.Events;
+using UnityEngine.UIElements;
+using NoodleKit;
+using UnityEditor.Events;
 
+[ExecuteAlways]
 public class TestScript : MonoBehaviour {
+    
+    public MarkdownDocument document;
+    [Button("",false)] public UnityEvent ToHTML;
+    [Button("",false)] public UnityEvent ToUXML;
 
-    private void Start() {
-        Vector4 v1 = new Vector4(1.0f, 2.0f, 3.0f, 4.0f);
-        Vector4 v2 = new Vector4(5.0f, 6.0f, 7.0f, 8.0f);
-        Vector4 v3 = new Vector4(9.0f, 10.0f, 11.0f, 12.0f);
-        Vector4 v4 = new Vector4(13.0f, 14.0f, 15.0f, 16.0f);
-        Matrix4x4 mat = new Matrix4x4(v1,v2,v3,v4);
-        Debug.Log(mat[0,1]);
-        Debug.Log(mat[1,1]);
-        Debug.Log(mat[2,1]);
-        Debug.Log(mat[3,1]);
+
+    void Update() {
+        UnityEventTools.RemovePersistentListener(ToHTML,HTML);
+        UnityEventTools.AddPersistentListener(ToHTML,HTML);
+        ToHTML.SetPersistentListenerState(0,UnityEventCallState.EditorAndRuntime);
+        
+        UnityEventTools.RemovePersistentListener(ToUXML,UXML);
+        UnityEventTools.AddPersistentListener(ToUXML,UXML);
+        ToUXML.SetPersistentListenerState(0,UnityEventCallState.EditorAndRuntime);
+    }
+
+    void AssignEvents() {
+        
+    }
+
+    public void HTML() {
+        document.RenderHTML();
+    }
+    
+    public void UXML() {
+        document.RenderUXML();
     }
 }
+
