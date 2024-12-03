@@ -2760,14 +2760,57 @@ coordinate is not considered at all, so you must use sorting layers.
 ## Shadows
 
 # 🏃 Animations
-
-## Animation Window
+There are several ways to accomplish animations in Unity. You can make your own animations with the Animation Window, import
+animations from blender, or even use a procedural animation system! I will go over the basics of all 3 here.
 
 ## Animation Clips
+Animation Clips are just the asset file type that Unity uses to store animations. They are just like Audio Clips but for
+animation. They can be generated from files you import from other software, of created in Unity by using the Animation 
+Window!
 
-## Animation Manager
+## Animation Window
+The Animation window lets your build animations from keyframes inside of Unity! You can access it by clicking Window > 
+Animation > Animation. Now, if you click on any gameobject in the scene hierarchy, you can make animations for it here!
+Note, any objects that you want to animate need an Animator Component on them. The Animation window will prompt you to 
+this if you forget. If the object has no animations yet, it will display a create button to make your first Animation Clip.
+Click it, pick a name for your animation file, and save it. Now the full animation window is enabled! The right side is 
+your timeline, any keyframes you add will show up there. You can select and move keyframes there. On the right you have play,
+pause, and skip buttons. Next to them is a record mode that will automatically add keyframes if you cange anything. Below 
+that, there is a dropdrop to select animation clips. Here you can switch between the animations you have for this object or
+create a new one. To the right of the dropdown, there are buttons for adding keyframes and events. By default we have no
+properties added to the animation. You can add any public number variable to be animated in an animation. This usually means
+the position and rotation fields of the transform component, but you can also animate your own script variables as well!
+To select something for animation, click add property, expand the component that has the variable you want, then click the 
+plus button next to whichever one(s) you want. Now you can pose your object in the scene, move the animation playhead to 
+where you would like to create a keyframe, and hit the add keyframe button. The animation length will automatically be set
+to the duration between your first and last keyframes. Just close the window whenever you are done, you changes are 
+automatically saved! Be sure to check out the [Hotkeys](#-hotkeys) section for some useful animation window hotkeys!
+
+## Animator Controller
+The Animator Controller is essentially a state machine designed specifically for setting up animation systems. It can be 
+added to the Animator component on any gameobject, and it will manage which animation(s) are being played on that object 
+at any given time. To create one, click Assets > Create > Animation > Animator Controller. Give it a cool name and save 
+it to your project. You can now click and drag it onto any Animator component for the object you want this controller to 
+manage. Note: If you already created Animation Clips for an Animator component, Unity may have automatically created one
+for you. Double-click the Animator Component to open the editor for it. The Animator Component has a lot of features and 
+shiny buttons, I won't go over all of them here but I'll tell you the basics! Every block in the window represents a state.
+You can click and drag any Animation Clip you wish to add into the Animator Controller and it will create a new state for 
+it.
 
 ## Playing Animations
+
+## Importing Animations from Blender
+Im just gonna assume you've made an animation in blender in the Action Editor and saved it as an action. This is a Unity 
+cheat sheet after all, not a Blender one. Select the mesh AND the armature (and more if you want), then click File > 
+Export > FBX. In the export window, make sure you have both the armature and mesh object types selected. (You may also 
+wanna tick apply transform to avoid scaling weirdness.) Name you file and save it somewhere you'll remember! Now drag your 
+textures and .fbx file you exported into Unity. If you click the .fbx file, you can see its import settings in the inspector.
+You can click the animation tab to preview all your imported animations. Back in the assets window, your .fbx file should
+have an right arrow over its icon. Clicking that will expand it to show all the assets inside of the file. This will include
+you model, its generated material, its armature, and your animations! Animations will show up as little triangles that have 
+go fast lines behind them. Click and drag the model from your .fbx file into the scene. Add an animator component to it, 
+then create and add an [Animator Controller](#animator-controller), and open the animation controller. You can click and 
+drag any animations from your .fbx file into the controller, and set them up how you would with any other animation!
 
 ## Rigging & Procedural Animation
 
