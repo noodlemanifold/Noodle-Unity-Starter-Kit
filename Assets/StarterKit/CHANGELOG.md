@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.0]
+
+### Cheat Sheet
+- Added Animation Section
+
 ## [0.4.0]
 
 ### Cheat Sheet

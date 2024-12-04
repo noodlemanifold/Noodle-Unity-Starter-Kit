@@ -2765,25 +2765,33 @@ animations from blender, or even use a procedural animation system! I will go ov
 
 ## Animation Clips
 Animation Clips are just the asset file type that Unity uses to store animations. They are just like Audio Clips but for
-animation. They can be generated from files you import from other software, of created in Unity by using the Animation 
+animation. They can be generated from files you import from other software, or created in Unity by using the Animation 
 Window!
+
+## Animator Component
+The animator component is required to have on any object you wish to animate with Unity's animation system. for like 
+99% of use cases you will be interacting with it from other places, like the [Animation Window](#animation-window) 
+or the [Animator Controller](#animator-controller). This section is here for one reason: There is a legacy component 
+still included with Unity called the Animation component. DO NOT USE IT. Animations made with the Animation 
+component are not compatible with any of the other animations systems in the document. Make sure you are adding the 
+Animat***or*** Component!
 
 ## Animation Window
 The Animation window lets your build animations from keyframes inside of Unity! You can access it by clicking Window > 
 Animation > Animation. Now, if you click on any gameobject in the scene hierarchy, you can make animations for it here!
-Note, any objects that you want to animate need an Animator Component on them. The Animation window will prompt you to 
+Note: any objects that you want to animate need an Animator Component on them. The Animation window will prompt you to do 
 this if you forget. If the object has no animations yet, it will display a create button to make your first Animation Clip.
 Click it, pick a name for your animation file, and save it. Now the full animation window is enabled! The right side is 
-your timeline, any keyframes you add will show up there. You can select and move keyframes there. On the right you have play,
-pause, and skip buttons. Next to them is a record mode that will automatically add keyframes if you cange anything. Below 
-that, there is a dropdrop to select animation clips. Here you can switch between the animations you have for this object or
+your timeline, any keyframes you add will show up there. You can select and move keyframes there. On the left you have play,
+pause, and skip buttons. Next to them is a record mode that will automatically add keyframes if you change anything. Below 
+that, there is a dropdown to select animation clips. Here you can switch between the animations you have for this object or
 create a new one. To the right of the dropdown, there are buttons for adding keyframes and events. By default we have no
 properties added to the animation. You can add any public number variable to be animated in an animation. This usually means
 the position and rotation fields of the transform component, but you can also animate your own script variables as well!
 To select something for animation, click add property, expand the component that has the variable you want, then click the 
 plus button next to whichever one(s) you want. Now you can pose your object in the scene, move the animation playhead to 
 where you would like to create a keyframe, and hit the add keyframe button. The animation length will automatically be set
-to the duration between your first and last keyframes. Just close the window whenever you are done, you changes are 
+to the duration between your first and last keyframes. Just close the window whenever you are done, your changes are 
 automatically saved! Be sure to check out the [Hotkeys](#-hotkeys) section for some useful animation window hotkeys!
 
 ## Animator Controller
@@ -2792,15 +2800,61 @@ added to the Animator component on any gameobject, and it will manage which anim
 at any given time. To create one, click Assets > Create > Animation > Animator Controller. Give it a cool name and save 
 it to your project. You can now click and drag it onto any Animator component for the object you want this controller to 
 manage. Note: If you already created Animation Clips for an Animator component, Unity may have automatically created one
-for you. Double-click the Animator Component to open the editor for it. The Animator Component has a lot of features and 
-shiny buttons, I won't go over all of them here but I'll tell you the basics! Every block in the window represents a state.
+for you. Double-click the Animator Controller to open the editor for it. The Animator Component has a lot of features and 
+shiny buttons, I won't go over all of them here, but I'll tell you the basics! Every block in the window represents a state.
 You can click and drag any Animation Clip you wish to add into the Animator Controller and it will create a new state for 
-it.
+it. The Entry state is always the state that will be active first, and can be used to transition to whichever 
+animation you would like to start with. The pane on the left holds both your layers and the parameters for each 
+layer. Layers let you set up multiple state machines and run them at the same time on one object. This is could be 
+used, among many things, for having the animations of a characters' arms be independent of the animation for their 
+legs. You can select the gear icon next to a layer to either create a mask to limit the layer's influence on the object,
+or give it a weight. Parameters are variables that represent the conditions that a state will transition to another 
+state. You can add a float, int, bool, or trigger parameter (triggers are essentially bools). To create a transition,
+right-click on the state you would like to transition from, click Make Transition, and then click on the state you 
+would like to transition to! An arrow will appear going from the first state to the second one. Click it to see its 
+options. There are a lot of options to define the specific blend between the two states that would honestly probably 
+get more confusing if I tried to explain them. These are the important ones:
+- Has Exit Time: enables locking the transition to happen at a certain point in the animation
+- Exit Time: If the previous option is enabled, this specifies the point in the animation where the state will begin 
+  to transition.
+- Transition Duration: How long the transition into the next state is.  
+
+Below all these and the transition visualization, there is a conditions section. This is how you specify when this 
+transition is activated. Click the little plus at the bottom to add a new condition. Select one of your parameters 
+from the left dropdown. You can then choose to transition when the parameter is greater than or less than a certain 
+value. We will be setting these parameters in code in the [Playing Animations](#playing-animations) section to 
+actually control the state machine at runtime. Whenever you are happy, you can close the Animator Controller window 
+at any time, it will auto save your changes. NOTE: you can click a state and change its playback speed, and even 
+multiply it by the value of a parameter to change it dynamically at runtime!
 
 ## Playing Animations
+The Animator Component will start executing the state machine(s) in its Animator Controller the second it is loaded 
+and enabled. If you wish to disable animations, just disable the Animator Component like any other component. When 
+you re-enable it, it will reset all your parameters and start from the Entry state again. If you want to just freeze 
+the object for a bit instead, make a state with no animation and transition to that (You can do that by 
+right-clicking the background of the Animator Controller window and clicking Create State > Empty). To switch what 
+animation is being played, we change the value of the Animator Controller's parameters. When their values match the 
+conditions for a transition from the current state, the Animator Controller will transition for us automatically! 
+You can set parameter values in code just like this:
+```csharp
+Animator animator;
+    
+void Start () {
+    animator = GetComponent<Animator>();
+}
+
+void UpdateParameters () {
+    animator.SetFloat("ParameterName",1f);
+    animator.SetInt("IntParam",0);
+    animator.SetBool("isLit", true);
+    animator.SetTrigger("Consumeee");//this just sets the trigger to true
+                                     //triggers are automatically set back to false after the transition
+    animator.ResetTrigger("Consumeee");//you can manually set them back to false like this
+}
+```
 
 ## Importing Animations from Blender
-Im just gonna assume you've made an animation in blender in the Action Editor and saved it as an action. This is a Unity 
+I'm just gonna assume you've made an animation in blender in the Action Editor and saved it as an action. This is a Unity 
 cheat sheet after all, not a Blender one. Select the mesh AND the armature (and more if you want), then click File > 
 Export > FBX. In the export window, make sure you have both the armature and mesh object types selected. (You may also 
 wanna tick apply transform to avoid scaling weirdness.) Name you file and save it somewhere you'll remember! Now drag your 
@@ -2812,7 +2866,25 @@ go fast lines behind them. Click and drag the model from your .fbx file into the
 then create and add an [Animator Controller](#animator-controller), and open the animation controller. You can click and 
 drag any animations from your .fbx file into the controller, and set them up how you would with any other animation!
 
-## Rigging & Procedural Animation
+## Rigging for Procedural Animation
+If instead of switching between pre-made animations with an Animator Controller, you want to use procedural 
+animation (or a mix of both), you will need to set up your character's rigging inside of Unity. To get started, 
+make sure you have the Animation Rigging package installed. Then import your character from Blender *with* its rig. 
+Add your imported model into the scene hierarchy. Make sure both your mesh and armature are children of the root 
+gameobject in the scene. Then, add the Animator component, Rig Builder component, and Bone Renderer component to that 
+root gameobject. Now, select *every* bone in your armature, and click and drag them into the Transforms field of the 
+Bone Renderer component. We will now create the rig inside Unity. (Note: this is a bit confusing, but the "rig" is 
+not the armature of the model. It is a list of entirely new gameobjects that have components that define constraints 
+for all of the bones in the armature.) Create a new gameobject that is a child of the root gameobject and call it 
+something along the lines of "Rig". It should be a sibling of the armature. Now, add a Rig component to it. Then 
+click and drag this rig gamobject into the Rig Layers field of the Rig Builder component on the root gameobject. You 
+can now add constraints as children to the rig gameobject you just created, and they should work! There are a ton of 
+constraint types, and you will need different ones depending on the armature of your character and what you want to 
+be procedurally animated. You can see all the options by clicking the Add Component bottom at the bottom of the 
+inspector, and clicking the Animation Rigging tab (make sure the search field is empty for this to work). Generally, 
+the constrained object(s) field is a gameobject from the armature hierarchy of your model, and targets can be any 
+old gameobject you want. If you need more help for a specific use case, look up "unity procedural animation rigging" 
+on Youtube!
 
 ## Animating Variables
 
@@ -3581,10 +3653,44 @@ private void OnDestroy() {
 }
 ```
 
+### Data Binding
+Binding C# variables to UI Toolkit variables is super easy! Open up your UI Layout in the UI Builder if it is not
+open already. Hover over the UI variable you would like to bind a variable to in the Inspector pane. Most commonly this
+will probably be the Label field of a UI component. When you hover over it, 3 little dots will appear to the left of
+the variable name. Click those, then choose Add Binding. A window will appear to configure your data binding. You
+can bind a scriptable object or a monobehaviour script. If you would like to use a scriptable object, click Object
+as the source type, drag and drop your scriptable object into the field that says None (Scriptable Object), and then
+just enter the target variable name for the data source path. Make sure the capitalization is the same! If you would
+like to use a monobehaviour component, the process is really similar. Select Type as your data source type, then
+click the Select Type button, and search for the class that you want. For the data source path, just
+put in the variable name you would like to bind to from the class you selected! So far we have only told UI toolkit
+what kind of script it will be binding to, but it doesn't know what specific instance to use. For that, at runtime,
+you must make a script to give the UI an instance. That can be done by getting a reference to the UI Document
+component displaying your UI and inserting this code:
+```csharp
+public MyCoolScript script;//assign this in the editor or put it on the same gameobject as the UI Document
+public UIDocument document;//same goes for this one, just get a reference however you please.
+
+void Start(){
+    VisualElement uiRoot = document.rootVisualElement;
+    uiRoot.Query<Label>("LabelName").dataSource = script;
+            //replace Label with the UI Component type that you are targeting. Ex: Button, Toggle, TextField, etc...
+            //replace "LabelName" with the name of the target UI Component in the layout.
+}
+```
+For either scriptable objects or monobehaviours, both have an option for a binding mode. By default it is set to To
+Target, which means your code will only modify the UI, not the other way around. However, for something like a
+TextField or a Toggle, you may want the UI to write back to the variable when the user changes something. To enable
+that, select Two Way from the dropdown. To Source and To Target Once are also both available options if you would
+like. When you are happy with your settings, click the Add Binding button at the bottom of the window, and you're
+all set!
+
+NOTE: If UI Toolkit isn't recognizing the variable you wish to bind to, add the [CreateProperty] attribute above it.
+
 ### Doing Stuff
 
 [📓](https://docs.unity3d.com/ScriptReference/UIElements.VisualElement.html)  
-You can do anything in code at runtime that you can do in the UI Builder. Here is just some stuff I think is useful.
+You can do anything in code at runtime that you can do in the UI Builder! Here is just some stuff I think is useful.
 
 ```csharp
 UIDocument document = GetComponent<UIDocument>();//document component
