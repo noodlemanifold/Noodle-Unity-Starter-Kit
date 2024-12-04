@@ -1,13 +1,15 @@
+using Markdig.Renderers.Html;
 using UnityEngine;
 
 using Markdig.Syntax.Inlines;
+using NoodleKit;
 
 namespace Markdig.Renderers.Uxml {
 
 /// <summary>
 /// A HTML renderer for a <see cref="LineBreakInline"/>.
 /// </summary>
-/// <seealso cref="HtmlObjectRenderer{LineBreakInline}" />
+/// <seealso cref="HtmlObjectRenderer{TObject}" />
 public class UxmlLineBreakInlineRenderer : UxmlObjectRenderer<LineBreakInline> {
     
     private MarkdownSettings renderSettings;

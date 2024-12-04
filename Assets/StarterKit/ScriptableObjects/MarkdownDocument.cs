@@ -3,8 +3,11 @@ using System.IO;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
 using Markdig.Renderers;
+using NoodleKit;
 using Unity.Properties;
 using UnityEngine;
+
+namespace Noodlekit{
 
 [CreateAssetMenu(fileName = "Markdown", menuName = "Noodle Kit/Markdown")]
 public class MarkdownDocument : ScriptableObject {
@@ -58,4 +61,5 @@ public class MarkdownDocument : ScriptableObject {
 
         //Debug.Log(uxmlRichText);
     }
+}
 }

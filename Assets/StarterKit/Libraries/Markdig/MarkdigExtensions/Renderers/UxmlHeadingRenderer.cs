@@ -1,6 +1,7 @@
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using NoodleKit;
 using Unity.VisualScripting;
 using UnityEngine;
 

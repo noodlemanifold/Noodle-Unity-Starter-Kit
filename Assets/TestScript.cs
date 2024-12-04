@@ -9,6 +9,7 @@ using UnityEngine.Events;
 using UnityEngine.UIElements;
 using NoodleKit;
 using UnityEditor.Events;
+using MarkdownDocument = Noodlekit.MarkdownDocument;
 
 [ExecuteAlways]
 public class TestScript : MonoBehaviour {
