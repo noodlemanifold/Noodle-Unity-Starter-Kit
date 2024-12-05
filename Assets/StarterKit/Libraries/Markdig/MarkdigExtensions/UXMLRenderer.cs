@@ -12,7 +12,6 @@ using System;
 
 using Markdig.Helpers;
 using Markdig.Renderers.Html;
-using Markdig.Renderers.Html.Inlines;
 using Markdig.Renderers.Uxml;
 using Markdig.Syntax;
 using NoodleKit;
