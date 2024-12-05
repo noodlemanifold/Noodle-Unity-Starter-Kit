@@ -4757,8 +4757,69 @@ you wish to follow tutorials as closely as you can, but they will not work forev
 # 📈 Profiler
 
 # 👷‍♀️ Making Builds
+I thought I would put in a little section here about making builds of your game. Unity 6 introduced a whole new 
+world of build tools that allows you to make build profiles, which lets you change aspects of your game depending on 
+the platform (windows, mac, linux) and/or build type (debug, release, dedicated server). Here's how to use them!
 
-# 🏗️ Probuilder
+## Quick Builds
+
+# 🏗️ ProBuilder
+ProBuilder is a Unity package that allows you to quickly an easily create 3d objects inside the editor! It is 
+intended for prototyping, testing, and design, but if you put enough time into it you can make some great 3D models! 
+Not that I recommend that at all.
+
+## Setup
+Make sure you have the ProBuilder package installed from the Package Manager. That's all! 👍
+
+## Creating Shapes
+To get started with ProBuilder, you need to create a ProBuilder shape. There used to be a dedicated window for doing 
+everything with ProBuilder, but now it is built directly into the editor UI. At the bottom of your toolbar in the 
+scene window, after the Transform tool, there should be two buttons in their own section: Create Cube and Create 
+Polyshape. Click Create Cube to make our first ProBuilder shape. The way ProBuilder shape tools work is that you 
+first create a 2D slice of your shape, and then raise it up on the Y axis. To create a cube, hold down left-click 
+where you want one corner of the cube, then drag to where you would like the opposite corner to be, and release. 
+After you release, move your mouse up to define the height of the cube. When you are happy with it, left-click one 
+final time to confirm. Now you have a cube! You can change the size of any ProBuilder shape after the fact by 
+selecting it in the hierarchy and editing the Size variable of the ProBuilder Shape component in the Inspector. 
+Alternatively, when you select a ProBuilder shape, an Edit Probuilder Shape tool gets added to your Scene Tools 
+Toolbar, and you can use that to change the bounding box of your shape! Note: The click-and-drag shape creation 
+tools are a lot more useful when you enable the editor's grid snapping feature!
+
+To make a shape that isn't a cube, hold down left-click over the Create Cube tool. A little window will appear that 
+lets you select a lot of other shapes! Release left click over any other shape to switch to it. Creating any of the 
+other shapes works the same way as the cube. You click and drag a flat box and then raise your mouse to specify the 
+height. The shape will fill the bounding box you specify. Notice, some of the other shapes will have more options in 
+the ProBuilder Shape component after you make them. For instance, the sphere lets you specify a number of 
+subdivisions, and the cylinder lets you specify a number of sides. You can always change these later! Underneath the 
+Create Cube tool in the Scene Tools Toolbar, there is a Create Polyshape tool. For that tool, left click somewhere 
+to create a point, then click somewhere else to make another point. Keep clicking to draw out the base of whatever 
+shape you want to make. Once you click back on the first point you made, the shape will close, and it will enter 
+height mode. Move your mouse up until you are happy with the height and left click. As always, you can change it 
+later in the PolyShape component in the Inspector.
+
+## Mesh Editing
+Once you make a shape in ProBuilder, you can edit its mesh directly! If you select a ProBuilder shape, an orange 
+grid tool will appear at the top of your Scene Tools Toolbar. When clicked, this will change the rest of the scene 
+tools (transform, rotation, scale) to work on mesh selections instead of gameobject selections. When in mesh mode, 
+there will also be new buttons at the top of the scene window to switch between vertex, edge, and face selection. 
+Now you can select and translate shape meshes as your heart desires! To modify the actual topology of the mesh, all 
+the modeling tools of ProBuilder now live in the right click menu. The options that appear in the right click menu 
+depend on if you are in vertex, edge, or face selection mode. They operate only on what you have currently selected, 
+so if you don't have a valid selection for a tool it will be greyed out. When you are done, click the orange 
+grid tool again to put your scene tools back into the normal gameobject mode. Note: If you edit a shape's mesh like 
+this, you can no longer change the settings of the original shape without reverting all of your changes.
+
+## Advanced Tools
+If you need more control over your ProBuilder meshes, there are more tools available! If you click Tools > 
+ProBuilder > Editors, there are several windows that let you edit your meshes further. There is an editor for 
+editing Materials, Smooth Shading, UVs, Vertex Colors, and Vertex Positions. When you have any of these windows open,
+they will let you edit the currently selected ProBuilder mesh. I'm not going to go over all of these tools, but I 
+think they are pretty self-explanatory!
+
+## Exporting
+If you want to export a ProBuilder mesh into another program, it is really easy! Select the meshes you want to 
+export, then click Tools > ProBuilder > Export, and select what file type you would like to export. Normally I just 
+do .obj, but there are other options. Select where you would like to save the file, hit Save, and tada! You're done!
 
 # 🕶️ Shader Graph
 
