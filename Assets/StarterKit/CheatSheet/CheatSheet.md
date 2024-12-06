@@ -2760,10 +2760,12 @@ coordinate is not considered at all, so you must use sorting layers.
 ## Shadows
 
 # 🏃 Animations
+[📓](https://docs.unity3d.com/Manual/AnimationOverview.html)  
 There are several ways to accomplish animations in Unity. You can make your own animations with the Animation Window, import
 animations from blender, or even use a procedural animation system! I will go over the basics of all 3 here.
 
 ## Animation Clips
+[📓](https://docs.unity3d.com/Manual/AnimationClips.html)  
 Animation Clips are just the asset file type that Unity uses to store animations. They are just like Audio Clips but for
 animation. They can be generated from files you import from other software, or created in Unity by using the Animation 
 Window!
@@ -2777,6 +2779,7 @@ component are not compatible with any of the other animations systems in the doc
 Animat***or*** Component!
 
 ## Animation Window
+[📓](https://docs.unity3d.com/Manual/AnimationEditorGuide.html)  
 The Animation window lets your build animations from keyframes inside of Unity! You can access it by clicking Window > 
 Animation > Animation. Now, if you click on any gameobject in the scene hierarchy, you can make animations for it here!
 Note: any objects that you want to animate need an Animator Component on them. The Animation window will prompt you to do 
@@ -2795,6 +2798,7 @@ to the duration between your first and last keyframes. Just close the window whe
 automatically saved! Be sure to check out the [Hotkeys](#-hotkeys) section for some useful animation window hotkeys!
 
 ## Animator Controller
+[📓](https://docs.unity3d.com/Manual/class-AnimatorController.html)  
 The Animator Controller is essentially a state machine designed specifically for setting up animation systems. It can be 
 added to the Animator component on any gameobject, and it will manage which animation(s) are being played on that object 
 at any given time. To create one, click Assets > Create > Animation > Animator Controller. Give it a cool name and save 
@@ -2867,6 +2871,7 @@ then create and add an [Animator Controller](#animator-controller), and open the
 drag any animations from your .fbx file into the controller, and set them up how you would with any other animation!
 
 ## Rigging for Procedural Animation
+[📓](https://docs.unity3d.com/Packages/com.unity.animation.rigging@1.0/manual/index.html)  
 If instead of switching between pre-made animations with an Animator Controller, you want to use procedural 
 animation (or a mix of both), you will need to set up your character's rigging inside of Unity. To get started, 
 make sure you have the Animation Rigging package installed. Then import your character from Blender *with* its rig. 
@@ -2887,8 +2892,44 @@ old gameobject you want. If you need more help for a specific use case, look up 
 on Youtube!
 
 ## Animating Variables
-
-AnimationCurve pog
+Sometimes when you are making a game, you need to smoothly animate the value of a variable over time. You could setup
+an entire Animator Controller and make an animation for it, but that is clunky and not very dynamic. The first thing 
+you might try is to make a timer variable and an if condition in your script's Update() function, and while that does 
+work, there is a better way. Use [coroutines!](#coroutines) I won't go over coroutines again here, they are covered in
+the [coroutines section](#coroutines), but here is some example code for how to use one to animate a variable.
+```csharp
+//linear animation function
+IEnumerator AnimationCoroutine(ref float target, float endingValue, float time){
+    float timer = 0;
+    float startValue = target;//keep track of the starting value for the lerp function
+    while(timer <= time){
+        timer += Time.deltaTime;
+        target = Mathf.Lerp(startValue, endValue, timer/time);//timer/time is our animation progress %
+        yield return null;
+    }
+}
+------
+//put this wherever you want to animate a variable
+float animateMe = 0f;
+IEnumerator coroutine = AnimationCoroutine(ref animateMe, 4f, 1f);
+StartCoroutine(coroutine);//this will start animating animateMe from 0 to 4 over 1 second
+```
+That example uses Lerp, which does linear interpolation, but you can use any other function you like! Unity has another
+on built in called SmoothStep(), which animates in an S-Curve shape.
+```csharp
+IEnumerator AnimationSmooth(ref float target, float endingValue, float time){
+    float timer = 0;
+    float startValue = target;//keep track of the starting value for the lerp function
+    while(timer <= time){
+        timer += Time.deltaTime;
+        target = Mathf.SmoothStep(startValue, endValue, timer/time);//Using a smooth function now!
+        yield return null;
+    }
+}
+```
+Unity only has the Lerp() and SmoothStep() functions, but there is a whole world of animation functions out there. They
+are called easing functions. You can do research to see what is out there or even make your own! You can find out more
+about easing functions [here](https://thebookofshaders.com/05/).
 
 # 🥏 Physics
 
@@ -4755,15 +4796,54 @@ you wish to follow tutorials as closely as you can, but they will not work forev
 [Rpc(SendTo.Server)] and [ClientRpc] with [Rpc(SendTo.ClientsAndHost)] and the code should still all work the same!
 
 # 📈 Profiler
+[📓](https://docs.unity3d.com/Manual/Profiler.html)  
+
+
+## Profiler Markers
+
+## Deep Profiling
 
 # 👷‍♀️ Making Builds
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/build-profiles.html)  
 I thought I would put in a little section here about making builds of your game. Unity 6 introduced a whole new 
 world of build tools that allows you to make build profiles, which lets you change aspects of your game depending on 
-the platform (windows, mac, linux) and/or build type (debug, release, dedicated server). Here's how to use them!
+the platform (windows, mac, linux) and/or build type (debug, release, dedicated server). The new Build Profiles window
+replaces the old Build Settings windows from previous Unity versions. You can open in by clicking File > Build Profiles
+to get started!
 
-## Quick Builds
+## Shared Settings
+Shared settings are similar to the old Build Settings window form previous Unity versions. They are basically the 
+default settings any build is based on unless it overrides anything. The default player settings are located under
+Edit > Project Settings > Player. The default scene list is located in the Build Profiles window. If you look on the
+left, there is a list of supported platforms. At the top of them is a section called Scene List. Here you can add 
+scenes to your build like you would in Unity before. Build profiles can override this list if you want them to!
+
+## Platforms
+Along the left of the Build Profiles window, there is a list of all the platforms supported by Unity that you can 
+export for. Platforms that are greyed out are not currently installed. If you click one of them, it will prompt you 
+to install that platform from the Unity Hub. For platforms that are installed, you can click them to configure settings
+for just that platform. You can also override player settings or the scene list for just that platform if needed.
+
+## Build Profiles
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/BuildSettings.html)  
+(You can create Build Profiles in the bottom left of the Build Profiles window. Build Profiles are saved as an asset in
+your project, which means they can be re-used or submitted to version control. When you go to create a build profile,
+Unity will prompt you for what platform you would like this build profile to be for. You can select any of the ones you
+have installed. Then click Add Profile. Now select your new build profile and if it is not already and click Switch
+Profile. This will make it the active profile for your project! Build Profiles allow you to do several things, including
+overriding player settings, overriding asset imports, and setting up custom scripting defines. Check out the 
+documentation to learn more! Note: Scripting defines are a bit advanced but also super useful. They essentially
+let you make variables that tell the compiler to conditionally include or exclude sections of your code. You use them
+by putting `#if MY_SCRIPT_DEFINE` on its own line and then later `#endif`. [Here](https://docs.unity3d.com/6000.0/Documentation/Manual/custom-scripting-symbols.html)
+is the documentation for them.
+
+## Addendum
+It's kinda obvious but I feel like I can't have a section called "Making Builds" and then not tell you that you make
+a build by clicking either the Build or Build and Run button. Build just builds the game, Build and Run builds it and
+then runs that build. You're welcome! ^-^
 
 # 🏗️ ProBuilder
+[📓](https://docs.unity3d.com/Packages/com.unity.probuilder@6.0/manual/index.html)
 ProBuilder is a Unity package that allows you to quickly an easily create 3d objects inside the editor! It is 
 intended for prototyping, testing, and design, but if you put enough time into it you can make some great 3D models! 
 Not that I recommend that at all.
