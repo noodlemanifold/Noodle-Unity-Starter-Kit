@@ -2612,6 +2612,23 @@ gameobject in your scene hierarchy and change the grid size.
 A quick note on Physics: you can add a TilemapCollider2D Component to your tile map gameobject, and it will
 automagically generate colliders for every tile in your tile map!!
 
+## Rule Tiles
+There are a few special tile types in Unity, but the most useful of them is the rule tile. It allows you to
+automatically place tile variants for the edges of a shape, for instance path borders, without having to juggle
+20 different tiles. To create one, first make sure you have the 2D Tilemap Extras package installed. Then, click
+Assets > Create > 2D > Tiles > Rule Tile. Give it a name and save it into your project. Single click the asset you
+just made to set it up in the inspector. The Default Tile field is what sprite is displayed when no rules are in effect.
+Usually this will be your interior texture. Below this, there is a field called Tiling Rules. Hit the plus to create
+a rule. On the right side of the rule, you can select a sprite for the rule. Click it and search for the sprite you
+want for this rule. This will usually be a corner or edge sprite. Just to the left of the sprite, there should be a
+3x3 grid of squares. Click any of the grid cells. A green arrow will appear. This means that this sprite will only be
+selected if there is another instance of this rule tile in that direction. If you click again, it will turn into a red
+X. A red X means this tile will only be selected if there is not and instance of this rule tile in that direction. By
+mixing and matching green arrows and red Xs in various directions, you can create unique rules for each of your sprites
+that dictate when they will appear. You can keep going and create as many rules as you need for all the edge variant
+sprites that you have. When you are finished, you can click and drag your rule tile into a tile palette and paint with
+it just like any other sprite! Note: for more super useful 2D tile tips, check out [this channel](https://www.youtube.com/@jesscodes).
+
 ## Sprite Shapes
 
 [📓](https://docs.unity3d.com/Packages/com.unity.2d.spriteshape@3.0/manual/index.html)  
@@ -2712,7 +2729,6 @@ without actually moving, useful for conveyor belts and such. Again with this one
 normal colliders.
 
 ## Lighting
-
 [📓](https://docs.unity3d.com/6000.0/Documentation/Manual/urp/Lights-2D-intro.html)  
 If you are using the 2D version of the Universal Render Pipeline (setup automatically with the 2D project template),
 then Unity actually has some really cool 2D lighting options available to you! By adding 2D lights and shadows to your
@@ -2738,16 +2754,40 @@ Lights and shadows can both be restricted to various sorting layers to achieve c
 coordinate is not considered at all, so you must use sorting layers.
 
 # 🎥 Rendering
+This sections contains information about a lot of things that are mostly unrelated, but you need knowledge of all of 
+them in order to compose and render a 3D scene in Unity. Lets get started!
 
 ## Universal Render Pipeline
+Unity right now has 2 render pipelines, the Universal Render Pipeline and the High Definition Render Pipeline 
+(the legacy pipeline does not exist). They are called URP and HDRP for short. The URP is meant for games on all
+platforms, and the HDRP is meant for super realistic games targeting high-end PCs and consoles. You have to choose which
+render pipeline you want when you create your project in the Unity Hub. It is possible to change it after the fact, but 
+it kinda sucks and will break all your scenes and assets. The situation kinda sucks, and in Unity 7 they plan on 
+merging them into one big render pipeline, but until then we're stuck with the two of them. Throughout this entire 
+sheet I will be assuming you are using the Universal Render Pipeline. The HDRP has a whole world of complexity that
+is not really suitable for a cheat sheet like this, and frankly I'm not interested in learning it.
+
+[show how to change urp settings please]
 
 ## Camera
 
+
 ## Importing Models
+[📓](https://docs.unity3d.com/Manual/CreatingDCCAssets.html)  
+To import a 3D model into Unity, all you have to do is click and drag any model you exported from your favorite 3D
+modelling software into the Assets pane! Unity support .fbx, .dae, .dxf, and .obj. All these formats have varying 
+amounts of supported features, modernity, and robustness. Unity kind of implicitly recommends that you use .fbx files
+in their documentation. To change the model settings, single-click the file in the Assets pane, and you can change its
+import settings in the Inspector. The available settings depend on the file type of the model. To put a 3D model in
+you scene, you can click and drag the file from the assets pane into the Scene Hierarchy. It will work like a prefab.
+I recommend that if it is something you will use more than once, make your own prefab for it. That way you can
+set up the materials and hierarchy and everything the way you like it once and have it every time you need the model.
 
 ## MeshRenderer
 
 ## Materials
+
+### Material Variants
 
 ## Lighting
 
@@ -4952,8 +4992,156 @@ export, then click Tools > ProBuilder > Export, and select what file type you wo
 do .obj, but there are other options. Select where you would like to save the file, hit Save, and tada! You're done!
 
 # 🕶️ Shader Graph
+[📓](https://docs.unity3d.com/Packages/com.unity.shadergraph@17.0/manual/index.html)  
+Shader Graph is a visual node-based tool for creating shaders without writing any code. You can't do everything with
+it that you can by writing code, but for the vast majority of use cases it can do the job!
+
+## Theory
+I'm not going to explain everything you need to know to start writing shaders, but I will give a refresher on how
+shaders are structured (at least for normal object shaders). If you would like a more in depth starter guide for
+writing shaders, check out [The Book of Shaders](https://thebookofshaders.com/). In a shader graph, there will be
+two sections of outputs: the Vertex Shader and the Fragment Shader. The Vertex Shader controls the final position of
+all the vertices that make up your mesh, as well as their normals. If you leave the Vertex Shader alone, your
+mesh will render just like normal. However, you can offset vertices of your mesh to achieve neat effects, like 
+a fish wiggling as it swims or the rolling terrain seen in Animal Crossing. The Fragment Shader is where most of the
+cool shader stuff will happen. It controls the final pixel color that is drawn to the scene. The color output in the
+Fragment Shader will set the color of your object, but that is not the whole story. You can also specify values for
+the metallic and smoothness of this pixel of the object, which controls how the object will receive and reflect light.
+There are also outputs for the Normal vector of the surface, Emission color, and Ambient Occlusion amount. To get values
+for all of these outputs, you will get data from inputs, and then do math on them to generate your desired output.
+Inputs can be position coordinates, UV coordinates, Noise textures, normal textures, depth textures, and so much more!
+
+## Making a Graph
+Create a shader graph shader by clicking Assets > Create > Shader Graph > URP > Lit Shader Graph. You can also choose
+unlit if you want an object with no metallic, smoothness, shading, or shadows. Type in a name and press enter.
+Double-click the asset you just created to open the shader graph editor window. You can dock it somewhere, but I recommend
+leaving it undocked and making it fullscreen. 
+
+The center of the window is your workspace with all of your nodes. Alt + left-click to pan it.
+The box on the left is your Blackboard. The Blackboard has all the variables of your shader. Click the plus at the 
+top left of it to create a new variable. There are several different types to choose from. You can click and drag
+any variable from the blackboard into your workspace to create a node with its value. You can also create multiple
+nodes of the same variable for neater looking connections! If you right-click a variable, there is an option to expose
+it. This essentially makes the variable "public". When you make a material with this shader, all your exposed variables
+will appear in the Inspector, and you will be able to change their values. The box on the right is the Graph Inspector.
+The Graph Inspector has two tabs: Node Settings and Graph Settings. The Node Settings tab lets you tweak the settings
+of any node that you have selected in the workspace. The Graph Settings tab lets you change settings for the entire
+shader as a whole. The bottom right of the window also has a little preview of your shader on a sphere. You can click 
+it to cycle between other shapes if you like. You can toggle the Blackboard, Graph Inspector, and Preview on or off
+for more space by clicking their corresponding buttons at the top right of the window. The top left has Save and Save
+As buttons. Don't forget to save your work, your changes are not saved for you!
+
+The actual fun bit with shader graph is making nodes! To create a new node, right-click the workspace in the center
+and click Create Node, or just press spacebar. The node creation window will appear! You can either browse for nodes
+through all the categories, or search for the node you want in the top bar. You can find a list of all the available
+nodes [here](https://docs.unity3d.com/Packages/com.unity.shadergraph@17.0/manual/Node-Library.html). Once you click on a node, it will be
+created and put in your workspace. You can click and drag nodes around. Click and drag on the background to box
+select multiple nodes. When multiple nodes are selected, you can click and drag any of the selected nodes, and the
+rest of the selected nodes will move around with it. The inputs of a node are always on the left side, and the outputs
+are always on the right side. To connect nodes, click and drag the output of one node into the input of another node.
+This will create a connections between the two nodes, represented as a line. To delete a connection, click the 
+connection you want to delete and press the delete key. All outputs and inputs in shader graph have a color, and this
+color denotes what data type they are. You can find all the types and their colors [here](https://docs.unity3d.com/Packages/com.unity.shadergraph@17.0/manual/Data-Types.html).
+Some data types can be automatically converted into another if you connect them. For instance, you can connect a float
+output to a vector input, and unity will just make every component of the vector equal to the value of the float. I
+just kinda go by vibes for this and I couldn't find any list of what data types can be cast to what, so just try stuff
+and see what happens I guess 乁༼☯‿☯✿༽ㄏ have fun!!!
+
+You can also right-click the workspace background and click Create Sticky Note to make a lil sticky note that you
+can use to write comments for yourself. ^-^
+
+## Using Your Shaders
+To use any shaders you make, make a new material and name it whatever you like. Click the material to see its settings
+in the Inspector. At the very tippy-top of the Inspector, right under the material name, there a dropdown field named
+Shader. Click this, then go to Shader Graphs > Your Shader Name, or simply search for your shader at the top. Now that
+material is using the shader you made! Any objects with this material will be rendered with your shader, and any 
+variables you marked as exposed can be tweaked by selecting the material in the Assets pane and changing their values
+in the Inspector.
 
 # 🎆 VFX Graph
+[📓](https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.0/manual/index.html)  
+VFX Graph is a GPU-based particle system that you create visually using nodes. You can also use it for GPU instancing.
+It is super cool and awesome and fast and amazing and I should really use it a lot more. It supports both URP and 
+the HDRP now!
+
+## Theory
+[📓](https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.0/manual/GraphLogicAndPhilosophy.html)  
+Ok jeepers this one has some crazy theory that is completely unique to VFX Graph, but I will do my best to understand
+it and relay that understanding to you. There are some terms that have specific meanings in VFX Graph land that you
+need to understand first:  
+
+- Variables are values that live in the blackboard that serve as inputs for Operator nodes.
+- Operators are nodes very similar to Shader Graph nodes, they let you take an input and do math stuff on it.
+- Blocks are an instruction that VFX Graph will execute. They are always organized as a vertical stack, and will
+  execute from the top down. Some examples are like, Set Color, Apply Force, stuff like that.
+- Contexts are containers for a stack of blocks. Contexts will execute their stack of blocks at a specific time. For
+  instance, the Initialize context will run once at the start of the particle system, and the Update context will run
+  once per frame.
+- Systems are a context or a group of contexts that represents some like, uh, thing? Like for instance, You can have
+  a spawning system, and particle system, or a mesh output system. Systems are represented in the workspace by a dotted
+  line surrounding a group of contexts.  
+
+Systems, Contexts, and Blocks are all organized in a vertical stack going from top to bottom. Operators go from left
+to right, and their final output can be plugged into the input of any block in any context. This creates a sort of
+twig structure, where you have a main central channel and little spindly bits coming off the sides wherever you need
+custom logic.
+
+The only three systems you will probably ever need are:
+- Spawning System: composed of just a Spawning context
+- Particle System: composed of an Initialize > Update > Quad|Mesh Output context stack
+- Mesh System: composed of just a Mesh Output context
+
+You can hook a Spawning System up to a Particle System to make a bunch of pretty particles, or you can hook up a 
+Spawing System to a Mesh System to basically just do GPU Instancing.
+
+## Making a Graph
+First things first, make sure you have the Visual Effect Graph package installed from the package manager. To create
+a VFX Graph, click Assets > Create > Visual Effects > Visual Effect Graph. Give it a name and press enter. Double-click
+the asset you just made to open the VFX Graph window. The main view in the center-right is your workspace. This is where
+you will create and manipulate nodes. The box in the top left is your Blackboard. The Blackboard holds variables you
+can use in your graph. To create a new variable, click the plus at the top right of the Blackboard. Select the variable
+type you want, and then give it a name. If you hit the down arrow next to a variable, you can edit its value, tooltip,
+and if it is exposed. Exposed variables are basically "public", they can be edited from instance to instance by
+clicking an instance and changing the values in the Inspector under the Properties section. Below the Blackboard is the VFX Control pane. If you
+select an instance of this particle system in the scene hierarchy, you can change the playback settings for it here.
+In the top left of the window, there are buttons to save and compile your graph. In the top right, there are buttons
+to toggle the visibility of the Backboard and VFX Control panes.
+
+To create, uh, anything, right-click and click Create Node, or press the spacebar. The Create Node menu will appear.
+It will only show you Operators, Blocks, and Contexts that are valid to create based on where your mouse cursor is.
+For instance, you can't use any spawn context blocks in the output context. There are a *ton* of nodes, and it will
+take some getting used to to learn what is available and how to achieve things. Definitely start by looking up some
+tutorials. You can find the full list of nodes [here](https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.0/manual/node-library.html).
+
+You can also right-click the workspace background and click Create Sticky Note to make a lil sticky note that you
+can use to write comments for yourself. ^-^
+
+## Using Your Particle Systems
+Just drag and drop your VFX Graph asset into the scene ^-^
+
+## Controlling Your Particle Systems
+[📓](https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.0/manual/ComponentAPI.html)  
+You can interact with your VFX Graph at runtime by putting a script on the gameobject that has your VFX Graph on it,
+and doing this:
+```csharp
+VisualEffect effect = GetComponent<VisualEffect>();
+
+effect.Play();
+effect.Stop();
+effect.pause = true;//pause particles
+effect.pause = false;//resume particles
+effect.AdvanceOneFrame();//only works if paused is set to true
+effect.Reinit();//sets total time to zero and restarts the system
+```
+The VisualEffect component has methods to check for, get, and set variables of your VFX Graph. I will only cover the 
+functions for floats, since they are the most common, but there is a corresponding function for every data type a
+VFX Graph variable can have. The full list of them is [here](https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.0/manual/ComponentAPI.html#checking-for-exposed-properties).
+```csharp
+bool iHas = effect.HasFloat("MyVariableName");//returns true if
+float canIHas = effect.GetFloat("MyVariableName");//returns the value of the variable with this name
+effect.SetFloat("MayVariableName",5f);//write the value of the variable with this name
+```
+You can also set up events and stuff but like bleh look it up if you need it.
 
 # 🫥 DOTS
 
@@ -4969,4 +5157,5 @@ Notes:
   Authoring the gameobject mode that the entity is based on, and runtime is the preview of the entity that will be 
   created! You can also have multiple inspectors with different authoring settings!
 - Click Window > Entities > Hierarchy to get the entities hierarchy window!
-- Bust can be disabled or re-enabled with Jobs > Burst > Enable Compilation
+- Burst can be disabled or re-enabled with Jobs > Burst > Enable Compilation. You may want to do this to get more 
+  helpful error messages.
