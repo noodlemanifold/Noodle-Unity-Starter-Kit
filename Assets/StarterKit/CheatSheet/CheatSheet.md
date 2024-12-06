@@ -4797,11 +4797,60 @@ you wish to follow tutorials as closely as you can, but they will not work forev
 
 # 📈 Profiler
 [📓](https://docs.unity3d.com/Manual/Profiler.html)  
-
+The Profiler is a powerful built-in tool to the Unity editor that lets you monitor and diagnose how your game is 
+performing. You can access it by clicking Window > Analysis > Profiler. The profiler is broken up into modules. Each 
+module will report data about one specific aspect of your game. You can see them along the left column of the window.
+The most useful ones are CPU, Rendering, and Memory. You can toggle modules on or off in the dropdown in the top 
+left of the profiler window. To actually start profiling, play your game. Live data will start streaming across all 
+of your enabled modules. If you click on any of the charts of any module, Unity will pause your game and give you a 
+deeper breakdown at the bottom of the window. What this looks like varies from module to module, but for the CPU 
+module, Unity gives you a chart showing a bar for every script on every thread and exactly how long it took to 
+execute. Keep in mind, when you actually build your game, the editor loop block will be gone! You can scrub through 
+time by clicking anywhere on the top bar, or clicking and dragging the white line going down the center of the 
+profiler chart. At the top of the window, there are controls for frame advance, clearing the data buffer, call 
+stacks, saving and loading profiler data, and [Deep Profiling](#deep-profiling).
 
 ## Profiler Markers
+[📓](https://docs.unity3d.com/Manual/profiler-adding-information-code.html)  
+Profiler Markers lets you profile specific sections of code and even make your own profiler modules! As always, 
+there is a whole rabbit hole to go down here, but these are the basics.
+
+Adding markers to your code is super easy! You can do it just like this:
+```csharp
+static readonly ProfilerMarker marker = new ProfilerMarker("My Code Marker");
+
+void Update() {
+    marker.Begin();
+    Debug.Log("Catch me if you can!!");
+    marker.End();
+}
+```
+This marker will show up in the CPU module as a block below whatever monobehaviour event it originated from.
+
+Optionally, you can also pass in a string or number variable into the .Begin() function to give some context about 
+this specific run of this code (like maybe a level name or enemy count or something).
+```csharp
+static readonly ProfilerMarker marker = new ProfilerMarker("My Code Marker");
+
+void Update() {
+    int counter = 5;
+    marker.Begin(counter);
+    Debug.Log("Catch me if you can!!");
+    marker.End();
+}
+```
 
 ## Deep Profiling
+[📓](https://docs.unity3d.com/Manual/profiler-deep-profiling.html)  
+By default, Unity (outside of its own stuff) will only track the timings of your monobehaviour event functions 
+(Start, Update, etc) and any custom [Profiler Markers](#profiler-markers) that you have set up. However, at the top 
+of the profiler window, you can enable Deep Profiling. Deep Profiling will add markers to every single C# method 
+call and track the timing of all of them. The reason this isn't on by default is because it takes a ton of memory 
+and resources to do this. Your game *will* run slower when this is enabled, so only compare the relative timings you 
+get when deep profiling. Unity states in their documentation that this is only meant for smaller projects and games. 
+For bigger projects, the editor may run out of memory before it can even start running the game and crash. Try to 
+reserve deep profiling for when you are truly desperate, and use [Profiler Markers](#profiler-markers) for 
+everything else.
 
 # 👷‍♀️ Making Builds
 [📓](https://docs.unity3d.com/6000.0/Documentation/Manual/build-profiles.html)  
@@ -4812,21 +4861,22 @@ replaces the old Build Settings windows from previous Unity versions. You can op
 to get started!
 
 ## Shared Settings
-Shared settings are similar to the old Build Settings window form previous Unity versions. They are basically the 
-default settings any build is based on unless it overrides anything. The default player settings are located under
-Edit > Project Settings > Player. The default scene list is located in the Build Profiles window. If you look on the
-left, there is a list of supported platforms. At the top of them is a section called Scene List. Here you can add 
-scenes to your build like you would in Unity before. Build profiles can override this list if you want them to!
+Shared settings are similar to the old Build Settings window from previous Unity versions. They are basically the 
+default settings any build is based on unless they are overriden. The default player settings are located under
+Edit > Project Settings > Player. You can also get to them by clicking the Player Settings button at the top of the 
+Build Profiles Window. The default scene list is located in the Build Profiles window. If you look on the left, 
+there is a list of supported platforms. At the top of them is a section called Scene List. Here you can add scenes 
+to your build like you would in Unity before. Build profiles can override this list if you want them to!
 
 ## Platforms
 Along the left of the Build Profiles window, there is a list of all the platforms supported by Unity that you can 
 export for. Platforms that are greyed out are not currently installed. If you click one of them, it will prompt you 
 to install that platform from the Unity Hub. For platforms that are installed, you can click them to configure settings
-for just that platform. You can also override player settings or the scene list for just that platform if needed.
+for just that platform. These also count as shared settings that all build profiles inherit from.
 
 ## Build Profiles
 [📓](https://docs.unity3d.com/6000.0/Documentation/Manual/BuildSettings.html)  
-(You can create Build Profiles in the bottom left of the Build Profiles window. Build Profiles are saved as an asset in
+You can create Build Profiles in the bottom left of the Build Profiles window. Build Profiles are saved as an asset in
 your project, which means they can be re-used or submitted to version control. When you go to create a build profile,
 Unity will prompt you for what platform you would like this build profile to be for. You can select any of the ones you
 have installed. Then click Add Profile. Now select your new build profile and if it is not already and click Switch
