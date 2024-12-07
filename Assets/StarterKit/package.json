@@ -1,6 +1,6 @@
 {
     "name": "com.noodlemanifold.starterkit",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "displayName": "Noodle Unity Starter Kit",
     "description": "This is a simple package that just contains simple assets for starting new projects. They are perfect for prototyping and game jams! There is also a cheat sheet for quick reference and refreshers on many Unity features! Have fun creating <3",
     "unity": "6000.0",
