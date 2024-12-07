@@ -2,5 +2,5 @@
     <Style src="project://database/Assets/StarterKit/ScriptableObjects/Checklist.uss?fileID=7433441132597879392&amp;guid=3612d4d31196fc445b726723504aeae0&amp;type=3#Checklist" />
     <ui:Toggle style="background-image: none; background-color: rgba(243, 12, 12, 0);" />
     <ui:TextField />
-    <ui:ListView show-add-remove-footer="true" data-source-path="taskList" />
+    <ui:ListView show-add-remove-footer="true" data-source-path="taskList" data-source="project://database/Assets/Checklist.asset?fileID=11400000&amp;guid=8834144ce64a09e40bb4b4a9547831ba&amp;type=2#Checklist" />
 </ui:UXML>
