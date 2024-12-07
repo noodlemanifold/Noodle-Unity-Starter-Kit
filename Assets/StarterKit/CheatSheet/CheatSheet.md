@@ -64,6 +64,7 @@ there is anything left out that you would like me to include! Take a deep breath
   * [Sprites](#sprites)
   * [Sprite Sheets](#sprite-sheets)
   * [Tile Maps](#tile-maps)
+  * [Rule Tiles](#rule-tiles)
   * [Sprite Shapes](#sprite-shapes)
   * [Animations](#animations)
   * [Physics2D](#physics2d)
@@ -77,11 +78,13 @@ there is anything left out that you would like me to include! Take a deep breath
   * [Lighting](#lighting-1)
   * [Shadows](#shadows)
 * [🏃 Animations](#-animations)
-  * [Animation Window](#animation-window)
   * [Animation Clips](#animation-clips)
-  * [Animation Manager](#animation-manager)
+  * [Animator Component](#animator-component)
+  * [Animation Window](#animation-window)
+  * [Animator Controller](#animator-controller)
   * [Playing Animations](#playing-animations)
-  * [Rigging & Procedural Animation](#rigging--procedural-animation)
+  * [Importing Animations from Blender](#importing-animations-from-blender)
+  * [Rigging for Procedural Animation](#rigging-for-procedural-animation)
   * [Animating Variables](#animating-variables)
 * [🥏 Physics](#-physics)
   * [Rigidbody](#rigidbody)
@@ -116,17 +119,39 @@ there is anything left out that you would like me to include! Take a deep breath
   * [Custom Inspectors](#custom-inspectors)
   * [Custom Windows](#custom-windows)
 * [🗄️ Multiplayer](#-multiplayer)
-  * [Theory & Terminology](#theory--terminology)
+  * [Terminology](#terminology-1)
+  * [Theory](#theory-1)
   * [Setup](#setup-1)
+  * [Multi-Player Play Mode](#multi-player-play-mode)
+  * [Network Manager](#network-manager)
+  * [NetworkObject](#networkobject)
+  * [NetworkBehaviour](#networkbehaviour)
   * [Sync Components](#sync-components)
   * [Network Variables](#network-variables)
   * [RPCs](#rpcs)
-  * [Connections](#connections)
 * [📈 Profiler](#-profiler)
-* [🏗️ Probuilder](#-probuilder)
+  * [Profiler Markers](#profiler-markers)
+  * [Deep Profiling](#deep-profiling)
+* [👷‍♀️ Making Builds](#-making-builds)
+  * [Shared Settings](#shared-settings)
+  * [Platforms](#platforms)
+  * [Build Profiles](#build-profiles)
+  * [Addendum](#addendum)
+* [🏗️ ProBuilder](#-probuilder)
+  * [Setup](#setup-2)
+  * [Creating Shapes](#creating-shapes)
+  * [Mesh Editing](#mesh-editing)
+  * [Advanced Tools](#advanced-tools)
+  * [Exporting](#exporting)
 * [🕶️ Shader Graph](#-shader-graph)
+  * [Theory](#theory-2)
+  * [Making a Graph](#making-a-graph)
+  * [Using Your Shaders](#using-your-shaders)
 * [🎆 VFX Graph](#-vfx-graph)
-* [🫥 DOTS](#-dots)
+  * [Theory](#theory-3)
+  * [Making a Graph](#making-a-graph-1)
+  * [Using Your Particle Systems](#using-your-particle-systems)
+  * [Controlling Your Particle Systems](#controlling-your-particle-systems)
 
 # 🎓 Reference
 
@@ -2758,6 +2783,7 @@ This sections contains information about a lot of things that are mostly unrelat
 them in order to compose and render a 3D scene in Unity. Lets get started!
 
 ## Universal Render Pipeline
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/urp/urp-introduction.html)  
 Unity right now has 2 render pipelines, the Universal Render Pipeline and the High Definition Render Pipeline 
 (the legacy pipeline does not exist). They are called URP and HDRP for short. The URP is meant for games on all
 platforms, and the HDRP is meant for super realistic games targeting high-end PCs and consoles. You have to choose which
@@ -2767,10 +2793,55 @@ merging them into one big render pipeline, but until then we're stuck with the t
 sheet I will be assuming you are using the Universal Render Pipeline. The HDRP has a whole world of complexity that
 is not really suitable for a cheat sheet like this, and frankly I'm not interested in learning it.
 
-[show how to change urp settings please]
+If you select a URP project from the Unity Hub, everything will already be set up for you! All the settings for it 
+live in scriptable objects in the Settings folder of your project. Unity gives you two RP Assets: a PC RP Asset and 
+a mobile RP Asset. By default, the PC Asset is the one in use for your project, and if you plan to target PC you can 
+just delete the one for mobile if you like. Each RP Asset also has a renderer that is attached to it (PC Renderer 
+and mobile Renderer respectively). RP Assets hold the global pipeline settings for your project, and renderers hold 
+a list of effects and some specific effect-related settings. You can make multiple renderers, each with different 
+effects, and switch which one your Camera is using at runtime, or even have multiple Cameras all with a different 
+renderer. There may also be some volume profile assets in your Settings folder. These hold all the settings for 
+post-processing, and can change from scene to scene. By default, Unity creates one for your in all of your scenes 
+called Global Volume, but you can also make local overrides within a scene as well. There's a ton of settings and 
+features here, but that is a brief overview of the need-to-know stuff!
 
 ## Camera
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/urp/urp-cameras-landing.html)  
+Cameras are responsible for actually rendering your scene and outputting and image to be displayed on the screen or 
+on a render texture. There are so many things I could tell you about cameras that I don't even know what to put in 
+this section. There is Camera stacking, base vs overlay cameras, projections, masks, clear colors, and so much more. 
+Here is just the stuff you need to know for your usual everyday Unity-ing.
 
+You can create a camera by clicking GameObject > Camera. The camera settings are in the inspector for your camera gameobject.
+I think they are pretty self-explanatory for the most part. Click the book up above if you need more help with any of 
+them. The main ones to look out for are all the settings under Projection, and the background type under Environment.
+For the rest of them, the defaults ok 99% of the time, unless you are trying to make a crazy shader effect. Can't 
+think of anyone who would do that on the regular tho.
+
+Editing in code:
+```csharp
+Camera cam = GetComponent<Camera>();
+Camera main = Camera.main; //gets the first camera tagged as MainCamera. Try not to use this its slow.
+
+//Here is how to change some things at runtime if you want!
+//As always, so much more in the documentation
+float aspectRatio = cam.aspect;//screen width divided by height
+cam.backgroundColor = Color.blue;//color to be rendered if there is no geometry or skybox
+cam.fieldOfView = 90f;//get or set the camera's FOV in degrees
+cam.orthographic = true;//get or set if the camera is orthographic. when false, it is perspective
+cam.orthographicSize = 5f;//get or set the size if the camera is orthographic. This is basically orthographic zoom.
+int width = cam.pixelWidth;//horizontal number of pixels of the output image
+int height = cam.pixelHeight;//vertical number of pixels of the output image
+
+//useful functions!
+Vector3 screenPoint = new Vector3(500,600,5f);//screen point coords are in pixels, with the origin at the bottom left
+                                             //of the screen. The z coordinate represents distance from the camera.
+Ray worldRay = cam.ScreenPointToRay(screenPoint);//returns a ray in world space going from the Camera thru the screen point
+Vector3 worldPos = cam.ScreenToWorldPoint(screenPoint);//get a world space point that is "under" a pixel.
+                                                       //distance from the camera will be the z value of screenPoint
+Vector3 pointOnTheScreen = cam.WorldToScreenPoint(Vector3.one);//the return value uses the same format for screen points
+                                                               //as the functions above 
+```
 
 ## Importing Models
 [📓](https://docs.unity3d.com/Manual/CreatingDCCAssets.html)  
@@ -2784,20 +2855,144 @@ I recommend that if it is something you will use more than once, make your own p
 set up the materials and hierarchy and everything the way you like it once and have it every time you need the model.
 
 ## MeshRenderer
+[📓](https://docs.unity3d.com/ScriptReference/MeshRenderer.html)  
+The Mesh Renderer is a component that will take a mesh and actually send it to the GPU to be rendered with a 
+material. 99% of the time, it is added for you automatically when you create a primitive or add a model file into 
+the scene. You can add it manually of course tho! It requires the Mesh Filter component, which just holds a 
+reference to the mesh asset that will be rendered. If you want to switch the mesh of an object at runtime, you need 
+to do it through the mesh filter like this: `GetComponent<MeshFilter>().mesh = myMesh;`. Otherwise, everything else 
+you need for rendering an object lives in the Mesh Renderer! It has settings in the Inspector for lighting, light 
+probes, and some other misc stuff. At the top, you can find a list of the materials this Mesh Renderer is using. It 
+is a list because one mesh can have multiple sub-meshes, each with a different material (If you assigned multiple 
+materials to your model in Blender, that creates a sub mesh for each material). You can add, remove, or switch 
+materials there. All the materials of the mesh renderer are also displayed at the bottom of the inspector below all 
+the other components on the object.
+
+The only time I have ever used a mesh renderer in a script is to change a material at runtime, so here is how to do 
+that! There is a big gotcha you have to look out for when doing this. If you have multiple objects that are all 
+using the same material, behind the scenes they are all referencing the same shared material and can be batched 
+together. The mesh renderer lets you modify the shared material or the instanced material. Editing the shared 
+material will also modify every other object using that material. Editing the instanced material will only affect 
+the material for this object, but if it is sharing a material with other objects, Unity will create an internal copy 
+of the material just for this object. If you do this a lot, it can increase your number of draw calls quite a bit 
+and reduce performance.
+```csharp
+MeshRenderer renderer = GetComponent<MeshRenderer>();
+
+Material instanceMat = renderer.material;//gets the first material on this renderer as *instanced*
+Material sharedMat = renderer.sharedMaterial;//gets the first material on this renderer as *shared*
+
+Material[] instancedMaterials = renderer.materials;//gets a list of all materials as instanced in case you have multiple.
+Material[] sharedMaterials = renderer.sharedMaterials;//gets a list of all materials as shared
+```
 
 ## Materials
+[📓](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Material.html)  
+Materials hold a shader and all the settings for that shader that control how an object is rendered! You can make 
+one by clicking Assets > Create > Material. By default, new materials use the lit shader for the URP, but you can 
+select any of the included shaders or any shaders you make by clicking the shader dropdown at the top of the material.
+The settings/variables you can change for a material depend entirely on what shader you are using, so there's not 
+much I can write about it in general. Hopefully the shader you're using has good names and tooltips! For the default 
+lit shader, you can hover over any of the variable names to get more information about them. For any variable that 
+has a square to the left of its name, you can click and drag a texture into it. At the very bottom, there are some 
+advanced settings, including the one for automatic GPU instancing, which is disabled by default.
+
+You can use materials read or write variables from your shaders at runtime! There are a ton of methods for every 
+kind of variable type you can have in a shader. I'm only gonna cover floats here as an example. You can find the 
+full list of them [here](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Material.html).
+```csharp
+MeshRenderer renderer = GetComponent<MeshRenderer>();
+Material mat = renderer.sharedMaterial;
+
+Shader shader = mat.shader;//Get the shader for this material
+
+//There are two ways to get variables references from shaders.
+//You can just pass in a name like this, but its a bit slow
+float varVal = mat.GetFloat("ShaderVariableName");
+//The more efficient way is to get the variable ID and save it at startup
+//Unity creates a unique ID for every shader variable name regardless of the shader it is in
+int variableID = Shader.PropertyToID("ShaderVariableName");//do this once
+float varVal2 = mat.GetFloat(variableID);//muuuuch faster :D
+//This works the same for the set and has functions as well!
+mat.SetFloat("ShaderVariableName", 5f);
+mat.SetFloat(variableID, 6f);
+//these functions return true if ShaderVariableName is defined in the shader
+//for any of these functions above or below to work, your shader variable must be exposed, it can't be a local variable
+//If you are using this with a Shader Graph shader, use the Reference name of the variable, not the display name
+//You can see this by selecting your variable in the blackboard and then going to the Node Settings tab in the Graph Inspector
+bool variableExists = mat.hasFloat("ShaderVariableName");
+bool variableExists2 = mat.hasFloat(variableID);
+```
 
 ### Material Variants
+Unity lets you create multiple variants of a material. This works sort of like prefabs, where the settings of the 
+base material will propagate down to all of its variants, but the variants can override any setting they like. You 
+can create a material variant by right-clicking a material in the Assets pane, then clicking Create > Rendering > 
+Material Variant. If you do this, any changes you make to the base material, even if it's after the variants are 
+created, will also show up in the material variants. If you edit any settings in a material variant, the setting
+will become bold. This means it will keep this value regardless of what the base material does. You can reset a 
+variable to inherit from the base material by right-clicking it and clicking Revert. As an aside, you can make 
+variants of variants of variants, but it seems a bit cursed and I've never done it. Proceed at your own risk.
 
 ## Lighting
+Lighting is an entire art in and of itself that will certainly not be done justice by this section. Here are the 
+basics of what you need to know!
 
 ### Realtime Lights
+Unity has 3 types of realtime lights: Directional, Point, and Spot. Area lights will only work with 
+[Baked Lighting](#baked-lights). You can create a light by clicking GameObject > Light > Directional or Spot or Point 
+Light. Directional lights are meant to mimic the sun. They cast light on every object everywhere with the same level 
+of brightness from one direction. If you are using one directional light and a procedural skybox material, the sun 
+and sky will follow the direction of your directional light! You can create day/night cycles super easily this way 
+by just rotating your directional light in a script. Point lights cast light in a sphere around them in all 
+directions a certain set range. Spot lights are very similar to point lights, except they only cast light in a cone 
+going one direction. Keep in mind, new lights have shadows disabled by default, so if you need shadows from them, 
+manually enable that option!
+
+All Unity lights support Light Cookies, which are basically just texture masks that can be used to easily create 
+some awesome effects, like caustics or lantern shadows and more! You can find out more about them 
+[here](https://docs.unity3d.com/Manual/Cookies.html).
 
 ### Baked Lights
+I'll be totally honest with you, baked lighting is probably my weakest area in Unity. It is very complex and finicky,
+and I've never really gotten results that I like with it. Regardless, this is what I know. Baked lighting will 
+pre-calculate raytraced light paths for your scene and save them into a texture that is overlayed on your scene at 
+runtime to fake much more sophisticated rendering than is possible in real time. This only works for objects that 
+never move, so by default gameobjects will not contribute to baked lighting. To enable it, select the object in the 
+scene hierarchy and tick the Static checkbox at the very top right of the Inspector. This tells Unity you super 
+duper pinky promise to never move this object at runtime. To actually bake the lighting, click Window > Rendering > 
+Lighting, and click the Scene tab. If your project does not have a Lighting Settings asset (if you don't everything 
+is greyed out), click the new button at the top of the list. Under Lightmapping, you can change all the settings for 
+your baked lighting. I recommend using the Progressive GPU Lightmapper unless it crashes for you. When you are ready,
+click the big friendly Generate Lighting button at the bottom of the window. When it is done, the baked lighting is 
+automatically applied to any static objects in the scene with a compatible shader.
+
+By default, baked lighting will have no influence over dynamic (not static) objects. The solution to this is to use 
+probes. Probes are little volumes that are taken into account when baking lighting data for your scene. They will 
+approximate the global illumination on any objects inside their volume. There are light probes, reflection probes, 
+and in Unity 6 we have the new Adaptive Probe Volumes. I know even less about probes to be honest and they scare me, 
+any information you find online about them will be better than what I can write. 
 
 ### Environment & Skybox
+You can change the Skybox & Environment lighting by clicking Window > Rendering > Lighting, and going to the 
+Environment tab. I don't have a ton to say about this to be honest its just an important thing to know where it 
+lives, so there you go! Oh you can create a skybox by making a new material, clicking the shader dropdown, and then 
+selecting which skybox type you would like. You can apply it by clicking and dragging in into the Skybox Material 
+field of the window I just had you open, or you can just click and drag it onto the skybox in the scene view.
 
 ## Shadows
+Realtime shadows in URP are done with shadow maps. The settings for shadows all live in your RP Asset. If you don't 
+know what that is, read the [URP Section](#universal-render-pipeline). The shadow map resolution settings live in 
+the lighting section for some reason underneath the Main Light setting. The higher the resolution you set, the less 
+pixelated your shadows will be, but they will be more expensive to render. The rest of the settings live in the 
+Shadows section as you would expect. Most of this section is dedicated to shadow cascades. Shadow cascades only 
+apply to directional lights. Since direction lights can be casting shadows over entire scenes at once, their shadow 
+maps can get very crowded. Shadow cascades split up the shadow map into chunks, with each chunk only containing 
+shadows that are a certain distance from the camera. Since there will only ever be a few shadows close to the camera,
+this gives close up shadows much more resolution, and makes shadows further away lower resolution. The default 
+shadow cascade settings are pretty good, but you can tweak them if they aren't working for you. Below the shadow 
+cascades, there are settings for biases, and you can enable or disable soft shadows. Its worth noting, every light 
+and mesh renderer also has its own settings for enabling or disabling shadows if you need per-object control.
 
 # 🏃 Animations
 [📓](https://docs.unity3d.com/Manual/AnimationOverview.html)  
