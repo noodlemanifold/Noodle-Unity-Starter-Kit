@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0]
+
+### Cheat Sheet
+- Added Animation Section
+- Added ProBuilder Section
+- Added Profiler Section
+- Added Making Builds Section
+- Added Shader Graph Section
+- Added VFX Graph Section
+- Added Rendering Section
+- Added Rule Tiles to the 2D Section
+
 ## [0.4.0]
 
 ### Cheat Sheet

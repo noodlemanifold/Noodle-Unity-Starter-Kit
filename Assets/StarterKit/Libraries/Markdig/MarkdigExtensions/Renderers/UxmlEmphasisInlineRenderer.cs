@@ -1,6 +1,7 @@
 using Markdig.Syntax.Inlines;
 using System.Diagnostics;
 using Markdig.Renderers.Uxml;
+using NoodleKit;
 using Debug = UnityEngine.Debug;
 
 namespace Markdig.Renderers.Html {

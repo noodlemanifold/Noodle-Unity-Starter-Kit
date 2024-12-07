@@ -1,13 +1,15 @@
+using Markdig.Renderers.Html;
 using UnityEngine;
 
 using Markdig.Syntax;
+using NoodleKit;
 
 namespace Markdig.Renderers.Uxml {
 
 /// <summary>
 /// A HTML renderer for a <see cref="ListBlock"/>.
 /// </summary>
-/// <seealso cref="HtmlObjectRenderer{ListBlock}" />
+/// <seealso cref="HtmlObjectRenderer{TObject}" />
 public class UxmlListRenderer : UxmlObjectRenderer<ListBlock> {
     
     private MarkdownSettings renderSettings;

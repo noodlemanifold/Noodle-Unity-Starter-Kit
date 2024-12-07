@@ -64,6 +64,7 @@ there is anything left out that you would like me to include! Take a deep breath
   * [Sprites](#sprites)
   * [Sprite Sheets](#sprite-sheets)
   * [Tile Maps](#tile-maps)
+  * [Rule Tiles](#rule-tiles)
   * [Sprite Shapes](#sprite-shapes)
   * [Animations](#animations)
   * [Physics2D](#physics2d)
@@ -77,11 +78,13 @@ there is anything left out that you would like me to include! Take a deep breath
   * [Lighting](#lighting-1)
   * [Shadows](#shadows)
 * [🏃 Animations](#-animations)
-  * [Animation Window](#animation-window)
   * [Animation Clips](#animation-clips)
-  * [Animation Manager](#animation-manager)
+  * [Animator Component](#animator-component)
+  * [Animation Window](#animation-window)
+  * [Animator Controller](#animator-controller)
   * [Playing Animations](#playing-animations)
-  * [Rigging & Procedural Animation](#rigging--procedural-animation)
+  * [Importing Animations from Blender](#importing-animations-from-blender)
+  * [Rigging for Procedural Animation](#rigging-for-procedural-animation)
   * [Animating Variables](#animating-variables)
 * [🥏 Physics](#-physics)
   * [Rigidbody](#rigidbody)
@@ -116,17 +119,39 @@ there is anything left out that you would like me to include! Take a deep breath
   * [Custom Inspectors](#custom-inspectors)
   * [Custom Windows](#custom-windows)
 * [🗄️ Multiplayer](#-multiplayer)
-  * [Theory & Terminology](#theory--terminology)
+  * [Terminology](#terminology-1)
+  * [Theory](#theory-1)
   * [Setup](#setup-1)
+  * [Multi-Player Play Mode](#multi-player-play-mode)
+  * [Network Manager](#network-manager)
+  * [NetworkObject](#networkobject)
+  * [NetworkBehaviour](#networkbehaviour)
   * [Sync Components](#sync-components)
   * [Network Variables](#network-variables)
   * [RPCs](#rpcs)
-  * [Connections](#connections)
 * [📈 Profiler](#-profiler)
-* [🏗️ Probuilder](#-probuilder)
+  * [Profiler Markers](#profiler-markers)
+  * [Deep Profiling](#deep-profiling)
+* [👷‍♀️ Making Builds](#-making-builds)
+  * [Shared Settings](#shared-settings)
+  * [Platforms](#platforms)
+  * [Build Profiles](#build-profiles)
+  * [Addendum](#addendum)
+* [🏗️ ProBuilder](#-probuilder)
+  * [Setup](#setup-2)
+  * [Creating Shapes](#creating-shapes)
+  * [Mesh Editing](#mesh-editing)
+  * [Advanced Tools](#advanced-tools)
+  * [Exporting](#exporting)
 * [🕶️ Shader Graph](#-shader-graph)
+  * [Theory](#theory-2)
+  * [Making a Graph](#making-a-graph)
+  * [Using Your Shaders](#using-your-shaders)
 * [🎆 VFX Graph](#-vfx-graph)
-* [🫥 DOTS](#-dots)
+  * [Theory](#theory-3)
+  * [Making a Graph](#making-a-graph-1)
+  * [Using Your Particle Systems](#using-your-particle-systems)
+  * [Controlling Your Particle Systems](#controlling-your-particle-systems)
 
 # 🎓 Reference
 
@@ -2612,6 +2637,23 @@ gameobject in your scene hierarchy and change the grid size.
 A quick note on Physics: you can add a TilemapCollider2D Component to your tile map gameobject, and it will
 automagically generate colliders for every tile in your tile map!!
 
+## Rule Tiles
+There are a few special tile types in Unity, but the most useful of them is the rule tile. It allows you to
+automatically place tile variants for the edges of a shape, for instance path borders, without having to juggle
+20 different tiles. To create one, first make sure you have the 2D Tilemap Extras package installed. Then, click
+Assets > Create > 2D > Tiles > Rule Tile. Give it a name and save it into your project. Single click the asset you
+just made to set it up in the inspector. The Default Tile field is what sprite is displayed when no rules are in effect.
+Usually this will be your interior texture. Below this, there is a field called Tiling Rules. Hit the plus to create
+a rule. On the right side of the rule, you can select a sprite for the rule. Click it and search for the sprite you
+want for this rule. This will usually be a corner or edge sprite. Just to the left of the sprite, there should be a
+3x3 grid of squares. Click any of the grid cells. A green arrow will appear. This means that this sprite will only be
+selected if there is another instance of this rule tile in that direction. If you click again, it will turn into a red
+X. A red X means this tile will only be selected if there is not and instance of this rule tile in that direction. By
+mixing and matching green arrows and red Xs in various directions, you can create unique rules for each of your sprites
+that dictate when they will appear. You can keep going and create as many rules as you need for all the edge variant
+sprites that you have. When you are finished, you can click and drag your rule tile into a tile palette and paint with
+it just like any other sprite! Note: for more super useful 2D tile tips, check out [this channel](https://www.youtube.com/@jesscodes).
+
 ## Sprite Shapes
 
 [📓](https://docs.unity3d.com/Packages/com.unity.2d.spriteshape@3.0/manual/index.html)  
@@ -2712,7 +2754,6 @@ without actually moving, useful for conveyor belts and such. Again with this one
 normal colliders.
 
 ## Lighting
-
 [📓](https://docs.unity3d.com/6000.0/Documentation/Manual/urp/Lights-2D-intro.html)  
 If you are using the 2D version of the Universal Render Pipeline (setup automatically with the 2D project template),
 then Unity actually has some really cool 2D lighting options available to you! By adding 2D lights and shadows to your
@@ -2738,69 +2779,321 @@ Lights and shadows can both be restricted to various sorting layers to achieve c
 coordinate is not considered at all, so you must use sorting layers.
 
 # 🎥 Rendering
+This sections contains information about a lot of things that are mostly unrelated, but you need knowledge of all of 
+them in order to compose and render a 3D scene in Unity. Lets get started!
 
 ## Universal Render Pipeline
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/urp/urp-introduction.html)  
+Unity right now has 2 render pipelines, the Universal Render Pipeline and the High Definition Render Pipeline 
+(the legacy pipeline does not exist). They are called URP and HDRP for short. The URP is meant for games on all
+platforms, and the HDRP is meant for super realistic games targeting high-end PCs and consoles. You have to choose which
+render pipeline you want when you create your project in the Unity Hub. It is possible to change it after the fact, but 
+it kinda sucks and will break all your scenes and assets. The situation kinda sucks, and in Unity 7 they plan on 
+merging them into one big render pipeline, but until then we're stuck with the two of them. Throughout this entire 
+sheet I will be assuming you are using the Universal Render Pipeline. The HDRP has a whole world of complexity that
+is not really suitable for a cheat sheet like this, and frankly I'm not interested in learning it.
+
+If you select a URP project from the Unity Hub, everything will already be set up for you! All the settings for it 
+live in scriptable objects in the Settings folder of your project. Unity gives you two RP Assets: a PC RP Asset and 
+a mobile RP Asset. By default, the PC Asset is the one in use for your project, and if you plan to target PC you can 
+just delete the one for mobile if you like. Each RP Asset also has a renderer that is attached to it (PC Renderer 
+and mobile Renderer respectively). RP Assets hold the global pipeline settings for your project, and renderers hold 
+a list of effects and some specific effect-related settings. You can make multiple renderers, each with different 
+effects, and switch which one your Camera is using at runtime, or even have multiple Cameras all with a different 
+renderer. There may also be some volume profile assets in your Settings folder. These hold all the settings for 
+post-processing, and can change from scene to scene. By default, Unity creates one for your in all of your scenes 
+called Global Volume, but you can also make local overrides within a scene as well. There's a ton of settings and 
+features here, but that is a brief overview of the need-to-know stuff!
 
 ## Camera
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/urp/urp-cameras-landing.html)  
+Cameras are responsible for actually rendering your scene and outputting and image to be displayed on the screen or 
+on a render texture. There are so many things I could tell you about cameras that I don't even know what to put in 
+this section. There is Camera stacking, base vs overlay cameras, projections, masks, clear colors, and so much more. 
+Here is just the stuff you need to know for your usual everyday Unity-ing.
+
+You can create a camera by clicking GameObject > Camera. The camera settings are in the inspector for your camera gameobject.
+I think they are pretty self-explanatory for the most part. Click the book up above if you need more help with any of 
+them. The main ones to look out for are all the settings under Projection, and the background type under Environment.
+For the rest of them, the defaults ok 99% of the time, unless you are trying to make a crazy shader effect. Can't 
+think of anyone who would do that on the regular tho.
+
+Editing in code:
+```csharp
+Camera cam = GetComponent<Camera>();
+Camera main = Camera.main; //gets the first camera tagged as MainCamera. Try not to use this its slow.
+
+//Here is how to change some things at runtime if you want!
+//As always, so much more in the documentation
+float aspectRatio = cam.aspect;//screen width divided by height
+cam.backgroundColor = Color.blue;//color to be rendered if there is no geometry or skybox
+cam.fieldOfView = 90f;//get or set the camera's FOV in degrees
+cam.orthographic = true;//get or set if the camera is orthographic. when false, it is perspective
+cam.orthographicSize = 5f;//get or set the size if the camera is orthographic. This is basically orthographic zoom.
+int width = cam.pixelWidth;//horizontal number of pixels of the output image
+int height = cam.pixelHeight;//vertical number of pixels of the output image
+
+//useful functions!
+Vector3 screenPoint = new Vector3(500,600,5f);//screen point coords are in pixels, with the origin at the bottom left
+                                             //of the screen. The z coordinate represents distance from the camera.
+Ray worldRay = cam.ScreenPointToRay(screenPoint);//returns a ray in world space going from the Camera thru the screen point
+Vector3 worldPos = cam.ScreenToWorldPoint(screenPoint);//get a world space point that is "under" a pixel.
+                                                       //distance from the camera will be the z value of screenPoint
+Vector3 pointOnTheScreen = cam.WorldToScreenPoint(Vector3.one);//the return value uses the same format for screen points
+                                                               //as the functions above 
+```
 
 ## Importing Models
+[📓](https://docs.unity3d.com/Manual/CreatingDCCAssets.html)  
+To import a 3D model into Unity, all you have to do is click and drag any model you exported from your favorite 3D
+modelling software into the Assets pane! Unity support .fbx, .dae, .dxf, and .obj. All these formats have varying 
+amounts of supported features, modernity, and robustness. Unity kind of implicitly recommends that you use .fbx files
+in their documentation. To change the model settings, single-click the file in the Assets pane, and you can change its
+import settings in the Inspector. The available settings depend on the file type of the model. To put a 3D model in
+you scene, you can click and drag the file from the assets pane into the Scene Hierarchy. It will work like a prefab.
+I recommend that if it is something you will use more than once, make your own prefab for it. That way you can
+set up the materials and hierarchy and everything the way you like it once and have it every time you need the model.
 
 ## MeshRenderer
+[📓](https://docs.unity3d.com/ScriptReference/MeshRenderer.html)  
+The Mesh Renderer is a component that will take a mesh and actually send it to the GPU to be rendered with a 
+material. 99% of the time, it is added for you automatically when you create a primitive or add a model file into 
+the scene. You can add it manually of course tho! It requires the Mesh Filter component, which just holds a 
+reference to the mesh asset that will be rendered. If you want to switch the mesh of an object at runtime, you need 
+to do it through the mesh filter like this: `GetComponent<MeshFilter>().mesh = myMesh;`. Otherwise, everything else 
+you need for rendering an object lives in the Mesh Renderer! It has settings in the Inspector for lighting, light 
+probes, and some other misc stuff. At the top, you can find a list of the materials this Mesh Renderer is using. It 
+is a list because one mesh can have multiple sub-meshes, each with a different material (If you assigned multiple 
+materials to your model in Blender, that creates a sub mesh for each material). You can add, remove, or switch 
+materials there. All the materials of the mesh renderer are also displayed at the bottom of the inspector below all 
+the other components on the object.
+
+The only time I have ever used a mesh renderer in a script is to change a material at runtime, so here is how to do 
+that! There is a big gotcha you have to look out for when doing this. If you have multiple objects that are all 
+using the same material, behind the scenes they are all referencing the same shared material and can be batched 
+together. The mesh renderer lets you modify the shared material or the instanced material. Editing the shared 
+material will also modify every other object using that material. Editing the instanced material will only affect 
+the material for this object, but if it is sharing a material with other objects, Unity will create an internal copy 
+of the material just for this object. If you do this a lot, it can increase your number of draw calls quite a bit 
+and reduce performance.
+```csharp
+MeshRenderer renderer = GetComponent<MeshRenderer>();
+
+Material instanceMat = renderer.material;//gets the first material on this renderer as *instanced*
+Material sharedMat = renderer.sharedMaterial;//gets the first material on this renderer as *shared*
+
+Material[] instancedMaterials = renderer.materials;//gets a list of all materials as instanced in case you have multiple.
+Material[] sharedMaterials = renderer.sharedMaterials;//gets a list of all materials as shared
+```
 
 ## Materials
+[📓](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Material.html)  
+Materials hold a shader and all the settings for that shader that control how an object is rendered! You can make 
+one by clicking Assets > Create > Material. By default, new materials use the lit shader for the URP, but you can 
+select any of the included shaders or any shaders you make by clicking the shader dropdown at the top of the material.
+The settings/variables you can change for a material depend entirely on what shader you are using, so there's not 
+much I can write about it in general. Hopefully the shader you're using has good names and tooltips! For the default 
+lit shader, you can hover over any of the variable names to get more information about them. For any variable that 
+has a square to the left of its name, you can click and drag a texture into it. At the very bottom, there are some 
+advanced settings, including the one for automatic GPU instancing, which is disabled by default.
+
+You can use materials read or write variables from your shaders at runtime! There are a ton of methods for every 
+kind of variable type you can have in a shader. I'm only gonna cover floats here as an example. You can find the 
+full list of them [here](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Material.html).
+```csharp
+MeshRenderer renderer = GetComponent<MeshRenderer>();
+Material mat = renderer.sharedMaterial;
+
+Shader shader = mat.shader;//Get the shader for this material
+
+//There are two ways to get variables references from shaders.
+//You can just pass in a name like this, but its a bit slow
+float varVal = mat.GetFloat("ShaderVariableName");
+//The more efficient way is to get the variable ID and save it at startup
+//Unity creates a unique ID for every shader variable name regardless of the shader it is in
+int variableID = Shader.PropertyToID("ShaderVariableName");//do this once
+float varVal2 = mat.GetFloat(variableID);//muuuuch faster :D
+//This works the same for the set and has functions as well!
+mat.SetFloat("ShaderVariableName", 5f);
+mat.SetFloat(variableID, 6f);
+//these functions return true if ShaderVariableName is defined in the shader
+//for any of these functions above or below to work, your shader variable must be exposed, it can't be a local variable
+//If you are using this with a Shader Graph shader, use the Reference name of the variable, not the display name
+//You can see this by selecting your variable in the blackboard and then going to the Node Settings tab in the Graph Inspector
+bool variableExists = mat.hasFloat("ShaderVariableName");
+bool variableExists2 = mat.hasFloat(variableID);
+```
+
+### Material Variants
+Unity lets you create multiple variants of a material. This works sort of like prefabs, where the settings of the 
+base material will propagate down to all of its variants, but the variants can override any setting they like. You 
+can create a material variant by right-clicking a material in the Assets pane, then clicking Create > Rendering > 
+Material Variant. If you do this, any changes you make to the base material, even if it's after the variants are 
+created, will also show up in the material variants. If you edit any settings in a material variant, the setting
+will become bold. This means it will keep this value regardless of what the base material does. You can reset a 
+variable to inherit from the base material by right-clicking it and clicking Revert. As an aside, you can make 
+variants of variants of variants, but it seems a bit cursed and I've never done it. Proceed at your own risk.
 
 ## Lighting
+Lighting is an entire art in and of itself that will certainly not be done justice by this section. Here are the 
+basics of what you need to know!
 
 ### Realtime Lights
+Unity has 3 types of realtime lights: Directional, Point, and Spot. Area lights will only work with 
+[Baked Lighting](#baked-lights). You can create a light by clicking GameObject > Light > Directional or Spot or Point 
+Light. Directional lights are meant to mimic the sun. They cast light on every object everywhere with the same level 
+of brightness from one direction. If you are using one directional light and a procedural skybox material, the sun 
+and sky will follow the direction of your directional light! You can create day/night cycles super easily this way 
+by just rotating your directional light in a script. Point lights cast light in a sphere around them in all 
+directions a certain set range. Spot lights are very similar to point lights, except they only cast light in a cone 
+going one direction. Keep in mind, new lights have shadows disabled by default, so if you need shadows from them, 
+manually enable that option!
+
+All Unity lights support Light Cookies, which are basically just texture masks that can be used to easily create 
+some awesome effects, like caustics or lantern shadows and more! You can find out more about them 
+[here](https://docs.unity3d.com/Manual/Cookies.html).
 
 ### Baked Lights
+I'll be totally honest with you, baked lighting is probably my weakest area in Unity. It is very complex and finicky,
+and I've never really gotten results that I like with it. Regardless, this is what I know. Baked lighting will 
+pre-calculate raytraced light paths for your scene and save them into a texture that is overlayed on your scene at 
+runtime to fake much more sophisticated rendering than is possible in real time. This only works for objects that 
+never move, so by default gameobjects will not contribute to baked lighting. To enable it, select the object in the 
+scene hierarchy and tick the Static checkbox at the very top right of the Inspector. This tells Unity you super 
+duper pinky promise to never move this object at runtime. To actually bake the lighting, click Window > Rendering > 
+Lighting, and click the Scene tab. If your project does not have a Lighting Settings asset (if you don't everything 
+is greyed out), click the new button at the top of the list. Under Lightmapping, you can change all the settings for 
+your baked lighting. I recommend using the Progressive GPU Lightmapper unless it crashes for you. When you are ready,
+click the big friendly Generate Lighting button at the bottom of the window. When it is done, the baked lighting is 
+automatically applied to any static objects in the scene with a compatible shader.
+
+By default, baked lighting will have no influence over dynamic (not static) objects. The solution to this is to use 
+probes. Probes are little volumes that are taken into account when baking lighting data for your scene. They will 
+approximate the global illumination on any objects inside their volume. There are light probes, reflection probes, 
+and in Unity 6 we have the new Adaptive Probe Volumes. I know even less about probes to be honest and they scare me, 
+any information you find online about them will be better than what I can write. 
 
 ### Environment & Skybox
+You can change the Skybox & Environment lighting by clicking Window > Rendering > Lighting, and going to the 
+Environment tab. I don't have a ton to say about this to be honest its just an important thing to know where it 
+lives, so there you go! Oh you can create a skybox by making a new material, clicking the shader dropdown, and then 
+selecting which skybox type you would like. You can apply it by clicking and dragging in into the Skybox Material 
+field of the window I just had you open, or you can just click and drag it onto the skybox in the scene view.
 
 ## Shadows
+Realtime shadows in URP are done with shadow maps. The settings for shadows all live in your RP Asset. If you don't 
+know what that is, read the [URP Section](#universal-render-pipeline). The shadow map resolution settings live in 
+the lighting section for some reason underneath the Main Light setting. The higher the resolution you set, the less 
+pixelated your shadows will be, but they will be more expensive to render. The rest of the settings live in the 
+Shadows section as you would expect. Most of this section is dedicated to shadow cascades. Shadow cascades only 
+apply to directional lights. Since direction lights can be casting shadows over entire scenes at once, their shadow 
+maps can get very crowded. Shadow cascades split up the shadow map into chunks, with each chunk only containing 
+shadows that are a certain distance from the camera. Since there will only ever be a few shadows close to the camera,
+this gives close up shadows much more resolution, and makes shadows further away lower resolution. The default 
+shadow cascade settings are pretty good, but you can tweak them if they aren't working for you. Below the shadow 
+cascades, there are settings for biases, and you can enable or disable soft shadows. Its worth noting, every light 
+and mesh renderer also has its own settings for enabling or disabling shadows if you need per-object control.
 
 # 🏃 Animations
+[📓](https://docs.unity3d.com/Manual/AnimationOverview.html)  
 There are several ways to accomplish animations in Unity. You can make your own animations with the Animation Window, import
 animations from blender, or even use a procedural animation system! I will go over the basics of all 3 here.
 
 ## Animation Clips
+[📓](https://docs.unity3d.com/Manual/AnimationClips.html)  
 Animation Clips are just the asset file type that Unity uses to store animations. They are just like Audio Clips but for
-animation. They can be generated from files you import from other software, of created in Unity by using the Animation 
+animation. They can be generated from files you import from other software, or created in Unity by using the Animation 
 Window!
 
+## Animator Component
+The animator component is required to have on any object you wish to animate with Unity's animation system. for like 
+99% of use cases you will be interacting with it from other places, like the [Animation Window](#animation-window) 
+or the [Animator Controller](#animator-controller). This section is here for one reason: There is a legacy component 
+still included with Unity called the Animation component. DO NOT USE IT. Animations made with the Animation 
+component are not compatible with any of the other animations systems in the document. Make sure you are adding the 
+Animat***or*** Component!
+
 ## Animation Window
+[📓](https://docs.unity3d.com/Manual/AnimationEditorGuide.html)  
 The Animation window lets your build animations from keyframes inside of Unity! You can access it by clicking Window > 
 Animation > Animation. Now, if you click on any gameobject in the scene hierarchy, you can make animations for it here!
-Note, any objects that you want to animate need an Animator Component on them. The Animation window will prompt you to 
+Note: any objects that you want to animate need an Animator Component on them. The Animation window will prompt you to do 
 this if you forget. If the object has no animations yet, it will display a create button to make your first Animation Clip.
 Click it, pick a name for your animation file, and save it. Now the full animation window is enabled! The right side is 
-your timeline, any keyframes you add will show up there. You can select and move keyframes there. On the right you have play,
-pause, and skip buttons. Next to them is a record mode that will automatically add keyframes if you cange anything. Below 
-that, there is a dropdrop to select animation clips. Here you can switch between the animations you have for this object or
+your timeline, any keyframes you add will show up there. You can select and move keyframes there. On the left you have play,
+pause, and skip buttons. Next to them is a record mode that will automatically add keyframes if you change anything. Below 
+that, there is a dropdown to select animation clips. Here you can switch between the animations you have for this object or
 create a new one. To the right of the dropdown, there are buttons for adding keyframes and events. By default we have no
 properties added to the animation. You can add any public number variable to be animated in an animation. This usually means
 the position and rotation fields of the transform component, but you can also animate your own script variables as well!
 To select something for animation, click add property, expand the component that has the variable you want, then click the 
 plus button next to whichever one(s) you want. Now you can pose your object in the scene, move the animation playhead to 
 where you would like to create a keyframe, and hit the add keyframe button. The animation length will automatically be set
-to the duration between your first and last keyframes. Just close the window whenever you are done, you changes are 
+to the duration between your first and last keyframes. Just close the window whenever you are done, your changes are 
 automatically saved! Be sure to check out the [Hotkeys](#-hotkeys) section for some useful animation window hotkeys!
 
 ## Animator Controller
+[📓](https://docs.unity3d.com/Manual/class-AnimatorController.html)  
 The Animator Controller is essentially a state machine designed specifically for setting up animation systems. It can be 
 added to the Animator component on any gameobject, and it will manage which animation(s) are being played on that object 
 at any given time. To create one, click Assets > Create > Animation > Animator Controller. Give it a cool name and save 
 it to your project. You can now click and drag it onto any Animator component for the object you want this controller to 
 manage. Note: If you already created Animation Clips for an Animator component, Unity may have automatically created one
-for you. Double-click the Animator Component to open the editor for it. The Animator Component has a lot of features and 
-shiny buttons, I won't go over all of them here but I'll tell you the basics! Every block in the window represents a state.
+for you. Double-click the Animator Controller to open the editor for it. The Animator Component has a lot of features and 
+shiny buttons, I won't go over all of them here, but I'll tell you the basics! Every block in the window represents a state.
 You can click and drag any Animation Clip you wish to add into the Animator Controller and it will create a new state for 
-it.
+it. The Entry state is always the state that will be active first, and can be used to transition to whichever 
+animation you would like to start with. The pane on the left holds both your layers and the parameters for each 
+layer. Layers let you set up multiple state machines and run them at the same time on one object. This is could be 
+used, among many things, for having the animations of a characters' arms be independent of the animation for their 
+legs. You can select the gear icon next to a layer to either create a mask to limit the layer's influence on the object,
+or give it a weight. Parameters are variables that represent the conditions that a state will transition to another 
+state. You can add a float, int, bool, or trigger parameter (triggers are essentially bools). To create a transition,
+right-click on the state you would like to transition from, click Make Transition, and then click on the state you 
+would like to transition to! An arrow will appear going from the first state to the second one. Click it to see its 
+options. There are a lot of options to define the specific blend between the two states that would honestly probably 
+get more confusing if I tried to explain them. These are the important ones:
+- Has Exit Time: enables locking the transition to happen at a certain point in the animation
+- Exit Time: If the previous option is enabled, this specifies the point in the animation where the state will begin 
+  to transition.
+- Transition Duration: How long the transition into the next state is.  
+
+Below all these and the transition visualization, there is a conditions section. This is how you specify when this 
+transition is activated. Click the little plus at the bottom to add a new condition. Select one of your parameters 
+from the left dropdown. You can then choose to transition when the parameter is greater than or less than a certain 
+value. We will be setting these parameters in code in the [Playing Animations](#playing-animations) section to 
+actually control the state machine at runtime. Whenever you are happy, you can close the Animator Controller window 
+at any time, it will auto save your changes. NOTE: you can click a state and change its playback speed, and even 
+multiply it by the value of a parameter to change it dynamically at runtime!
 
 ## Playing Animations
+The Animator Component will start executing the state machine(s) in its Animator Controller the second it is loaded 
+and enabled. If you wish to disable animations, just disable the Animator Component like any other component. When 
+you re-enable it, it will reset all your parameters and start from the Entry state again. If you want to just freeze 
+the object for a bit instead, make a state with no animation and transition to that (You can do that by 
+right-clicking the background of the Animator Controller window and clicking Create State > Empty). To switch what 
+animation is being played, we change the value of the Animator Controller's parameters. When their values match the 
+conditions for a transition from the current state, the Animator Controller will transition for us automatically! 
+You can set parameter values in code just like this:
+```csharp
+Animator animator;
+    
+void Start () {
+    animator = GetComponent<Animator>();
+}
+
+void UpdateParameters () {
+    animator.SetFloat("ParameterName",1f);
+    animator.SetInt("IntParam",0);
+    animator.SetBool("isLit", true);
+    animator.SetTrigger("Consumeee");//this just sets the trigger to true
+                                     //triggers are automatically set back to false after the transition
+    animator.ResetTrigger("Consumeee");//you can manually set them back to false like this
+}
+```
 
 ## Importing Animations from Blender
-Im just gonna assume you've made an animation in blender in the Action Editor and saved it as an action. This is a Unity 
+I'm just gonna assume you've made an animation in blender in the Action Editor and saved it as an action. This is a Unity 
 cheat sheet after all, not a Blender one. Select the mesh AND the armature (and more if you want), then click File > 
 Export > FBX. In the export window, make sure you have both the armature and mesh object types selected. (You may also 
 wanna tick apply transform to avoid scaling weirdness.) Name you file and save it somewhere you'll remember! Now drag your 
@@ -2812,11 +3105,66 @@ go fast lines behind them. Click and drag the model from your .fbx file into the
 then create and add an [Animator Controller](#animator-controller), and open the animation controller. You can click and 
 drag any animations from your .fbx file into the controller, and set them up how you would with any other animation!
 
-## Rigging & Procedural Animation
+## Rigging for Procedural Animation
+[📓](https://docs.unity3d.com/Packages/com.unity.animation.rigging@1.0/manual/index.html)  
+If instead of switching between pre-made animations with an Animator Controller, you want to use procedural 
+animation (or a mix of both), you will need to set up your character's rigging inside of Unity. To get started, 
+make sure you have the Animation Rigging package installed. Then import your character from Blender *with* its rig. 
+Add your imported model into the scene hierarchy. Make sure both your mesh and armature are children of the root 
+gameobject in the scene. Then, add the Animator component, Rig Builder component, and Bone Renderer component to that 
+root gameobject. Now, select *every* bone in your armature, and click and drag them into the Transforms field of the 
+Bone Renderer component. We will now create the rig inside Unity. (Note: this is a bit confusing, but the "rig" is 
+not the armature of the model. It is a list of entirely new gameobjects that have components that define constraints 
+for all of the bones in the armature.) Create a new gameobject that is a child of the root gameobject and call it 
+something along the lines of "Rig". It should be a sibling of the armature. Now, add a Rig component to it. Then 
+click and drag this rig gamobject into the Rig Layers field of the Rig Builder component on the root gameobject. You 
+can now add constraints as children to the rig gameobject you just created, and they should work! There are a ton of 
+constraint types, and you will need different ones depending on the armature of your character and what you want to 
+be procedurally animated. You can see all the options by clicking the Add Component bottom at the bottom of the 
+inspector, and clicking the Animation Rigging tab (make sure the search field is empty for this to work). Generally, 
+the constrained object(s) field is a gameobject from the armature hierarchy of your model, and targets can be any 
+old gameobject you want. If you need more help for a specific use case, look up "unity procedural animation rigging" 
+on Youtube!
 
 ## Animating Variables
-
-AnimationCurve pog
+Sometimes when you are making a game, you need to smoothly animate the value of a variable over time. You could setup
+an entire Animator Controller and make an animation for it, but that is clunky and not very dynamic. The first thing 
+you might try is to make a timer variable and an if condition in your script's Update() function, and while that does 
+work, there is a better way. Use [coroutines!](#coroutines) I won't go over coroutines again here, they are covered in
+the [coroutines section](#coroutines), but here is some example code for how to use one to animate a variable.
+```csharp
+//linear animation function
+IEnumerator AnimationCoroutine(ref float target, float endingValue, float time){
+    float timer = 0;
+    float startValue = target;//keep track of the starting value for the lerp function
+    while(timer <= time){
+        timer += Time.deltaTime;
+        target = Mathf.Lerp(startValue, endValue, timer/time);//timer/time is our animation progress %
+        yield return null;
+    }
+}
+------
+//put this wherever you want to animate a variable
+float animateMe = 0f;
+IEnumerator coroutine = AnimationCoroutine(ref animateMe, 4f, 1f);
+StartCoroutine(coroutine);//this will start animating animateMe from 0 to 4 over 1 second
+```
+That example uses Lerp, which does linear interpolation, but you can use any other function you like! Unity has another
+on built in called SmoothStep(), which animates in an S-Curve shape.
+```csharp
+IEnumerator AnimationSmooth(ref float target, float endingValue, float time){
+    float timer = 0;
+    float startValue = target;//keep track of the starting value for the lerp function
+    while(timer <= time){
+        timer += Time.deltaTime;
+        target = Mathf.SmoothStep(startValue, endValue, timer/time);//Using a smooth function now!
+        yield return null;
+    }
+}
+```
+Unity only has the Lerp() and SmoothStep() functions, but there is a whole world of animation functions out there. They
+are called easing functions. You can do research to see what is out there or even make your own! You can find out more
+about easing functions [here](https://thebookofshaders.com/05/).
 
 # 🥏 Physics
 
@@ -3581,10 +3929,44 @@ private void OnDestroy() {
 }
 ```
 
+### Data Binding
+Binding C# variables to UI Toolkit variables is super easy! Open up your UI Layout in the UI Builder if it is not
+open already. Hover over the UI variable you would like to bind a variable to in the Inspector pane. Most commonly this
+will probably be the Label field of a UI component. When you hover over it, 3 little dots will appear to the left of
+the variable name. Click those, then choose Add Binding. A window will appear to configure your data binding. You
+can bind a scriptable object or a monobehaviour script. If you would like to use a scriptable object, click Object
+as the source type, drag and drop your scriptable object into the field that says None (Scriptable Object), and then
+just enter the target variable name for the data source path. Make sure the capitalization is the same! If you would
+like to use a monobehaviour component, the process is really similar. Select Type as your data source type, then
+click the Select Type button, and search for the class that you want. For the data source path, just
+put in the variable name you would like to bind to from the class you selected! So far we have only told UI toolkit
+what kind of script it will be binding to, but it doesn't know what specific instance to use. For that, at runtime,
+you must make a script to give the UI an instance. That can be done by getting a reference to the UI Document
+component displaying your UI and inserting this code:
+```csharp
+public MyCoolScript script;//assign this in the editor or put it on the same gameobject as the UI Document
+public UIDocument document;//same goes for this one, just get a reference however you please.
+
+void Start(){
+    VisualElement uiRoot = document.rootVisualElement;
+    uiRoot.Query<Label>("LabelName").dataSource = script;
+            //replace Label with the UI Component type that you are targeting. Ex: Button, Toggle, TextField, etc...
+            //replace "LabelName" with the name of the target UI Component in the layout.
+}
+```
+For either scriptable objects or monobehaviours, both have an option for a binding mode. By default it is set to To
+Target, which means your code will only modify the UI, not the other way around. However, for something like a
+TextField or a Toggle, you may want the UI to write back to the variable when the user changes something. To enable
+that, select Two Way from the dropdown. To Source and To Target Once are also both available options if you would
+like. When you are happy with your settings, click the Add Binding button at the bottom of the window, and you're
+all set!
+
+NOTE: If UI Toolkit isn't recognizing the variable you wish to bind to, add the [CreateProperty] attribute above it.
+
 ### Doing Stuff
 
 [📓](https://docs.unity3d.com/ScriptReference/UIElements.VisualElement.html)  
-You can do anything in code at runtime that you can do in the UI Builder. Here is just some stuff I think is useful.
+You can do anything in code at runtime that you can do in the UI Builder! Here is just some stuff I think is useful.
 
 ```csharp
 UIDocument document = GetComponent<UIDocument>();//document component
@@ -4649,14 +5031,312 @@ you wish to follow tutorials as closely as you can, but they will not work forev
 [Rpc(SendTo.Server)] and [ClientRpc] with [Rpc(SendTo.ClientsAndHost)] and the code should still all work the same!
 
 # 📈 Profiler
+[📓](https://docs.unity3d.com/Manual/Profiler.html)  
+The Profiler is a powerful built-in tool to the Unity editor that lets you monitor and diagnose how your game is 
+performing. You can access it by clicking Window > Analysis > Profiler. The profiler is broken up into modules. Each 
+module will report data about one specific aspect of your game. You can see them along the left column of the window.
+The most useful ones are CPU, Rendering, and Memory. You can toggle modules on or off in the dropdown in the top 
+left of the profiler window. To actually start profiling, play your game. Live data will start streaming across all 
+of your enabled modules. If you click on any of the charts of any module, Unity will pause your game and give you a 
+deeper breakdown at the bottom of the window. What this looks like varies from module to module, but for the CPU 
+module, Unity gives you a chart showing a bar for every script on every thread and exactly how long it took to 
+execute. Keep in mind, when you actually build your game, the editor loop block will be gone! You can scrub through 
+time by clicking anywhere on the top bar, or clicking and dragging the white line going down the center of the 
+profiler chart. At the top of the window, there are controls for frame advance, clearing the data buffer, call 
+stacks, saving and loading profiler data, and [Deep Profiling](#deep-profiling).
+
+## Profiler Markers
+[📓](https://docs.unity3d.com/Manual/profiler-adding-information-code.html)  
+Profiler Markers lets you profile specific sections of code and even make your own profiler modules! As always, 
+there is a whole rabbit hole to go down here, but these are the basics.
+
+Adding markers to your code is super easy! You can do it just like this:
+```csharp
+static readonly ProfilerMarker marker = new ProfilerMarker("My Code Marker");
+
+void Update() {
+    marker.Begin();
+    Debug.Log("Catch me if you can!!");
+    marker.End();
+}
+```
+This marker will show up in the CPU module as a block below whatever monobehaviour event it originated from.
+
+Optionally, you can also pass in a string or number variable into the .Begin() function to give some context about 
+this specific run of this code (like maybe a level name or enemy count or something).
+```csharp
+static readonly ProfilerMarker marker = new ProfilerMarker("My Code Marker");
+
+void Update() {
+    int counter = 5;
+    marker.Begin(counter);
+    Debug.Log("Catch me if you can!!");
+    marker.End();
+}
+```
+
+## Deep Profiling
+[📓](https://docs.unity3d.com/Manual/profiler-deep-profiling.html)  
+By default, Unity (outside of its own stuff) will only track the timings of your monobehaviour event functions 
+(Start, Update, etc) and any custom [Profiler Markers](#profiler-markers) that you have set up. However, at the top 
+of the profiler window, you can enable Deep Profiling. Deep Profiling will add markers to every single C# method 
+call and track the timing of all of them. The reason this isn't on by default is because it takes a ton of memory 
+and resources to do this. Your game *will* run slower when this is enabled, so only compare the relative timings you 
+get when deep profiling. Unity states in their documentation that this is only meant for smaller projects and games. 
+For bigger projects, the editor may run out of memory before it can even start running the game and crash. Try to 
+reserve deep profiling for when you are truly desperate, and use [Profiler Markers](#profiler-markers) for 
+everything else.
 
 # 👷‍♀️ Making Builds
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/build-profiles.html)  
+I thought I would put in a little section here about making builds of your game. Unity 6 introduced a whole new 
+world of build tools that allows you to make build profiles, which lets you change aspects of your game depending on 
+the platform (windows, mac, linux) and/or build type (debug, release, dedicated server). The new Build Profiles window
+replaces the old Build Settings windows from previous Unity versions. You can open in by clicking File > Build Profiles
+to get started!
 
-# 🏗️ Probuilder
+## Shared Settings
+Shared settings are similar to the old Build Settings window from previous Unity versions. They are basically the 
+default settings any build is based on unless they are overriden. The default player settings are located under
+Edit > Project Settings > Player. You can also get to them by clicking the Player Settings button at the top of the 
+Build Profiles Window. The default scene list is located in the Build Profiles window. If you look on the left, 
+there is a list of supported platforms. At the top of them is a section called Scene List. Here you can add scenes 
+to your build like you would in Unity before. Build profiles can override this list if you want them to!
+
+## Platforms
+Along the left of the Build Profiles window, there is a list of all the platforms supported by Unity that you can 
+export for. Platforms that are greyed out are not currently installed. If you click one of them, it will prompt you 
+to install that platform from the Unity Hub. For platforms that are installed, you can click them to configure settings
+for just that platform. These also count as shared settings that all build profiles inherit from.
+
+## Build Profiles
+[📓](https://docs.unity3d.com/6000.0/Documentation/Manual/BuildSettings.html)  
+You can create Build Profiles in the bottom left of the Build Profiles window. Build Profiles are saved as an asset in
+your project, which means they can be re-used or submitted to version control. When you go to create a build profile,
+Unity will prompt you for what platform you would like this build profile to be for. You can select any of the ones you
+have installed. Then click Add Profile. Now select your new build profile and if it is not already and click Switch
+Profile. This will make it the active profile for your project! Build Profiles allow you to do several things, including
+overriding player settings, overriding asset imports, and setting up custom scripting defines. Check out the 
+documentation to learn more! Note: Scripting defines are a bit advanced but also super useful. They essentially
+let you make variables that tell the compiler to conditionally include or exclude sections of your code. You use them
+by putting `#if MY_SCRIPT_DEFINE` on its own line and then later `#endif`. [Here](https://docs.unity3d.com/6000.0/Documentation/Manual/custom-scripting-symbols.html)
+is the documentation for them.
+
+## Addendum
+It's kinda obvious but I feel like I can't have a section called "Making Builds" and then not tell you that you make
+a build by clicking either the Build or Build and Run button. Build just builds the game, Build and Run builds it and
+then runs that build. You're welcome! ^-^
+
+# 🏗️ ProBuilder
+[📓](https://docs.unity3d.com/Packages/com.unity.probuilder@6.0/manual/index.html)
+ProBuilder is a Unity package that allows you to quickly an easily create 3d objects inside the editor! It is 
+intended for prototyping, testing, and design, but if you put enough time into it you can make some great 3D models! 
+Not that I recommend that at all.
+
+## Setup
+Make sure you have the ProBuilder package installed from the Package Manager. That's all! 👍
+
+## Creating Shapes
+To get started with ProBuilder, you need to create a ProBuilder shape. There used to be a dedicated window for doing 
+everything with ProBuilder, but now it is built directly into the editor UI. At the bottom of your toolbar in the 
+scene window, after the Transform tool, there should be two buttons in their own section: Create Cube and Create 
+Polyshape. Click Create Cube to make our first ProBuilder shape. The way ProBuilder shape tools work is that you 
+first create a 2D slice of your shape, and then raise it up on the Y axis. To create a cube, hold down left-click 
+where you want one corner of the cube, then drag to where you would like the opposite corner to be, and release. 
+After you release, move your mouse up to define the height of the cube. When you are happy with it, left-click one 
+final time to confirm. Now you have a cube! You can change the size of any ProBuilder shape after the fact by 
+selecting it in the hierarchy and editing the Size variable of the ProBuilder Shape component in the Inspector. 
+Alternatively, when you select a ProBuilder shape, an Edit Probuilder Shape tool gets added to your Scene Tools 
+Toolbar, and you can use that to change the bounding box of your shape! Note: The click-and-drag shape creation 
+tools are a lot more useful when you enable the editor's grid snapping feature!
+
+To make a shape that isn't a cube, hold down left-click over the Create Cube tool. A little window will appear that 
+lets you select a lot of other shapes! Release left click over any other shape to switch to it. Creating any of the 
+other shapes works the same way as the cube. You click and drag a flat box and then raise your mouse to specify the 
+height. The shape will fill the bounding box you specify. Notice, some of the other shapes will have more options in 
+the ProBuilder Shape component after you make them. For instance, the sphere lets you specify a number of 
+subdivisions, and the cylinder lets you specify a number of sides. You can always change these later! Underneath the 
+Create Cube tool in the Scene Tools Toolbar, there is a Create Polyshape tool. For that tool, left click somewhere 
+to create a point, then click somewhere else to make another point. Keep clicking to draw out the base of whatever 
+shape you want to make. Once you click back on the first point you made, the shape will close, and it will enter 
+height mode. Move your mouse up until you are happy with the height and left click. As always, you can change it 
+later in the PolyShape component in the Inspector.
+
+## Mesh Editing
+Once you make a shape in ProBuilder, you can edit its mesh directly! If you select a ProBuilder shape, an orange 
+grid tool will appear at the top of your Scene Tools Toolbar. When clicked, this will change the rest of the scene 
+tools (transform, rotation, scale) to work on mesh selections instead of gameobject selections. When in mesh mode, 
+there will also be new buttons at the top of the scene window to switch between vertex, edge, and face selection. 
+Now you can select and translate shape meshes as your heart desires! To modify the actual topology of the mesh, all 
+the modeling tools of ProBuilder now live in the right click menu. The options that appear in the right click menu 
+depend on if you are in vertex, edge, or face selection mode. They operate only on what you have currently selected, 
+so if you don't have a valid selection for a tool it will be greyed out. When you are done, click the orange 
+grid tool again to put your scene tools back into the normal gameobject mode. Note: If you edit a shape's mesh like 
+this, you can no longer change the settings of the original shape without reverting all of your changes.
+
+## Advanced Tools
+If you need more control over your ProBuilder meshes, there are more tools available! If you click Tools > 
+ProBuilder > Editors, there are several windows that let you edit your meshes further. There is an editor for 
+editing Materials, Smooth Shading, UVs, Vertex Colors, and Vertex Positions. When you have any of these windows open,
+they will let you edit the currently selected ProBuilder mesh. I'm not going to go over all of these tools, but I 
+think they are pretty self-explanatory!
+
+## Exporting
+If you want to export a ProBuilder mesh into another program, it is really easy! Select the meshes you want to 
+export, then click Tools > ProBuilder > Export, and select what file type you would like to export. Normally I just 
+do .obj, but there are other options. Select where you would like to save the file, hit Save, and tada! You're done!
 
 # 🕶️ Shader Graph
+[📓](https://docs.unity3d.com/Packages/com.unity.shadergraph@17.0/manual/index.html)  
+Shader Graph is a visual node-based tool for creating shaders without writing any code. You can't do everything with
+it that you can by writing code, but for the vast majority of use cases it can do the job!
+
+## Theory
+I'm not going to explain everything you need to know to start writing shaders, but I will give a refresher on how
+shaders are structured (at least for normal object shaders). If you would like a more in depth starter guide for
+writing shaders, check out [The Book of Shaders](https://thebookofshaders.com/). In a shader graph, there will be
+two sections of outputs: the Vertex Shader and the Fragment Shader. The Vertex Shader controls the final position of
+all the vertices that make up your mesh, as well as their normals. If you leave the Vertex Shader alone, your
+mesh will render just like normal. However, you can offset vertices of your mesh to achieve neat effects, like 
+a fish wiggling as it swims or the rolling terrain seen in Animal Crossing. The Fragment Shader is where most of the
+cool shader stuff will happen. It controls the final pixel color that is drawn to the scene. The color output in the
+Fragment Shader will set the color of your object, but that is not the whole story. You can also specify values for
+the metallic and smoothness of this pixel of the object, which controls how the object will receive and reflect light.
+There are also outputs for the Normal vector of the surface, Emission color, and Ambient Occlusion amount. To get values
+for all of these outputs, you will get data from inputs, and then do math on them to generate your desired output.
+Inputs can be position coordinates, UV coordinates, Noise textures, normal textures, depth textures, and so much more!
+
+## Making a Graph
+Create a shader graph shader by clicking Assets > Create > Shader Graph > URP > Lit Shader Graph. You can also choose
+unlit if you want an object with no metallic, smoothness, shading, or shadows. Type in a name and press enter.
+Double-click the asset you just created to open the shader graph editor window. You can dock it somewhere, but I recommend
+leaving it undocked and making it fullscreen. 
+
+The center of the window is your workspace with all of your nodes. Alt + left-click to pan it.
+The box on the left is your Blackboard. The Blackboard has all the variables of your shader. Click the plus at the 
+top left of it to create a new variable. There are several different types to choose from. You can click and drag
+any variable from the blackboard into your workspace to create a node with its value. You can also create multiple
+nodes of the same variable for neater looking connections! If you right-click a variable, there is an option to expose
+it. This essentially makes the variable "public". When you make a material with this shader, all your exposed variables
+will appear in the Inspector, and you will be able to change their values. The box on the right is the Graph Inspector.
+The Graph Inspector has two tabs: Node Settings and Graph Settings. The Node Settings tab lets you tweak the settings
+of any node that you have selected in the workspace. The Graph Settings tab lets you change settings for the entire
+shader as a whole. The bottom right of the window also has a little preview of your shader on a sphere. You can click 
+it to cycle between other shapes if you like. You can toggle the Blackboard, Graph Inspector, and Preview on or off
+for more space by clicking their corresponding buttons at the top right of the window. The top left has Save and Save
+As buttons. Don't forget to save your work, your changes are not saved for you!
+
+The actual fun bit with shader graph is making nodes! To create a new node, right-click the workspace in the center
+and click Create Node, or just press spacebar. The node creation window will appear! You can either browse for nodes
+through all the categories, or search for the node you want in the top bar. You can find a list of all the available
+nodes [here](https://docs.unity3d.com/Packages/com.unity.shadergraph@17.0/manual/Node-Library.html). Once you click on a node, it will be
+created and put in your workspace. You can click and drag nodes around. Click and drag on the background to box
+select multiple nodes. When multiple nodes are selected, you can click and drag any of the selected nodes, and the
+rest of the selected nodes will move around with it. The inputs of a node are always on the left side, and the outputs
+are always on the right side. To connect nodes, click and drag the output of one node into the input of another node.
+This will create a connections between the two nodes, represented as a line. To delete a connection, click the 
+connection you want to delete and press the delete key. All outputs and inputs in shader graph have a color, and this
+color denotes what data type they are. You can find all the types and their colors [here](https://docs.unity3d.com/Packages/com.unity.shadergraph@17.0/manual/Data-Types.html).
+Some data types can be automatically converted into another if you connect them. For instance, you can connect a float
+output to a vector input, and unity will just make every component of the vector equal to the value of the float. I
+just kinda go by vibes for this and I couldn't find any list of what data types can be cast to what, so just try stuff
+and see what happens I guess 乁༼☯‿☯✿༽ㄏ have fun!!!
+
+You can also right-click the workspace background and click Create Sticky Note to make a lil sticky note that you
+can use to write comments for yourself. ^-^
+
+## Using Your Shaders
+To use any shaders you make, make a new material and name it whatever you like. Click the material to see its settings
+in the Inspector. At the very tippy-top of the Inspector, right under the material name, there a dropdown field named
+Shader. Click this, then go to Shader Graphs > Your Shader Name, or simply search for your shader at the top. Now that
+material is using the shader you made! Any objects with this material will be rendered with your shader, and any 
+variables you marked as exposed can be tweaked by selecting the material in the Assets pane and changing their values
+in the Inspector.
 
 # 🎆 VFX Graph
+[📓](https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.0/manual/index.html)  
+VFX Graph is a GPU-based particle system that you create visually using nodes. You can also use it for GPU instancing.
+It is super cool and awesome and fast and amazing and I should really use it a lot more. It supports both URP and 
+the HDRP now!
+
+## Theory
+[📓](https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.0/manual/GraphLogicAndPhilosophy.html)  
+Ok jeepers this one has some crazy theory that is completely unique to VFX Graph, but I will do my best to understand
+it and relay that understanding to you. There are some terms that have specific meanings in VFX Graph land that you
+need to understand first:  
+
+- Variables are values that live in the blackboard that serve as inputs for Operator nodes.
+- Operators are nodes very similar to Shader Graph nodes, they let you take an input and do math stuff on it.
+- Blocks are an instruction that VFX Graph will execute. They are always organized as a vertical stack, and will
+  execute from the top down. Some examples are like, Set Color, Apply Force, stuff like that.
+- Contexts are containers for a stack of blocks. Contexts will execute their stack of blocks at a specific time. For
+  instance, the Initialize context will run once at the start of the particle system, and the Update context will run
+  once per frame.
+- Systems are a context or a group of contexts that represents some like, uh, thing? Like for instance, You can have
+  a spawning system, and particle system, or a mesh output system. Systems are represented in the workspace by a dotted
+  line surrounding a group of contexts.  
+
+Systems, Contexts, and Blocks are all organized in a vertical stack going from top to bottom. Operators go from left
+to right, and their final output can be plugged into the input of any block in any context. This creates a sort of
+twig structure, where you have a main central channel and little spindly bits coming off the sides wherever you need
+custom logic.
+
+The only three systems you will probably ever need are:
+- Spawning System: composed of just a Spawning context
+- Particle System: composed of an Initialize > Update > Quad|Mesh Output context stack
+- Mesh System: composed of just a Mesh Output context
+
+You can hook a Spawning System up to a Particle System to make a bunch of pretty particles, or you can hook up a 
+Spawing System to a Mesh System to basically just do GPU Instancing.
+
+## Making a Graph
+First things first, make sure you have the Visual Effect Graph package installed from the package manager. To create
+a VFX Graph, click Assets > Create > Visual Effects > Visual Effect Graph. Give it a name and press enter. Double-click
+the asset you just made to open the VFX Graph window. The main view in the center-right is your workspace. This is where
+you will create and manipulate nodes. The box in the top left is your Blackboard. The Blackboard holds variables you
+can use in your graph. To create a new variable, click the plus at the top right of the Blackboard. Select the variable
+type you want, and then give it a name. If you hit the down arrow next to a variable, you can edit its value, tooltip,
+and if it is exposed. Exposed variables are basically "public", they can be edited from instance to instance by
+clicking an instance and changing the values in the Inspector under the Properties section. Below the Blackboard is the VFX Control pane. If you
+select an instance of this particle system in the scene hierarchy, you can change the playback settings for it here.
+In the top left of the window, there are buttons to save and compile your graph. In the top right, there are buttons
+to toggle the visibility of the Backboard and VFX Control panes.
+
+To create, uh, anything, right-click and click Create Node, or press the spacebar. The Create Node menu will appear.
+It will only show you Operators, Blocks, and Contexts that are valid to create based on where your mouse cursor is.
+For instance, you can't use any spawn context blocks in the output context. There are a *ton* of nodes, and it will
+take some getting used to to learn what is available and how to achieve things. Definitely start by looking up some
+tutorials. You can find the full list of nodes [here](https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.0/manual/node-library.html).
+
+You can also right-click the workspace background and click Create Sticky Note to make a lil sticky note that you
+can use to write comments for yourself. ^-^
+
+## Using Your Particle Systems
+Just drag and drop your VFX Graph asset into the scene ^-^
+
+## Controlling Your Particle Systems
+[📓](https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.0/manual/ComponentAPI.html)  
+You can interact with your VFX Graph at runtime by putting a script on the gameobject that has your VFX Graph on it,
+and doing this:
+```csharp
+VisualEffect effect = GetComponent<VisualEffect>();
+
+effect.Play();
+effect.Stop();
+effect.pause = true;//pause particles
+effect.pause = false;//resume particles
+effect.AdvanceOneFrame();//only works if paused is set to true
+effect.Reinit();//sets total time to zero and restarts the system
+```
+The VisualEffect component has methods to check for, get, and set variables of your VFX Graph. I will only cover the 
+functions for floats, since they are the most common, but there is a corresponding function for every data type a
+VFX Graph variable can have. The full list of them is [here](https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.0/manual/ComponentAPI.html#checking-for-exposed-properties).
+```csharp
+bool iHas = effect.HasFloat("MyVariableName");//returns true if
+float canIHas = effect.GetFloat("MyVariableName");//returns the value of the variable with this name
+effect.SetFloat("MayVariableName",5f);//write the value of the variable with this name
+```
+You can also set up events and stuff but like bleh look it up if you need it.
 
 # 🫥 DOTS
 
@@ -4672,4 +5352,5 @@ Notes:
   Authoring the gameobject mode that the entity is based on, and runtime is the preview of the entity that will be 
   created! You can also have multiple inspectors with different authoring settings!
 - Click Window > Entities > Hierarchy to get the entities hierarchy window!
-- Bust can be disabled or re-enabled with Jobs > Burst > Enable Compilation
+- Burst can be disabled or re-enabled with Jobs > Burst > Enable Compilation. You may want to do this to get more 
+  helpful error messages.

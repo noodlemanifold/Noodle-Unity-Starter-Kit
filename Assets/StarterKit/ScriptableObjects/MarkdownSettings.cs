@@ -7,23 +7,21 @@ using UnityEditor;
 using UnityEditor.UIElements;
 #endif
 
+namespace NoodleKit {
 
 [CreateAssetMenu(fileName = "MarkdownSettings", menuName = "Noodle Kit/Markdown Settings")]
 public class MarkdownSettings : ScriptableObject {
 
-    [Header("Heading Settings")] 
-    public HeaderSettings h1;
+    [Header("Heading Settings")] public HeaderSettings h1;
     public HeaderSettings h2;
     public HeaderSettings h3;
     public HeaderSettings h4;
     public HeaderSettings h5;
     public HeaderSettings h6;
 
-    [Header("Paragraph Settings")]
-    public string tabSize = "1em";
+    [Header("Paragraph Settings")] public string tabSize = "1em";
 
-    [Header("List Settings")] 
-    public string unorderedListDelimiter = "- ";
+    [Header("List Settings")] public string unorderedListDelimiter = "- ";
 
     [System.Serializable]
     public class HeaderSettings {
@@ -35,7 +33,7 @@ public class MarkdownSettings : ScriptableObject {
 #if UNITY_EDITOR
 
 [CustomPropertyDrawer(typeof(MarkdownSettings.HeaderSettings))]
-public class ButtonDrawer : PropertyDrawer { //inherit from property drawer to change how a property is drawn
+public class HeaderSettingsDrawer : PropertyDrawer { //inherit from property drawer to change how a property is drawn
 
     public override VisualElement CreatePropertyGUI(SerializedProperty property) {
         VisualElement container = new VisualElement();
@@ -47,8 +45,9 @@ public class ButtonDrawer : PropertyDrawer { //inherit from property drawer to c
 
         PropertyField defaultInspector = new PropertyField(property);
         container.Add(defaultInspector);
-        
+
         return container;
     }
 }
 #endif
+}
