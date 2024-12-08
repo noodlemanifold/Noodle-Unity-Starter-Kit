@@ -14,8 +14,8 @@ using Markdig.Helpers;
 using Markdig.Renderers.Html;
 using Markdig.Renderers.Uxml;
 using Markdig.Syntax;
-using NoodleKit;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 namespace Markdig.Renderers {
 
@@ -30,7 +30,7 @@ public class UxmlRenderer : TextRendererBase<UxmlRenderer> {
     /// Initializes a new instance of the <see cref="UxmlRenderer"/> class.
     /// </summary>
     /// <param name="writer">The writer.</param>
-    public UxmlRenderer(TextWriter writer, MarkdownSettings renderSettings) : base(writer) {
+    public UxmlRenderer(TextWriter writer, TextStyleSheet renderStyle) : base(writer) {
         // Default block renderers
         // ObjectRenderers.Add(new CodeBlockRenderer());
         // ObjectRenderers.Add(new ListRenderer());
@@ -52,23 +52,23 @@ public class UxmlRenderer : TextRendererBase<UxmlRenderer> {
         // ObjectRenderers.Add(new LiteralInlineRenderer());
         
         //stuff I want:
-        //delimiter inline
-        //external link inline
-        //html block & inline & inline entity?
         //quote block?
         //code block & inline???
-        ObjectRenderers.Add(new UxmlHeadingRenderer(renderSettings));
-        ObjectRenderers.Add(new UxmlParagraphRenderer(renderSettings));
-        ObjectRenderers.Add(new UxmlListRenderer(renderSettings));
+        ObjectRenderers.Add(new UxmlHeadingRenderer(renderStyle));
+        ObjectRenderers.Add(new UxmlParagraphRenderer(renderStyle));
+        ObjectRenderers.Add(new UxmlListRenderer(renderStyle));
+        ObjectRenderers.Add(new UxmlThematicBreakRenderer(renderStyle));
         
         ObjectRenderers.Add(new UxmlLiteralInlineRenderer());
-        ObjectRenderers.Add(new UxmlLineBreakInlineRenderer(renderSettings));
-        ObjectRenderers.Add(new UxmlEmphasisInlineRenderer(renderSettings));
+        ObjectRenderers.Add(new UxmlLineBreakInlineRenderer());
+        ObjectRenderers.Add(new UxmlDelimiterInlineRenderer());
+        ObjectRenderers.Add(new UxmlEmphasisInlineRenderer(renderStyle));
+        ObjectRenderers.Add(new UxmlLinkInlineRenderer(renderStyle));
         
-        //rendering html as uxml? not sure how this will work
-        //ObjectRenderers.Add(new UxmlBlockRenderer());
-        //ObjectRenderers.Add(new UxmlInlineRenderer());
-        //ObjectRenderers.Add(new UxmlEntityInlineRenderer());
+        //this just makes rich text tags already in the document work
+        ObjectRenderers.Add(new UxmlHtmlBlockRenderer());
+        ObjectRenderers.Add(new UxmlHtmlInlineRenderer());
+        ObjectRenderers.Add(new UxmlHtmlEntityInlineRenderer());
 
         EnableHtmlForBlock = true;
         EnableHtmlForInline = true;
@@ -254,7 +254,6 @@ public class UxmlRenderer : TextRendererBase<UxmlRenderer> {
     public UxmlRenderer WriteLinesBefore(Block obj) {
         if (obj.LinesBefore is not null) {
             int lines = obj.LinesBefore.Count;
-            Debug.Log(lines);
             for (int i = 0; i < lines; i++) {
                 WriteLine();
             }

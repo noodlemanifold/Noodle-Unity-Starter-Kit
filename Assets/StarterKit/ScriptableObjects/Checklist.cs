@@ -48,12 +48,14 @@ public class ChecklistItemDrawer : PropertyDrawer { //inherit from property draw
         tickBox.BindProperty(property.FindPropertyRelative("complete"));
         tickBox.label = "";
         tickBox.style.flexShrink = 0;
+        tickBox.style.marginRight = 6;
         container.Add(tickBox);
         
         TextField textBox = new TextField();
         textBox.BindProperty(property.FindPropertyRelative("text"));
         textBox.label = "";
         textBox.style.flexGrow = 1;
+        textBox.style.marginRight = 0;
         textBox.multiline = true;
         textBox.style.whiteSpace = WhiteSpace.Normal;
         container.Add(textBox);

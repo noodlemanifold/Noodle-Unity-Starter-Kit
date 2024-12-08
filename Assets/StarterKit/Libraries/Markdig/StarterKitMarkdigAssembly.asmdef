@@ -1,9 +1,7 @@
 {
-    "name": "NoodleKit.Common",
+    "name": "NoodleKit.Markdig",
     "rootNamespace": "",
-    "references": [
-        "GUID:ed2b79e73e79bad4eaea1e8675a718bb"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

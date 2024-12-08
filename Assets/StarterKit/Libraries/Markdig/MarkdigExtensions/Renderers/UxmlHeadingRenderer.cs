@@ -1,44 +1,36 @@
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
-using NoodleKit;
+using UnityEngine.TextCore.Text;
 
 namespace Markdig.Renderers.Uxml {
-/// <summary>
-/// An HTML renderer for a <see cref="HeadingBlock"/>.
-/// </summary>
-/// <seealso cref="HtmlObjectRenderer{TObject}" />
+
 public class UxmlHeadingRenderer : UxmlObjectRenderer<HeadingBlock> {
     
-    private MarkdownSettings renderSettings;
-    private MarkdownSettings.HeaderSettings[] headerSettingses;
+    private TextStyleSheet renderStyle;
+    private string[] headerNames;
 
-    public UxmlHeadingRenderer(MarkdownSettings renderSettings) {
-        this.renderSettings = renderSettings;
-        headerSettingses = new MarkdownSettings.HeaderSettings[]{
-            this.renderSettings.h1,
-            this.renderSettings.h2,
-            this.renderSettings.h3,
-            this.renderSettings.h4,
-            this.renderSettings.h5,
-            this.renderSettings.h6
+    public UxmlHeadingRenderer(TextStyleSheet renderStyle) {
+        this.renderStyle = renderStyle;
+        headerNames = new string[]{
+            "heading1",
+            "heading2",
+            "heading3",
+            "heading4",
+            "heading5",
+            "heading6"
         };
     }
     
 
     protected override void Write(UxmlRenderer renderer, HeadingBlock obj) {
-        MarkdownSettings.HeaderSettings settings = headerSettingses[obj.Level - 1];
 
-        string opener = "<size=" + settings.fontSize +">";
-        string closer = "</size>";
+        string opener = "";
+        string closer = "";
 
-        int weight = settings.fontWeight;
-        if (weight > 0 && weight <= 900 && weight % 100 == 0) {
-            opener += "<font-weight=" + weight + ">";
-            closer += "</font-weight>";
-        }
-        else {
-            opener += "<b>";
-            closer += "</b>";
+        TextStyle style = renderStyle.GetStyle(headerNames[obj.Level - 1]);
+        if (style is not null) {
+            opener = style.styleOpeningDefinition;
+            closer = style.styleClosingDefinition;
         }
 
         renderer.WriteLinesBefore(obj);

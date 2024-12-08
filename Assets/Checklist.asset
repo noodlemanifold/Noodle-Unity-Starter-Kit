@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskList:
   - item:
-      complete: 0
+      complete: 1
       text: 
     subtaskList:
     - complete: 0
