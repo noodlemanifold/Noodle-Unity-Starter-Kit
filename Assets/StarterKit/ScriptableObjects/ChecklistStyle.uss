@@ -6,12 +6,15 @@
 }
 
 .unity-toggle > .unity-toggle__input > .unity-toggle__checkmark {
+    width: 18px;
+    height: 18px;
 }
 
 .unity-toggle:hover > .unity-toggle__input > .unity-toggle__checkmark {
 }
 
 .unity-toggle:checked > .unity-toggle__input > .unity-toggle__checkmark {
+    -unity-background-image-tint-color: rgb(187, 251, 191);
 }
 
 .unity-text-field > .unity-text-field__input {
