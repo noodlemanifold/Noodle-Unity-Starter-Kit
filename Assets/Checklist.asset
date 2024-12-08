@@ -14,29 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskList:
   - item:
-      complete: 0
-      text: 
-    subtaskList:
-    - complete: 0
-      text: 
-    - complete: 0
-      text: 
-    - complete: 0
-      text: 
-    - complete: 0
-      text: 
-  - item:
-      complete: 0
-      text: 
-    subtaskList:
-    - complete: 0
-      text: 
-  - item:
-      complete: 0
-      text: 
-    subtaskList: []
-  - item:
-      complete: 0
-      text: 
+      complete: 1
+      text: make checklist
     subtaskList: []
   styleSheet: {fileID: 7433441132597879392, guid: 3612d4d31196fc445b726723504aeae0, type: 3}
