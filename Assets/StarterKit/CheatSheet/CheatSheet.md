@@ -4465,7 +4465,7 @@ public class MyComponent : MonoBehaviour {
 }
     
 #if UNITY_EDITOR
-public class MyComponent : Editor {
+public class MyComponentGizmo : Editor {
     //Gizmo types: https://docs.unity3d.com/ScriptReference/GizmoType.html
     [DrawGizmo(GizmoType.InSelectionHierarchy)]
     static void DrawMyGizmos(MyComponent script, GizmoType type){//you can call this anything
