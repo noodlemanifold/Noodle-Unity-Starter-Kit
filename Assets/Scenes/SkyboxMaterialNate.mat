@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SkyboxMaterial
+  m_Name: SkyboxMaterialNate
   m_Shader: {fileID: -6465566751694194690, guid: ce08c044436dd9141a1b9246036e506f, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -53,22 +53,22 @@ Material:
     m_Floats:
     - _GridInnerDistance: 10
     - _GridOuterDistance: 20
-    - _GridScale: 5
-    - _HorizonFactor: 40
-    - _LineOpacity: 1
+    - _GridScale: 5.06
+    - _HorizonFactor: 20.76
+    - _LineOpacity: 0.8
     - _LineScale: 2.74
     - _LineWidth: 0.04
     - _MajorLineCount: 8
-    - _MajorLineOpacity: 4.3
+    - _MajorLineOpacity: 1
     - _MajorLineWidth: 0.08
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
-    - _GridColor: {r: 0.19399999, g: 0.084875, b: 0.08083333, a: 1}
-    - _GroundColor: {r: 0.055, g: 0.02838817, b: 0.025299998, a: 0}
-    - _HorizonColor: {r: 0.14117648, g: 0.08117247, b: 0.07002353, a: 1}
-    - _SkyColor: {r: 0.078431375, g: 0.036015686, b: 0.025411766, a: 0}
-    - _XAxisColor: {r: 0.141, g: 0, b: 0.010846128, a: 1}
-    - _ZAxisColor: {r: 0.018836364, g: 0.024218192, b: 0.148, a: 1}
+    - _GridColor: {r: 0, g: 0, b: 0, a: 1}
+    - _GroundColor: {r: 0.45490196, g: 0.53333336, b: 0.6117647, a: 1}
+    - _HorizonColor: {r: 0.58500004, g: 0.9400809, b: 1, a: 1}
+    - _SkyColor: {r: 0.44300002, g: 0.7062398, b: 1, a: 1}
+    - _XAxisColor: {r: 0.754, g: 0, b: 0.063800246, a: 1}
+    - _ZAxisColor: {r: 0.0971223, g: 0.12410066, b: 0.75, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

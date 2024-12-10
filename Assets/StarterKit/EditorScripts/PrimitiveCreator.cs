@@ -108,6 +108,11 @@ public class PrimitiveCreator : Editor {
     }
 
     private static GameObject FindPrimitive(string name) {
+        if (PrimitivePrefabs.instance == null) {
+            Debug.Log("Primitive Prefabs SO static instance is null!!! Bug Roxy about this and try again it might work idk");
+            return null;
+        }
+
         IEnumerable<GameObject> prefabQuery = //variable storing results of the query
             from prefab in PrimitivePrefabs.instance.prefabs //sql style query
             where prefab.name.Equals(name)
@@ -116,6 +121,10 @@ public class PrimitiveCreator : Editor {
     }
 
     private static void PlacePrimitive(GameObject prefab, MenuCommand menuCommand) {
+        if (prefab == null) {
+            return;
+        }
+
         Vector3 position = Vector3.zero;
         if (SceneView.lastActiveSceneView != null) {
             position = SceneView.lastActiveSceneView.camera.transform.position
