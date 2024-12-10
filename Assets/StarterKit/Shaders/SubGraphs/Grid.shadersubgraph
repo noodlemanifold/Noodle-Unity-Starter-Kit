@@ -8,6 +8,9 @@
         },
         {
             "m_Id": "a2c799119f004389b766e0dfc147b1f2"
+        },
+        {
+            "m_Id": "4639f1620ccd4e6393e80ab62468499f"
         }
     ],
     "m_Keywords": [],
@@ -125,6 +128,9 @@
         },
         {
             "m_Id": "d2666aeb545a49d3a7ddd064e0778e98"
+        },
+        {
+            "m_Id": "51a5c70c674343a699553920dfc9e330"
         }
     ],
     "m_GroupDatas": [
@@ -337,6 +343,20 @@
                     "m_Id": "62a54de9ca4c463d99aacaa8511d7cd3"
                 },
                 "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "51a5c70c674343a699553920dfc9e330"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "5379a93a27394c25b7aecadd40853890"
+                },
+                "m_SlotId": 1
             }
         },
         {
@@ -1691,7 +1711,7 @@
     "m_ObjectId": "2fbb8fcb05304c94a2320db87efe9a91",
     "m_Title": "Cell UV",
     "m_Position": {
-        "x": -1503.2001953125,
+        "x": -1503.2000732421875,
         "y": 700.0
     }
 }
@@ -1702,8 +1722,8 @@
     "m_ObjectId": "2fe41b890d5a41329ebc66bc752e26a3",
     "m_Title": "Screen Space Derivative",
     "m_Position": {
-        "x": -1607.9998779296875,
-        "y": -176.00006103515626
+        "x": -1608.0,
+        "y": -176.0
     }
 }
 
@@ -1915,10 +1935,13 @@
     "m_Name": "",
     "m_ChildObjectList": [
         {
+            "m_Id": "a2c799119f004389b766e0dfc147b1f2"
+        },
+        {
             "m_Id": "9a58eca69bd14d75a36f86ec23a5f088"
         },
         {
-            "m_Id": "a2c799119f004389b766e0dfc147b1f2"
+            "m_Id": "4639f1620ccd4e6393e80ab62468499f"
         }
     ]
 }
@@ -2121,6 +2144,34 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector2ShaderProperty",
+    "m_ObjectId": "4639f1620ccd4e6393e80ab62468499f",
+    "m_Guid": {
+        "m_GuidSerialized": "6a549fb2-9098-4171-8a2b-481980ce299e"
+    },
+    "m_Name": "GridScale",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "GridScale",
+    "m_DefaultReferenceName": "_GridScale",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": {
+        "x": 2.0,
+        "y": 2.0,
+        "z": 0.0,
+        "w": 0.0
+    }
+}
+
+{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
     "m_ObjectId": "46dad67ee01a49a4afb0fa5a1d7c71c7",
@@ -2261,6 +2312,42 @@
         "y": 0.0,
         "z": 0.0,
         "w": 0.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "51a5c70c674343a699553920dfc9e330",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -2183.19970703125,
+            "y": 352.79998779296877,
+            "width": 131.199951171875,
+            "height": 33.60003662109375
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "736ea916d6714567b74fa346e34de92b"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "4639f1620ccd4e6393e80ab62468499f"
     }
 }
 
@@ -2595,7 +2682,7 @@
     "m_ObjectId": "660d07e38fb94ccba722f19da51b2579",
     "m_Title": "Distant Line Fade",
     "m_Position": {
-        "x": -647.2000732421875,
+        "x": -647.199951171875,
         "y": -1178.4000244140625
     }
 }
@@ -2728,6 +2815,27 @@
     "m_CustomColors": {
         "m_SerializableColors": []
     }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector2MaterialSlot",
+    "m_ObjectId": "736ea916d6714567b74fa346e34de92b",
+    "m_Id": 0,
+    "m_DisplayName": "GridScale",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0
+    },
+    "m_Labels": []
 }
 
 {
@@ -3042,7 +3150,7 @@
     "m_ObjectId": "808bade6f78b40279d74fbfc712690d6",
     "m_Title": "Alpha Blend",
     "m_Position": {
-        "x": 1810.400146484375,
+        "x": 1810.4000244140625,
         "y": -837.5999755859375
     }
 }
@@ -3835,8 +3943,8 @@
     "m_ObjectId": "a6d8aa0630244821bfa6f47364ea84b2",
     "m_Title": "AA Width",
     "m_Position": {
-        "x": -1004.800048828125,
-        "y": -196.00006103515626
+        "x": -1004.7999877929688,
+        "y": -196.0
     }
 }
 
@@ -3870,7 +3978,7 @@
     "m_ObjectId": "adb2a4c677104261b59d76197d73c0b7",
     "m_Title": "Mesier Compensation/Fade Out",
     "m_Position": {
-        "x": 268.800048828125,
+        "x": 268.7999267578125,
         "y": -852.0
     }
 }
@@ -4724,7 +4832,7 @@
     "m_ObjectId": "e28844970de24790b49e0fcc964d2a8c",
     "m_Title": "Grid UV",
     "m_Position": {
-        "x": -1987.2001953125,
+        "x": -1987.2000732421875,
         "y": 232.0
     }
 }
@@ -4990,7 +5098,7 @@
     "m_ObjectId": "fa418e8f9b7f473fa1dfa2b45b8a94a5",
     "m_Title": "Cell Coord",
     "m_Position": {
-        "x": -1503.2001953125,
+        "x": -1503.2000732421875,
         "y": 1134.39990234375
     }
 }
