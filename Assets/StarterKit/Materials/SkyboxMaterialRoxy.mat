@@ -53,7 +53,7 @@ Material:
     m_Floats:
     - _GridInnerDistance: 10
     - _GridOuterDistance: 20
-    - _GridScale: 10
+    - _GridScale: 5
     - _HorizonFactor: 40
     - _LineOpacity: 1
     - _LineScale: 2.74
