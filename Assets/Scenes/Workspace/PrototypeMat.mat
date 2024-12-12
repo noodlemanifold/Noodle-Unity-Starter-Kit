@@ -132,7 +132,7 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _CellColor: {r: 0.27603534, g: 0.869, b: 0.7138372, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _DecalOffset: {r: 0.03, g: 0.75, b: 0, a: 0}
+    - _DecalOffset: {r: 0.05, g: 0.75, b: 0, a: 0}
     - _DecalScale: {r: 0.2, g: 0.2, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GridColor: {r: 1, g: 1, b: 1, a: 1}
