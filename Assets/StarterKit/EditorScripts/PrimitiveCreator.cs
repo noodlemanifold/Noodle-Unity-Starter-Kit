@@ -110,6 +110,10 @@ public class PrimitiveCreator : Editor {
 
     static PrimitiveCreator() {
         var ids = AssetDatabase.FindAssets("PrimitivePrefabsList t:PrimitivePrefabs");
+        if (ids.Length == 0) {
+            ids = AssetDatabase.FindAssets("PrimitivePrefabsList t:PrimitivePrefabs", new string[] { "Packages/com.noodlemanifold.starterkit/Noodle Unity Starter Kit" });
+        }
+
         if (ids.Length == 1) {
             var prefabsObject = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GUIDToAssetPath(ids[0]));
 
