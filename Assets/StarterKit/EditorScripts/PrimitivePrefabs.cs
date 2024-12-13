@@ -1,21 +1,19 @@
 using System;
 using UnityEngine;
+#if UNITY_EDITOR
+#endif
 
 namespace NoodleKit {
+
 //[CreateAssetMenu(fileName = "PrimitivePrefabs", menuName = "Scriptable Objects/PrimitivePrefabs")]
 public class PrimitivePrefabs : ScriptableObject {
 
     public GameObject[] prefabs;
 
-    private void Awake() {
+    public static PrimitivePrefabs instance;
+
+    void Awake() {
         instance = this;
     }
-
-    private void OnEnable() {
-        instance = this;
-    }
-
-    public static PrimitivePrefabs instance { get; private set; }
-
 }
 }

@@ -1,6 +1,43 @@
 # Changelog
 
-## [0.6.0]
+## [1.0.0] !!!
+### Shaders
+- Added Skybox Shader
+- Added Prototype Shader
+- Added Normals Test Shader
+- Added Grid Subgraph
+- Added Grid Triplanar Subgraph
+- Added Random Range 3D Subgraph
+
+### Materials
+- Added Skybox Materials
+- Added Multi-Colored Prototype Materials
+- Added UV Test Material
+- Added Normals Test Material
+
+### Models
+- Added 16 or so Primitives
+- Added Primitive Prefabs to Create > 3D Menu
+
+### Scripts
+- Added NoodleTrigger component to visualize and hook up triggers
+- Added animation coroutines to NoodleUtils
+
+### Scriptable Objects
+- Finished Checklist
+- Finished Markdown
+
+### Textures
+- Added UV Test Texture
+- Added Template Tilesheet (and 5 color variants)
+
+### 2D
+- Added Prototype Rule Tiles
+- Added Prototype Sprite Palette
+
+### Assets
+- Added Roxy's Editor Layouts
+- Added Starter Scene Templates
 
 ## [0.5.0]
 

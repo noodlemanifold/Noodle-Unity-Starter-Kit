@@ -6,6 +6,7 @@ using UnityEditor;
 
 namespace NoodleKit {
 
+[InitializeOnLoad]
 public class PrimitiveCreator : Editor {
 
     //OH MY GOD FOR ONCE IT WAS JUST WELL DOCUMENTED AND EASY!!!!
@@ -105,6 +106,18 @@ public class PrimitiveCreator : Editor {
     public static void Torus(MenuCommand menuCommand) {
         string name = "Torus";
         PlacePrimitive(FindPrimitive(name), menuCommand);
+    }
+
+    static PrimitiveCreator() {
+        var ids = AssetDatabase.FindAssets("PrimitivePrefabsList t:PrimitivePrefabs");
+        if (ids.Length == 1) {
+            var prefabsObject = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GUIDToAssetPath(ids[0]));
+
+            PrimitivePrefabs.instance = (PrimitivePrefabs)prefabsObject;
+        }
+        else {
+            Debug.Log("Couldn't find prefabs :(");
+        }
     }
 
     private static GameObject FindPrimitive(string name) {
