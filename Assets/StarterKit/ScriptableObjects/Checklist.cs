@@ -38,8 +38,8 @@ public class ChecklistItemDrawer : PropertyDrawer { //inherit from property draw
         VisualElement container = new VisualElement();
         
         //holy serialization batman!
-        StyleSheet sheet = typeof(Checklist).GetField("styleSheet").GetValue(property.serializedObject.targetObject) as StyleSheet;
-        if (sheet != null) container.styleSheets.Add(sheet);
+        //StyleSheet sheet = typeof(Checklist).GetField("styleSheet").GetValue(property.serializedObject.targetObject) as StyleSheet;
+        //if (sheet != null) container.styleSheets.Add(sheet);
         container.style.flexDirection = FlexDirection.Row;
         container.style.justifyContent = Justify.Center;
         container.style.alignContent = Align.Center;
@@ -48,12 +48,14 @@ public class ChecklistItemDrawer : PropertyDrawer { //inherit from property draw
         tickBox.BindProperty(property.FindPropertyRelative("complete"));
         tickBox.label = "";
         tickBox.style.flexShrink = 0;
+        tickBox.style.marginRight = 6;
         container.Add(tickBox);
         
         TextField textBox = new TextField();
         textBox.BindProperty(property.FindPropertyRelative("text"));
         textBox.label = "";
         textBox.style.flexGrow = 1;
+        textBox.style.marginRight = 0;
         textBox.multiline = true;
         textBox.style.whiteSpace = WhiteSpace.Normal;
         container.Add(textBox);
@@ -151,6 +153,7 @@ public class ChecklistDrawer : Editor { //inherit from property drawer to change
     public override VisualElement CreateInspectorGUI() {
         Checklist script = (Checklist)target;
         VisualElement container = new VisualElement();
+        container.styleSheets.Add(script.styleSheet);
         container.style.flexDirection = FlexDirection.Column;
         
         Label title = new Label();
@@ -205,6 +208,7 @@ public class ChecklistDrawer : Editor { //inherit from property drawer to change
         VisualElement footer = new VisualElement();
         footer.style.flexDirection = FlexDirection.Row;
         footer.style.justifyContent = Justify.FlexEnd;
+        footer.style.marginTop = 8;
         
         Button addButton = new Button();
         addButton.text = "+ New Task";

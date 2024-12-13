@@ -12,11 +12,105 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf55a003ec4933b4f9ed5210699d7c65, type: 3}
   m_Name: MarkdownTest
   m_EditorClassIdentifier: 
-  renderingSettings: {fileID: 11400000, guid: bd86af081f224974cb37eede63319436, type: 2}
-  rawText: "# Test Document!\n\nHello! I have things to say!  \nI'm not gonna use
-    any like  \ncrazy _inlines_ or *_anything_* like  \nthat yet. *YET ;)*\n\nI am
-    gonna use multiple paragraphs tho so put that in ur cap and ~noodle on it~!\n\n######
-    Heres a list:\n- I'm a list\n- woohoo\n- listing so hard right now\n\n1. I'm
-    an ordered list\n2. monkaS\n3. ay-yeee!!!\n\n1) different character\n2) yeah
-    I have to support this garbage\n3) who on earth likes these parenthesis\n4) feels
-    like i need to test a 4th option for some reason but not a 5th one. weird."
+  textStyle: {fileID: 11400000, guid: ca897bb4cee2fb6409547a141970ed35, type: 2}
+  renderDocument:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000}
+        m_TargetAssemblyTypeName: Noodlekit.MarkdownDocument, NoodleKit.Common
+        m_MethodName: RenderUXML
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  rawText: '# Heading1
+
+    ## Heading2
+
+    ### Heading3
+
+    #### Heading4
+
+    #####
+    Heading5
+
+    ###### Heading6
+
+    ***
+
+
+    *bold*
+
+    **italics**
+
+    ***bold
+    & italics***
+
+
+    ~~strikethrough~~
+
+    ~subscript~
+
+    ^superscript^
+
+    ++inserted++
+
+    ==marked??==
+
+    here
+    is a [link!](https://www.unity.com)
+
+
+    <color=#ff00ccff>plz work</color>
+
+    <rotate="45"><b>LETS
+    GOOOO</b></rotate>
+
+
+    ###### Heres a list:
+
+    - I''m a list
+
+    - woohoooo
+
+    -
+    listing so hard right now
+
+
+    1. I''m an ordered list
+
+    2. monkaS
+
+    3.
+    ay-yeee!!!
+
+
+    1) different character
+
+    2) yeah I have to support this garbage
+
+    3)
+    who on earth likes these parenthesis
+
+    4) feels like i need to test a 4th
+    option for some reason but not a 5th one. weird.
+
+'
+  <uxmlRichText>k__BackingField: "<size=2em><b>Heading1</b></size>\n<size=1.5em><b>Heading2</b></size>\n<size=1.17em><b>Heading3</b></size>\n<size=1em><b>Heading4</b></size>\n<size=0.83em><b>Heading5</b></size>\n<size=0.67em><b>Heading6</b></size>\n<s>\u200F\u200F\u200E
+    <pos=100%>\u200F\u200F\u200E </s>\n\n<line-indent=1em><b>bold</b>\n<i>italics</i>\n<b><i>bold
+    & italics</i></b></line-indent>\n\n<line-indent=1em><s>strikethrough</s>\n<sub>subscript</sub>\n<sup>superscript</sup>\n<u>inserted</u>\n<mark=#ff00aa66>marked??</mark>\nhere
+    is a <color=#ff00aaff><u><a href=\"https://www.unity.com\">link!</a>\u200F</u></color></line-indent>\n\n<line-indent=1em><color=#ff00ccff>plz
+    work</color>\n<rotate=\"45\"><b>LETS GOOOO</b></rotate></line-indent>\n\n<size=0.67em><b>Heres
+    a list:</b></size>\n-<indent=1em> I'm a list</indent>\n-<indent=1em> woohoooo</indent>\n-<indent=1em>
+    listing so hard right now</indent>\n\n<mspace=0.6em>1.</mspace><indent=1em> I'm
+    an ordered list</indent>\n<mspace=0.6em>2.</mspace><indent=1em> monkaS</indent>\n<mspace=0.6em>3.</mspace><indent=1em>
+    ay-yeee!!!</indent>\n\n<mspace=0.6em>1)</mspace><indent=1em> different character</indent>\n<mspace=0.6em>2)</mspace><indent=1em>
+    yeah I have to support this garbage</indent>\n<mspace=0.6em>3)</mspace><indent=1em>
+    who on earth likes these parenthesis</indent>\n<mspace=0.6em>4)</mspace><indent=1em>
+    feels like i need to test a 4th option for some reason but not a 5th one. weird.</indent>\n\n"
+  showEditor: 1

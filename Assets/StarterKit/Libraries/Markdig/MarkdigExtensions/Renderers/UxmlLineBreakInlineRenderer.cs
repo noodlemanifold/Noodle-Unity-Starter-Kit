@@ -2,7 +2,6 @@ using Markdig.Renderers.Html;
 using UnityEngine;
 
 using Markdig.Syntax.Inlines;
-using NoodleKit;
 
 namespace Markdig.Renderers.Uxml {
 
@@ -12,10 +11,10 @@ namespace Markdig.Renderers.Uxml {
 /// <seealso cref="HtmlObjectRenderer{TObject}" />
 public class UxmlLineBreakInlineRenderer : UxmlObjectRenderer<LineBreakInline> {
     
-    private MarkdownSettings renderSettings;
+
     
-    public UxmlLineBreakInlineRenderer(MarkdownSettings renderSettings) {
-        this.renderSettings = renderSettings;
+    public UxmlLineBreakInlineRenderer() {
+
     }
     
     /// <summary>
@@ -25,12 +24,6 @@ public class UxmlLineBreakInlineRenderer : UxmlObjectRenderer<LineBreakInline> {
 
     protected override void Write(UxmlRenderer renderer, LineBreakInline obj) {
         if (renderer.IsLastInContainer) return;
-
-        // if (renderer.EnableHtmlForInline) {
-        //     if (obj.IsHard || RenderAsHardlineBreak) {
-        //         renderer.WriteLine("<br />");
-        //     }
-        // }
 
         renderer.EnsureLine();
     }

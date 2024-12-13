@@ -1,65 +1,122 @@
-using System;
-using System.IO;
+using System.Collections.Generic;
 using Markdig;
-using Markdig.Extensions.EmphasisExtras;
-using Markdig.Renderers;
 using NoodleKit;
 using Unity.Properties;
+using UnityEditor.Events;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.TextCore.Text;
+using UnityEngine.UIElements;
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.UIElements;
+#endif
 
 namespace Noodlekit{
 
 [CreateAssetMenu(fileName = "Markdown", menuName = "Noodle Kit/Markdown")]
 public class MarkdownDocument : ScriptableObject {
-
-    public MarkdownSettings renderingSettings;
-    [TextArea(30,50)]
-    public string rawText;
-
-    [CreateProperty]
-    public string uxmlRichText{ get; private set; }
     
-    public string htmlText { get; private set; }
+    public TextStyleSheet textStyle;
+    [Button] 
+    public UnityEvent renderDocument;
+    public string rawText = "";
 
-    private StringWriter writer1 = new();
-    private StringWriter writer2 = new();
-    private HtmlRenderer htmlRenderer;
-    private UxmlRenderer uxmlRenderer;
+    [field: SerializeField][CreateProperty]
+    public string uxmlRichText{ get; private set; }
 
-    public void RenderHTML() {
-        if (htmlRenderer is null) htmlRenderer = new(writer1);
-        
-        Markdig.Syntax.MarkdownDocument doc = Markdown.Parse(rawText);
-        
-        htmlRenderer.Render(doc);
-        htmlRenderer.Writer.Flush();
-
-        htmlText =  htmlRenderer.Writer.ToString() ?? string.Empty;
-
-        Debug.Log(htmlText);
-    }
+    [SerializeField] public bool showEditor = false;
     
     public void RenderUXML() {
-        if (renderingSettings is null) return;
-        if (uxmlRenderer is null) uxmlRenderer = new(writer2, renderingSettings);
-        
-        var pipeline = new MarkdownPipelineBuilder()
-            .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Subscript)
-            .EnableTrackTrivia()
-            .Build();
-        
-        Markdig.Syntax.MarkdownDocument doc = Markdown.Parse(rawText, pipeline);
-        
-        uxmlRenderer.Render(doc);
-        uxmlRenderer.Writer.Flush();
+        uxmlRichText = MarkdownExtension.RenderUxml(rawText, textStyle);
+    }
 
-        uxmlRichText =  uxmlRenderer.Writer.ToString() ?? string.Empty;
+    public void DisposeRenderer() {
+        MarkdownExtension.Dispose();
+    }
 
-        StringWriter w = uxmlRenderer.Writer as StringWriter;
-        w.GetStringBuilder().Clear();
-        
+    void OnEnable() {
+        EnsureButton();
+    }
 
-        //Debug.Log(uxmlRichText);
+    private void OnValidate() {
+        EnsureButton();
+    }
+
+    private void EnsureButton() {
+        if (renderDocument.GetPersistentEventCount() < 1) {
+            UnityEventTools.AddPersistentListener(renderDocument,RenderUXML);
+            renderDocument.SetPersistentListenerState(0,UnityEventCallState.EditorAndRuntime);
+        }
     }
 }
+#if UNITY_EDITOR
+[CustomEditor(typeof(MarkdownDocument))]
+public class MarkdownDocumentDrawer : Editor {
+    
+    public override VisualElement CreateInspectorGUI() {
+        MarkdownDocument script = target as MarkdownDocument;
+        VisualElement container = new VisualElement();
+        
+        VisualElement editor = new VisualElement();
+        editor.style.display = script.showEditor?DisplayStyle.Flex:DisplayStyle.None;
+            
+        VisualElement properties = new VisualElement();
+            
+        PropertyField styleField = new PropertyField(serializedObject.FindProperty("textStyle"));
+        styleField.style.marginRight = 40;
+        properties.Add(styleField);
+        PropertyField renderField = new PropertyField(serializedObject.FindProperty("renderDocument"));
+        properties.Add(renderField);
+            
+        editor.Add(properties);
+        
+        TextField textBox = new TextField();
+        textBox.BindProperty(serializedObject.FindProperty("rawText"));
+        textBox.label = "";
+        textBox.style.flexGrow = 1;
+        textBox.style.maxHeight = new Length(100, LengthUnit.Percent);
+        textBox.multiline = true;
+        textBox.style.whiteSpace = WhiteSpace.Normal;
+        editor.Add(textBox);
+            
+        container.Add(editor);
+        
+        VisualElement renderer = new VisualElement();
+        renderer.style.display = script.showEditor?DisplayStyle.None:DisplayStyle.Flex;
+        
+        Label display = new Label();
+        display.text = script.uxmlRichText;
+        display.style.fontSize = 12;
+        display.style.whiteSpace = WhiteSpace.Normal;
+        display.style.flexGrow = 1;
+        renderer.Add(display);
+        
+        container.Add(renderer);
+        
+        Button flipFlop = new Button();
+        flipFlop.text = script.showEditor?"📖":"📝";
+        flipFlop.style.position = Position.Absolute;
+        flipFlop.style.right = 0;
+        flipFlop.clickable = new Clickable(() => {
+            script.showEditor = !script.showEditor;
+            if (script.showEditor) {
+                editor.style.display = DisplayStyle.Flex;
+                renderer.style.display = DisplayStyle.None;
+                flipFlop.text = "📖";
+            }
+            else {
+                editor.style.display = DisplayStyle.None;
+                renderer.style.display = DisplayStyle.Flex;
+                flipFlop.text = "📝";
+                script.RenderUXML();
+                display.text = script.uxmlRichText;
+            }
+        });
+        container.Add(flipFlop);
+
+        return container;
+    }
+}
+#endif
 }

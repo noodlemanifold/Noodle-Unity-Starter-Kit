@@ -3131,33 +3131,33 @@ Sometimes when you are making a game, you need to smoothly animate the value of 
 an entire Animator Controller and make an animation for it, but that is clunky and not very dynamic. The first thing 
 you might try is to make a timer variable and an if condition in your script's Update() function, and while that does 
 work, there is a better way. Use [coroutines!](#coroutines) I won't go over coroutines again here, they are covered in
-the [coroutines section](#coroutines), but here is some example code for how to use one to animate a variable.
+the [coroutines section](#coroutines), but here is some example code for how to use one to animate a variable. 
+Coroutines do not support pass by reference so I had to do some delegate shenanigans to make this work. Look at the 
+[delegates](#delegates) section if you wanna learn more.
 ```csharp
 //linear animation function
-IEnumerator AnimationCoroutine(ref float target, float endingValue, float time){
+IEnumerator AnimationCoroutine(Action<float> callback, float startValue, float endingValue, float time){
     float timer = 0;
-    float startValue = target;//keep track of the starting value for the lerp function
     while(timer <= time){
         timer += Time.deltaTime;
-        target = Mathf.Lerp(startValue, endValue, timer/time);//timer/time is our animation progress %
+        callback(Mathf.Lerp(startValue, endingValue, timer/time));//timer/time is our animation progress %
         yield return null;
     }
 }
 ------
 //put this wherever you want to animate a variable
 float animateMe = 0f;
-IEnumerator coroutine = AnimationCoroutine(ref animateMe, 4f, 1f);
+IEnumerator coroutine = AnimationCoroutine(newValue => animateMe = newValue, animateMe, 4f, 1f);
 StartCoroutine(coroutine);//this will start animating animateMe from 0 to 4 over 1 second
 ```
 That example uses Lerp, which does linear interpolation, but you can use any other function you like! Unity has another
 on built in called SmoothStep(), which animates in an S-Curve shape.
 ```csharp
-IEnumerator AnimationSmooth(ref float target, float endingValue, float time){
+IEnumerator AnimationCoroutine(Action<float> callback, float startValue, float endingValue, float time){
     float timer = 0;
-    float startValue = target;//keep track of the starting value for the lerp function
     while(timer <= time){
         timer += Time.deltaTime;
-        target = Mathf.SmoothStep(startValue, endValue, timer/time);//Using a smooth function now!
+        callback(Mathf.SmoothStep(startValue, endingValue, timer/time));//timer/time is our animation progress %
         yield return null;
     }
 }
@@ -4465,7 +4465,7 @@ public class MyComponent : MonoBehaviour {
 }
     
 #if UNITY_EDITOR
-public class MyComponent : Editor {
+public class MyComponentGizmo : Editor {
     //Gizmo types: https://docs.unity3d.com/ScriptReference/GizmoType.html
     [DrawGizmo(GizmoType.InSelectionHierarchy)]
     static void DrawMyGizmos(MyComponent script, GizmoType type){//you can call this anything

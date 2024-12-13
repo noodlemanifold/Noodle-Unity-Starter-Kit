@@ -1,6 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/StarterKit/ScriptableObjects/Checklist.uss?fileID=7433441132597879392&amp;guid=3612d4d31196fc445b726723504aeae0&amp;type=3#Checklist" />
-    <ui:Toggle style="background-image: none; background-color: rgba(243, 12, 12, 0);" />
-    <ui:TextField />
-    <ui:ListView show-add-remove-footer="true" data-source-path="taskList" />
-</ui:UXML>

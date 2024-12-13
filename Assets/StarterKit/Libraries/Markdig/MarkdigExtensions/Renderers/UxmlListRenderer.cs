@@ -2,23 +2,24 @@ using Markdig.Renderers.Html;
 using UnityEngine;
 
 using Markdig.Syntax;
-using NoodleKit;
+using UnityEngine.TextCore.Text;
 
 namespace Markdig.Renderers.Uxml {
 
-/// <summary>
-/// A HTML renderer for a <see cref="ListBlock"/>.
-/// </summary>
-/// <seealso cref="HtmlObjectRenderer{TObject}" />
+
 public class UxmlListRenderer : UxmlObjectRenderer<ListBlock> {
     
-    private MarkdownSettings renderSettings;
+    private TextStyleSheet renderStyle;
     
-    public UxmlListRenderer(MarkdownSettings renderSettings) {
-        this.renderSettings = renderSettings;
+    public UxmlListRenderer(TextStyleSheet renderStyle) {
+        this.renderStyle = renderStyle;
     }
     
     protected override void Write(UxmlRenderer renderer, ListBlock listBlock) {
+        TextStyle unorderedStyle = renderStyle.GetStyle("unorderedList");
+        TextStyle orderedStyle = renderStyle.GetStyle("orderedList");
+        TextStyle itemStyle = renderStyle.GetStyle("listItem");
+        
         renderer.EnsureLine();
         renderer.WriteLinesBefore(listBlock);
 
@@ -33,6 +34,10 @@ public class UxmlListRenderer : UxmlObjectRenderer<ListBlock> {
             renderer.ImplicitParagraph = !listBlock.IsLoose;
 
             if (listBlock.IsOrdered) {
+                if (orderedStyle is not null) {
+                    renderer.WriteRaw(orderedStyle.styleOpeningDefinition);
+                }
+
                 if (listBlock.BulletType != '1') {
                     //apparently this isnt supported?
                     //its just treats them as a big paragraph
@@ -42,19 +47,29 @@ public class UxmlListRenderer : UxmlObjectRenderer<ListBlock> {
                     renderer.Write("" + delimiterLetter + listBlock.OrderedDelimiter);
                 }
                 else {
-                    renderer.WriteRaw("<mspace=0.6em>" + delimiterNumber +"</mspace>" + listBlock.OrderedDelimiter);
+                    renderer.WriteRaw(""+ delimiterNumber + listBlock.OrderedDelimiter);
                     //renderer.Write("" + delimiterNumber + listBlock.OrderedDelimiter);
+                }
+                if (orderedStyle is not null) {
+                    renderer.WriteRaw(orderedStyle.styleClosingDefinition);
                 }
             }
             else {
-                renderer.WriteRaw(renderSettings.unorderedListDelimiter);
+                if (unorderedStyle is not null) {
+                    renderer.WriteRaw(unorderedStyle.styleOpeningDefinition);
+                    renderer.WriteRaw(unorderedStyle.styleClosingDefinition);
+                }
             }
 
             delimiterNumber++;
 
-            renderer.WriteRaw("<indent=1em>");
+            if (itemStyle is not null) {
+                renderer.WriteRaw(itemStyle.styleOpeningDefinition);
+            }
             renderer.WriteChildren(listItem);
-            renderer.WriteRaw("</indent>");
+            if (itemStyle is not null) {
+                renderer.WriteRaw(itemStyle.styleClosingDefinition);
+            }
             
             renderer.ImplicitParagraph = previousImplicit;
             renderer.EnsureLine();

@@ -1,38 +1,49 @@
 using Markdig.Renderers.Uxml;
 using Markdig.Syntax;
-using NoodleKit;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
-namespace Markdig.Renderers.Html {
+namespace Markdig.Renderers.Uxml {
 
-/// <summary>
-/// A HTML renderer for a <see cref="ParagraphBlock"/>.
-/// </summary>
-/// <seealso cref="HtmlObjectRenderer{ParagraphBlock}" />
+
 public class UxmlParagraphRenderer : UxmlObjectRenderer<ParagraphBlock> {
 
-    private MarkdownSettings renderSettings;
+    private TextStyleSheet renderStyle;
 
-    public UxmlParagraphRenderer(MarkdownSettings renderSettings) {
-        this.renderSettings = renderSettings;
+    public UxmlParagraphRenderer(TextStyleSheet renderStyle) {
+        this.renderStyle = renderStyle;
     }
     
     protected override void Write(UxmlRenderer renderer, ParagraphBlock obj) {
         
-        string opener = "<line-indent=" + renderSettings.tabSize +">";
-        string closer = "</line-indent>";
+        string opener = "";
+        string closer = "";
+        
+        TextStyle style = null;
+        if (!renderer.ImplicitParagraph) {
+            style = renderStyle.GetStyle("paragraph");
+        }
+        else {
+            style = renderStyle.GetStyle("implicitText");
+        }
+
+        if (style is not null) {
+            opener = style.styleOpeningDefinition;
+            closer = style.styleClosingDefinition;
+        }
 
         //implicit paragraph means that this is an embedded paragraph in a list or something
         //and it should not get paragraph formatting. how elegant -_-
         if (!renderer.ImplicitParagraph) {
             renderer.WriteLinesBefore(obj);
-            renderer.WriteRaw(opener);
         }
 
+        renderer.WriteRaw(opener);
         renderer.WriteLeafInline(obj);
+        renderer.WriteRaw(closer);
 
         if (!renderer.ImplicitParagraph) {
-            renderer.WriteLine(closer);
+            renderer.EnsureLine();
             renderer.WriteLine();//paragraphs are always followed by a blank space
         }
         
