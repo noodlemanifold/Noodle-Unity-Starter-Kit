@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.0]
+### Editor Scripts
+- Added Units Attribute
+
+### Utils
+- Added Degree & Radian structs
+
+### DOTS
+- Added Gizmo Invoker for ECS Systems
+- Added dangle & rangle Unity Mathematics structs
+
 ## [1.0.0] !!!
 ### Shaders
 - Added Skybox Shader
