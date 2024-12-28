@@ -225,6 +225,7 @@ Scene Tools:
 - Transform: Y
 - Toggle Pivot or Center: Z
 - Toggle Global or Local: X
+- Transform from Vertex: Hold V
 
 Windows:
 

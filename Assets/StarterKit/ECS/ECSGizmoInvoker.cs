@@ -10,7 +10,7 @@ using Unity.Entities;
 namespace NoodleKit.ECS{
 //Using some hacky? generics stuff to make my own DrawGizmos Event in any system, managed or unmanaged.
 //https://discussions.unity.com/t/entity-visualizer-ondrawgizmos/744996/4
-static class GizmoInvoker{
+public static class GizmoInvoker{
     
     private static List<GizmoSystem> gizmoSystems = new ();
     private static float doneTime;
