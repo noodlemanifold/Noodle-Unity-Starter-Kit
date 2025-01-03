@@ -4,12 +4,17 @@
 ### Editor Scripts
 - Added Units Attribute
 
-### Utils
+### Math
 - Added Degree & Radian structs
+- Added ProjectOntoPlane and LawOfCosines functions
 
 ### DOTS
 - Added Gizmo Invoker for ECS Systems
 - Added dangle & rangle Unity Mathematics structs
+- Added angle, plane projection, mod, and law of cosines math functions
+
+### Fixes
+- Fixed build failing for Markdown documents
 
 ## [1.0.0] !!!
 ### Shaders

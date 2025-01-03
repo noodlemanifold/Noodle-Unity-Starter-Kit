@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Markdig;
 using NoodleKit;
 using Unity.Properties;
-using UnityEditor.Events;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.TextCore.Text;
@@ -10,6 +9,7 @@ using UnityEngine.UIElements;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.UIElements;
+using UnityEditor.Events;
 #endif
 
 namespace Noodlekit{
@@ -34,7 +34,7 @@ public class MarkdownDocument : ScriptableObject {
     public void DisposeRenderer() {
         MarkdownExtension.Dispose();
     }
-
+#if UNITY_EDITOR
     void OnEnable() {
         EnsureButton();
     }
@@ -49,6 +49,7 @@ public class MarkdownDocument : ScriptableObject {
             renderDocument.SetPersistentListenerState(0,UnityEventCallState.EditorAndRuntime);
         }
     }
+#endif
 }
 #if UNITY_EDITOR
 [CustomEditor(typeof(MarkdownDocument))]
