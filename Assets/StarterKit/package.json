@@ -21,6 +21,6 @@
     "url": "https://noodlemanifold.github.io/"
   },
   "_upm": {
-    "changelog": "## [1.1.0]\n### Editor Scripts\n- Added Units Attribute\n\n### Utils\n- Added Degree & Radian structs\n\n### DOTS\n- Added Gizmo Invoker for ECS Systems\n- Added dangle & rangle Unity Mathematics structs"
+    "changelog": "bla :P"
   }
 }
