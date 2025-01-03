@@ -1,5 +1,7 @@
 # Changelog
 
+## [1.2.0]
+
 ## [1.1.0]
 ### Editor Scripts
 - Added Units Attribute
