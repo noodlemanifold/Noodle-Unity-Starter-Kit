@@ -1,6 +1,9 @@
 # Changelog
 
 ## [1.2.0]
+### BREAKING CHANGES
+- Made Button Attribute work without UnityEvents. Just give it the method name now.
+- Renamed the old Button Attribute to EventButton.
 
 ## [1.1.0]
 ### Editor Scripts
