@@ -5,6 +5,9 @@
 - Made Button Attribute work without UnityEvents. Just give it the method name now.
 - Renamed the old Button Attribute to EventButton.
 
+### Fixes
+- Made Checklist Item handle centered for multi-line items.
+
 ## [1.1.0]
 ### Editor Scripts
 - Added Units Attribute

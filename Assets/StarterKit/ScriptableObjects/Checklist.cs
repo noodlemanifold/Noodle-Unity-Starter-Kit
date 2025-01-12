@@ -43,12 +43,31 @@ public class ChecklistItemDrawer : PropertyDrawer { //inherit from property draw
         container.style.flexDirection = FlexDirection.Row;
         container.style.justifyContent = Justify.Center;
         container.style.alignContent = Align.Center;
+        container.style.alignItems = Align.Center;
+        container.style.marginTop = 1;
+        
+        var tex = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/StarterKit/Icons/handle.png");
+        if (tex == null) {
+            tex = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.noodlemanifold.starterkit/Noodle Unity Starter Kit/Icons/handle.png");
+        }
+
+        VisualElement handle = new VisualElement();
+        handle.style.width = 18;
+        handle.style.height = 18;
+        handle.style.flexShrink = 0;
+        handle.style.marginRight = 4;
+        handle.style.justifyContent = Justify.Center;
+        handle.style.alignContent = Align.Center;
+        handle.style.alignItems = Align.Center;
+        handle.style.backgroundImage = tex;//Background.FromTexture2D(EditorGUIUtility.IconContent("btn_AlignMiddle").image as Texture2D);//d_Remove@2x, check-dash@2x
+        handle.style.unityBackgroundImageTintColor = NoodleUtils.GetEditorUIPrimaryColor();
+        container.Add(handle);
         
         Toggle tickBox = new Toggle();
         tickBox.BindProperty(property.FindPropertyRelative("complete"));
         tickBox.label = "";
         tickBox.style.flexShrink = 0;
-        tickBox.style.marginRight = 6;
+        tickBox.style.marginRight = 4;
         container.Add(tickBox);
         
         TextField textBox = new TextField();

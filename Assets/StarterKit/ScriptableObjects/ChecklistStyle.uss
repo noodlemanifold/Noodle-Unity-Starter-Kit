@@ -3,6 +3,8 @@
 }
 
 .unity-toggle {
+    margin-bottom: 0px;
+    height: 18px;
 }
 
 .unity-toggle > .unity-toggle__input > .unity-toggle__checkmark {
@@ -30,6 +32,14 @@
 
 .unity-list-view__reorderable-item__container {
     padding-left: 6px;
+}
+
+.unity-list-view__reorderable-handle{
+    display: none;
+}
+
+.unity-property-field__inspector-property .unity-list-view{
+    margin-left: 8px;
 }
 
 .unity-list-view .unity-button {
