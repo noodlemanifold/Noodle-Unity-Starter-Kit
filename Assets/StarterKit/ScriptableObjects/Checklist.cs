@@ -74,6 +74,7 @@ public class ChecklistItemDrawer : PropertyDrawer { //inherit from property draw
         textBox.BindProperty(property.FindPropertyRelative("text"));
         textBox.label = "";
         textBox.style.flexGrow = 1;
+        textBox.style.flexShrink = 1;
         textBox.style.marginRight = 0;
         textBox.multiline = true;
         textBox.style.whiteSpace = WhiteSpace.Normal;

@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.1]
+### Fixes
+- Made Checklist Items that wrap lines not break the layout.
+
 ## [1.2.0]
 ### BREAKING CHANGES
 - Made Button Attribute work without UnityEvents. Just give it the method name now.
