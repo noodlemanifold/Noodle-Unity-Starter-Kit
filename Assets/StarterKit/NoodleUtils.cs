@@ -98,6 +98,16 @@ public static class NoodleUtils {
         Color color = EditorGUIUtility.isProSkin ? darkColor : lightColor;
         return color;
     }
+    
+    /// <summary>
+    /// Editor only function to get the inspector border color for the current editor theme
+    /// </summary>
+    public static Color GetEditorUIPrimaryColor() {
+        Color lightColor = new Color(0.38f, 0.38f, 0.38f);
+        Color darkColor = new Color(0.6f, 0.6f, 0.6f);
+        Color color = EditorGUIUtility.isProSkin ? darkColor : lightColor;
+        return color;
+    }
 #endif
 }
 }

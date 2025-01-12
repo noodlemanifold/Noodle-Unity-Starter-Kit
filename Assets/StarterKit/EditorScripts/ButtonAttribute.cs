@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UIElements;
 #if UNITY_EDITOR
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.UIElements;
 #endif
@@ -12,14 +13,18 @@ using UnityEditor.UIElements;
 namespace NoodleKit {
 
 //these classes create a button to execute a UnityEvent. Only works for UnityEvents :(
-[AttributeUsage(AttributeTargets.Field)]
+[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 public class ButtonAttribute : PropertyAttribute {
+    public string function;
     public string label;
-    public bool showDefaultInspector;
+    public bool inEditor;
+    public bool hideField;
 
-    public ButtonAttribute(string label = "", bool showDefaultInspector = false) {
+    public ButtonAttribute(string function, string label = "", bool inEditor = false, bool hideField = false) {
         this.label = label;
-        this.showDefaultInspector = showDefaultInspector;
+        this.function = function;
+        this.inEditor = inEditor;
+        this.hideField = hideField;
     }
 }
 
@@ -32,39 +37,38 @@ public class ButtonDrawer : PropertyDrawer { //inherit from property drawer to c
         VisualElement container = new VisualElement();
         ButtonAttribute buttonAttribute = attribute as ButtonAttribute;
 
-        if (buttonAttribute.showDefaultInspector) {
+        if (!buttonAttribute.hideField) {
             PropertyField defaultInspector = new PropertyField(property);
             container.Add(defaultInspector);
         }
 
-        //Reflection nonsense to actually get the Event this button triggers
-        //Type type = property.serializedObject.targetObject.GetType();
-        //FieldInfo fieldInfo = type.GetField(property.name);
-        var monobehaviour = property.serializedObject.targetObject;
-        var field = fieldInfo.GetValue(monobehaviour);
+        //hooooooooooooly reflection batman
+        Type type = property.serializedObject.targetObject.GetType();
+        MethodInfo method = type.GetMethod(buttonAttribute.function);
 
-        //only try to invoke event if this attribute was placed on an event!
-        if (field is UnityEvent) {
-            UnityEvent daEvent = field as UnityEvent;
+        if (method != null) {
             Button button = new Button();
 
             string label = buttonAttribute.label;
-            if (label.Length == 0) label = NoodleUtils.FormatCamelCase(property.name);
+            if (label.Length == 0) label = NoodleUtils.FormatCamelCase(buttonAttribute.function);
             button.text = label;
 
             int margins = 2;
             button.style.marginTop = margins;
             button.style.marginBottom = margins;
 
-            button.clickable = new Clickable(() => { daEvent.Invoke(); });
+            button.clickable = new Clickable(() => {
+                if (Application.isPlaying || buttonAttribute.inEditor) {
+                    method.Invoke(property.serializedObject.targetObject, null);
+                }
+            });
 
             container.Add(button);
         }
         else {
-            //display an error message if no event is found
             Label errorLabel = new Label();
 
-            errorLabel.text = "Error: Field " + property.name + " is not of type UnityEvent.";
+            errorLabel.text = "Error: Function " + buttonAttribute.function + " doesn't exist or isn't public!";
             errorLabel.style.color = Color.red;
 
             int errorMargin = 4;
@@ -75,6 +79,7 @@ public class ButtonDrawer : PropertyDrawer { //inherit from property drawer to c
 
             container.Add(errorLabel);
         }
+
         return container;
     }
 }

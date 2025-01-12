@@ -1,15 +1,12 @@
-using System.Collections.Generic;
 using Markdig;
 using NoodleKit;
 using Unity.Properties;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.UIElements;
-using UnityEditor.Events;
 #endif
 
 namespace Noodlekit{
@@ -18,13 +15,15 @@ namespace Noodlekit{
 public class MarkdownDocument : ScriptableObject {
     
     public TextStyleSheet textStyle;
-    [Button] 
-    public UnityEvent renderDocument;
-    public string rawText = "";
 
+    [Button("RenderUXML", "Render Document!", true, true)] [SerializeField]
+    private float forceButtonRender = 0f;
+    
+    public string rawText = "";
+    
     [field: SerializeField][CreateProperty]
     public string uxmlRichText{ get; private set; }
-
+    
     [SerializeField] public bool showEditor = false;
     
     public void RenderUXML() {
@@ -34,22 +33,7 @@ public class MarkdownDocument : ScriptableObject {
     public void DisposeRenderer() {
         MarkdownExtension.Dispose();
     }
-#if UNITY_EDITOR
-    void OnEnable() {
-        EnsureButton();
-    }
 
-    private void OnValidate() {
-        EnsureButton();
-    }
-
-    private void EnsureButton() {
-        if (renderDocument.GetPersistentEventCount() < 1) {
-            UnityEventTools.AddPersistentListener(renderDocument,RenderUXML);
-            renderDocument.SetPersistentListenerState(0,UnityEventCallState.EditorAndRuntime);
-        }
-    }
-#endif
 }
 #if UNITY_EDITOR
 [CustomEditor(typeof(MarkdownDocument))]
@@ -67,7 +51,7 @@ public class MarkdownDocumentDrawer : Editor {
         PropertyField styleField = new PropertyField(serializedObject.FindProperty("textStyle"));
         styleField.style.marginRight = 40;
         properties.Add(styleField);
-        PropertyField renderField = new PropertyField(serializedObject.FindProperty("renderDocument"));
+        PropertyField renderField = new PropertyField(serializedObject.FindProperty("forceButtonRender"));
         properties.Add(renderField);
             
         editor.Add(properties);
