@@ -48,7 +48,7 @@ public class ChecklistItemDrawer : PropertyDrawer { //inherit from property draw
         
         var tex = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/StarterKit/Icons/handle.png");
         if (tex == null) {
-            tex = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.noodlemanifold.starterkit/Noodle Unity Starter Kit/Icons/handle.png");
+            tex = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.noodlemanifold.starterkit/Icons/handle.png");
         }
 
         VisualElement handle = new VisualElement();
