@@ -43,8 +43,16 @@ public class ButtonDrawer : PropertyDrawer { //inherit from property drawer to c
         }
 
         //hooooooooooooly reflection batman
+        //hooooooooooooly reflection batman
         Type type = property.serializedObject.targetObject.GetType();
-        MethodInfo method = type.GetMethod(buttonAttribute.function);
+        MethodInfo[] methods = type.GetMethods();
+        MethodInfo method = null;
+        foreach (var m in methods) {
+            if (m.Name == buttonAttribute.function && m.GetParameters().Length == 0) {
+                method = m;
+                break;
+            }
+        }
 
         if (method != null) {
             Button button = new Button();
