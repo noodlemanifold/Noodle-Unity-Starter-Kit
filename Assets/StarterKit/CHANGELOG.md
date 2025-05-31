@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.2]
+### Fixes
+- Button Attribute now works correctl with method overloads.
+
 ## [1.2.1]
 ### Fixes
 - Made Checklist Items that wrap lines not break the layout.
