@@ -22,5 +22,12 @@
   },
   "_upm": {
     "changelog": "bla :P"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Prototyping Materials",
+      "description": "Contains a shader and a set of materials for quick prototyping with some color!",
+      "path": "Samples~/PrototypingMaterials"
+    }
+  ]
 }
