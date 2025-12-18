@@ -29,7 +29,7 @@ public class ThemeSwitcher : Editor {
 //it only gives you the play buttons container before it is added to the rest of the Editor UI
 //so its parent is null :(
 //however, if you cache it, then subscribe to a late redraw event, its parents are defined!
-
+/*
 internal static class ToolbarHook {
     // public static event Action<VisualElement> CreatingPlayModeButtons
     // {
@@ -62,7 +62,7 @@ internal static class ToolbarHook {
         button.clickable = new Clickable(() => { ThemeSwitcher.ToggleTheme(); });
         container.Add(button);
     }
-}
+}*/
 
 //overwriting toolbar buttons idea:
 //https://stackoverflow.com/questions/76496378/is-there-a-way-to-add-a-button-in-the-unity-editor-like-unity-services
