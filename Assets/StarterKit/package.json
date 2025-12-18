@@ -28,6 +28,16 @@
       "displayName": "Prototyping Materials",
       "description": "Contains a shader and a set of materials for quick prototyping with some color!",
       "path": "Samples~/PrototypingMaterials"
+    },
+    {
+      "displayName": "Debugging Materials",
+      "description": "Contains materials for visualizing UVs and Normals",
+      "path": "Samples~/DebuggingMaterials"
+    },
+    {
+      "displayName": "Skybox Materials",
+      "description": "Contains customized skyboxes using the grid skybox shader",
+      "path": "Samples~/SkyboxMaterials"
     }
   ]
 }
