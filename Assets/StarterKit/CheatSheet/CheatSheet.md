@@ -3950,7 +3950,7 @@ public UIDocument document;//same goes for this one, just get a reference howeve
 
 void Start(){
     VisualElement uiRoot = document.rootVisualElement;
-    uiRoot.Query<Label>("LabelName").dataSource = script;
+    uiRoot.Q<Label>("LabelName").dataSource = script;
             //replace Label with the UI Component type that you are targeting. Ex: Button, Toggle, TextField, etc...
             //replace "LabelName" with the name of the target UI Component in the layout.
 }

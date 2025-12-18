@@ -1,8 +1,15 @@
 # Changelog
 
+## [1.3.0]
+### BREAKING CHANGES
+- Materials have been moved to samples that can be imported into the project through the package manager.
+
+### Fixes
+-Fixed Cheat Sheet error for UI Binding
+
 ## [1.2.2]
 ### Fixes
-- Button Attribute now works correctl with method overloads.
+- Button Attribute now works correctly with method overloads.
 
 ## [1.2.1]
 ### Fixes
