@@ -1,5 +1,7 @@
 # Noodle Unity Starter Kit
 
+NEW PACKAGE: https://github.com/SerialBoxes/Unity-Utils
+
 This is a Unity package that contains starter assets and a cheat sheet for new Unity projects!
 
 To add it to your project:
